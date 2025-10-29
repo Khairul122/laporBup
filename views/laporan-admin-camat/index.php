@@ -19,15 +19,9 @@
             <div class="col-12">
 
               <!-- Header Section -->
-              <div class="page-header d-flex justify-content-between align-items-center mb-4">
+              <div class="page-header mb-4">
                 <div>
                   <h2 class="page-title">Manajemen Laporan Camat</h2>
-                </div>
-                <div>
-                  <a href="index.php?controller=laporanCamatAdmin&action=export&format=csv"
-                     class="btn btn-outline-success">
-                    <i class="mdi mdi-download me-2"></i>Export CSV
-                  </a>
                 </div>
               </div>
 
@@ -110,8 +104,10 @@
               <div class="card mb-4">
                 <div class="card-body">
                   <form method="GET" id="filterForm">
+                    <input type="hidden" name="controller" value="laporanCamatAdmin">
+                    <input type="hidden" name="action" value="index">
                     <div class="row g-3">
-                      <div class="col-md-4">
+                      <div class="col-md-3">
                         <label class="form-label">Cari Laporan</label>
                         <div class="input-group">
                           <span class="input-group-text">
@@ -134,17 +130,34 @@
                       </div>
 
                       <div class="col-md-2">
+                        <label class="form-label">Tujuan</label>
+                        <select name="tujuan" class="form-select">
+                          <option value="">Semua</option>
+                          <?php foreach ($tujuanOptions as $option): ?>
+                            <option value="<?php echo htmlspecialchars($option); ?>"
+                                    <?php echo $tujuan === $option ? 'selected' : ''; ?>>
+                                <?php echo htmlspecialchars($option); ?>
+                            </option>
+                          <?php endforeach; ?>
+                        </select>
+                      </div>
+
+                      <div class="col-md-2">
                         <label class="form-label">&nbsp;</label>
                         <button type="submit" class="btn btn-primary w-100">
                           <i class="mdi mdi-magnify me-1"></i>Cari
                         </button>
                       </div>
 
-                      <div class="col-md-4">
+                      <div class="col-md-3">
                         <label class="form-label">&nbsp;</label>
                         <div class="btn-group w-100">
                           <a href="index.php?controller=laporanCamatAdmin&action=index" class="btn btn-outline-secondary">
                             <i class="mdi mdi-refresh"></i> Reset
+                          </a>
+                          <a href="index.php?controller=laporanCamatAdmin&action=export&format=csv"
+                             class="btn btn-outline-success">
+                            <i class="mdi mdi-download me-1"></i>Export CSV
                           </a>
                         </div>
                       </div>

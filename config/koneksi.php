@@ -56,9 +56,28 @@ function escapeString($string) {
 }
 
 // Fungsi untuk query
-function query($sql) {
+function query($sql, $params = []) {
     global $koneksi;
-    return $koneksi->query($sql);
+
+    if (empty($params)) {
+        $result = $koneksi->query($sql);
+        if ($result === false) {
+            throw new mysqli_sql_exception("Query failed: " . $koneksi->error . " SQL: " . $sql);
+        }
+        return $result;
+    }
+
+    // For backward compatibility, build safe query manually
+    foreach ($params as $param) {
+        $escapedParam = $koneksi->real_escape_string((string)$param);
+        $sql = preg_replace('/\?/', "'" . $escapedParam . "'", $sql, 1);
+    }
+
+    $result = $koneksi->query($sql);
+    if ($result === false) {
+        throw new mysqli_sql_exception("Query failed: " . $koneksi->error . " SQL: " . $sql);
+    }
+    return $result;
 }
 
 // Fungsi untuk close koneksi

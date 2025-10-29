@@ -12,7 +12,7 @@ class LaporanCamatAdminModel {
     /**
      * Get all laporan camat with pagination and filtering
      */
-    public function getAllLaporanCamat($page = 1, $limit = 10, $search = '', $status = '') {
+    public function getAllLaporanCamat($page = 1, $limit = 10, $search = '', $status = '', $tujuan = '') {
         $offset = ($page - 1) * $limit;
 
         // Build WHERE conditions
@@ -33,6 +33,15 @@ class LaporanCamatAdminModel {
             }
         }
 
+        if (!empty($tujuan)) {
+            $tujuan = escapeString($tujuan);
+            if (!empty($whereClause)) {
+                $whereClause .= " AND lc.tujuan = '$tujuan'";
+            } else {
+                $whereClause .= "WHERE lc.tujuan = '$tujuan'";
+            }
+        }
+
         // Main query to get data
         $query = "SELECT lc.*, u.username, u.jabatan, '' as nama_kegiatan
                   FROM laporan_camat lc
@@ -41,7 +50,22 @@ class LaporanCamatAdminModel {
                   ORDER BY lc.created_at DESC
                   LIMIT $limit OFFSET $offset";
 
+    
         $result = $this->db->query($query);
+
+        // Check for query errors
+        if (!$result) {
+            error_log("LaporanCamatModel - MySQL error: " . $this->db->errno . " - " . $this->db->error);
+            return [
+                'data' => [],
+                'total' => 0,
+                'per_page' => $limit,
+                'current_page' => $page,
+                'total_pages' => 0,
+                'error' => true
+            ];
+        }
+
         $data = [];
         if ($result) {
             while ($row = $result->fetch_assoc()) {
@@ -49,6 +73,7 @@ class LaporanCamatAdminModel {
             }
         }
 
+        
         // Get total count for pagination
         $countQuery = "SELECT COUNT(*) as total FROM laporan_camat lc
                        LEFT JOIN users u ON lc.id_user = u.id_user
@@ -494,5 +519,27 @@ class LaporanCamatAdminModel {
             }
         }
         return $data;
+    }
+
+    /**
+     * Get tujuan options for filter
+     */
+    public function getTujuanOptions() {
+        $query = "SELECT DISTINCT tujuan
+                  FROM laporan_camat
+                  WHERE tujuan IS NOT NULL
+                  AND tujuan != ''
+                  ORDER BY tujuan ASC";
+
+        $result = $this->db->query($query);
+        $options = [];
+
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                $options[] = $row['tujuan'];
+            }
+        }
+
+        return $options;
     }
 }

@@ -110,6 +110,8 @@
               <div class="card mb-4">
                 <div class="card-body">
                   <form method="GET" id="filterForm">
+                    <input type="hidden" name="controller" value="laporanOPDAdmin">
+                    <input type="hidden" name="action" value="index">
                     <div class="row g-3">
                       <div class="col-md-4">
                         <label class="form-label">Cari Laporan</label>

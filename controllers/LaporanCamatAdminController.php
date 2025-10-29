@@ -55,6 +55,8 @@ class LaporanCamatAdminController {
                 echo json_encode($response);
                 exit;
             } else {
+                // Preserve query string saat redirect
+                $currentUrl = $_SERVER['REQUEST_URI'];
                 header('Location: index.php');
                 exit;
             }
@@ -88,6 +90,7 @@ class LaporanCamatAdminController {
      * Menampilkan halaman daftar laporan Camat
      */
     public function index() {
+  
         $this->requireAdmin();
 
         $user = $this->getCurrentUser();
@@ -95,13 +98,16 @@ class LaporanCamatAdminController {
         $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
         $search = $_GET['search'] ?? '';
         $status = $_GET['status'] ?? '';
+        $tujuan = $_GET['tujuan'] ?? '';
 
+  
         // Get data laporan Camat
-        $result = $this->laporanCamatAdminModel->getAllLaporanCamat($page, $limit, $search, $status);
+        $result = $this->laporanCamatAdminModel->getAllLaporanCamat($page, $limit, $search, $status, $tujuan);
         $laporans = $result['data'];
         $totalLaporan = $result['total'];
         $totalPages = $result['total_pages'];
 
+    
         // Get statistics
         $statistics = $this->laporanCamatAdminModel->getLaporanCamatStatistics();
 
@@ -117,6 +123,10 @@ class LaporanCamatAdminController {
             $stats[$stat['status_laporan']] = $stat['total'];
         }
 
+        // Get tujuan options for filter
+        $tujuanOptions = $this->laporanCamatAdminModel->getTujuanOptions();
+
+      
         // Include view
         include 'views/laporan-admin-camat/index.php';
     }
