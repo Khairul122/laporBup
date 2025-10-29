@@ -1,5 +1,5 @@
 <?php 
-$title = 'Dashboard OPD - LaporBup';
+$title = 'Dashboard OPD - Madina Maju Madani';
 include 'views/template/header.php'; 
 ?>
 <?php include 'views/template/navbar.php'; ?>

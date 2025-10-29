@@ -1,7 +1,22 @@
 <header class="header">
     <div class="logo">
         <i class="fas fa-landmark"></i>
-        <span>LaporBup</span>
+        <span>
+            <?php
+            $current_role = $_SESSION['role'] ?? 'user';
+            switch ($current_role) {
+                case 'camat':
+                    echo 'Silap Gawat';
+                    break;
+                case 'opd':
+                    echo 'Madina Maju Madani';
+                    break;
+                default:
+                    echo 'LaporBup';
+                    break;
+            }
+            ?>
+        </span>
     </div>
     <nav class="nav-menu">
         <?php

@@ -1,5 +1,5 @@
 <?php 
-$title = 'Dashboard Camat - LaporBup';
+$title = 'Dashboard Camat - Silap Gawat';
 include 'views/template/header.php'; 
 ?>
 <?php include 'views/template/navbar.php'; ?>
