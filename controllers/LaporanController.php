@@ -298,7 +298,7 @@ class LaporanController
                     <th>Nama Desa</th>
                     <th>Nama Kecamatan</th>
                     <th>Tujuan</th>
-                    <th>Uraian Laporan</th>
+                    <th style="width:200px">Uraian Laporan</th>
                     <th>Tanggal</th>';
         }
 
@@ -365,7 +365,7 @@ class LaporanController
                         <td>' . htmlspecialchars($row['nama_desa'] ?? '') . '</td>
                         <td>' . htmlspecialchars($row['nama_kecamatan'] ?? '') . '</td>
                         <td>' . htmlspecialchars($tujuan_display) . '</td>
-                        <td>' . htmlspecialchars(strip_tags($row['uraian_laporan'] ?? '')) . '</td>
+                        <td style="width:200px">' . htmlspecialchars(strip_tags($row['uraian_laporan'] ?? '')) . '</td>
                         <td>' . $this->formatTanggalIndonesia($row['created_at']) . '</td>';
             }
 
