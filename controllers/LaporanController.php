@@ -483,47 +483,44 @@ class LaporanController
         $tahun = date('Y');
         $tempatTanggal = "Panyabungan, $tanggal $nama_bulan $tahun";
 
-        // Add more spacing between table data and signature (3 rows as requested)
-        $startRow += 3;
+        // Add spacing between table data and signature
+        $startRow += 5;
 
         // Get last column for right alignment
         $lastColumn = $sheet->getHighestColumn();
 
         if ($defaultSignature) {
-            // Add blank row before signature section
-            $startRow += 2;
-            
             // 1. Tempat dan Tanggal - match PDF font size (11), aligned right
             $sheet->setCellValue($lastColumn . $startRow, $tempatTanggal);
             $sheet->getStyle($lastColumn . $startRow)->getFont()->setSize(11);
             $sheet->getStyle($lastColumn . $startRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
-            // Spasi untuk tanda tangan (3 rows as requested in the problem)
-            $startRow += 3;
+            // Spasi 3 baris kosong antara tempat/tanggal dan jabatan (as requested)
+            $startRow += 1;
 
-            // 2. Jabatan Penandatangan (uppercase, bold) - match PDF
+            // 2. Jabatan Penandatangan (uppercase, bold) - match PDF, aligned right
             $sheet->setCellValue($lastColumn . $startRow, strtoupper($defaultSignature['jabatan_penanda_tangan']));
             $sheet->getStyle($lastColumn . $startRow)->getFont()->setBold(true);
             $sheet->getStyle($lastColumn . $startRow)->getFont()->setSize(11);
             $sheet->getStyle($lastColumn . $startRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
-            // Spasi untuk nama (2 rows to maintain proper spacing)
-            $startRow += 2;
+            // Spasi untuk nama (4 rows to match PDF spacing)
+            $startRow += 4;
 
-            // 3. Nama Penandatangan (uppercase, bold)
+            // 3. Nama Penandatangan (uppercase, bold), aligned right
             $sheet->setCellValue($lastColumn . $startRow, strtoupper($defaultSignature['nama_penanda_tangan']));
             $sheet->getStyle($lastColumn . $startRow)->getFont()->setBold(true);
             $sheet->getStyle($lastColumn . $startRow)->getFont()->setSize(11);
             $sheet->getStyle($lastColumn . $startRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
-            // 4. Pangkat (italic) - match PDF formatting
+            // 4. Pangkat (italic), aligned right
             $startRow += 1;
             $sheet->setCellValue($lastColumn . $startRow, $defaultSignature['pangkat'] ?? 'PEMBINA UTAMA MUDA');
             $sheet->getStyle($lastColumn . $startRow)->getFont()->setItalic(true);
             $sheet->getStyle($lastColumn . $startRow)->getFont()->setSize(10);
             $sheet->getStyle($lastColumn . $startRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
-            // 5. NIP - match PDF formatting
+            // 5. NIP, aligned right
             $startRow += 1;
             $sheet->setCellValue($lastColumn . $startRow, 'NIP. ' . $defaultSignature['nip']);
             $sheet->getStyle($lastColumn . $startRow)->getFont()->setSize(10);
@@ -531,40 +528,37 @@ class LaporanController
 
         } else {
             // Default signature
-            // Add blank row before signature section
-            $startRow += 2;
-            
-            // 1. Tempat dan Tanggal
+            // 1. Tempat dan Tanggal - aligned right
             $sheet->setCellValue($lastColumn . $startRow, $tempatTanggal);
             $sheet->getStyle($lastColumn . $startRow)->getFont()->setSize(11);
             $sheet->getStyle($lastColumn . $startRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
-            // Spasi untuk tanda tangan (3 rows as requested)
+            // Spasi 3 baris kosong antara tempat/tanggal dan jabatan (as requested)
             $startRow += 3;
 
-            // 2. Jabatan Penandatangan
+            // 2. Jabatan Penandatangan - aligned right
             $sheet->setCellValue($lastColumn . $startRow, 'PLT. KEPALA DINAS KOMUNIKASI DAN INFORMATIKA KABUPATEN MANDAILING NATAL');
             $sheet->getStyle($lastColumn . $startRow)->getFont()->setBold(true);
             $sheet->getStyle($lastColumn . $startRow)->getFont()->setSize(11);
             $sheet->getStyle($lastColumn . $startRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
-            // Spasi untuk nama (2 rows to maintain proper spacing)
-            $startRow += 2;
+            // Spasi untuk nama (4 rows to match PDF spacing)
+            $startRow += 4;
 
-            // 3. Nama
+            // 3. Nama - aligned right
             $sheet->setCellValue($lastColumn . $startRow, 'RAHMAD HIDAYAT, S.Pd');
             $sheet->getStyle($lastColumn . $startRow)->getFont()->setBold(true);
             $sheet->getStyle($lastColumn . $startRow)->getFont()->setSize(11);
             $sheet->getStyle($lastColumn . $startRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
-            // 4. Pangkat
+            // 4. Pangkat - aligned right
             $startRow += 1;
             $sheet->setCellValue($lastColumn . $startRow, 'PEMBINA UTAMA MUDA');
             $sheet->getStyle($lastColumn . $startRow)->getFont()->setItalic(true);
             $sheet->getStyle($lastColumn . $startRow)->getFont()->setSize(10);
             $sheet->getStyle($lastColumn . $startRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
-            // 5. NIP
+            // 5. NIP - aligned right
             $startRow += 1;
             $sheet->setCellValue($lastColumn . $startRow, 'NIP. 19730417 199903 1 003');
             $sheet->getStyle($lastColumn . $startRow)->getFont()->setSize(10);
