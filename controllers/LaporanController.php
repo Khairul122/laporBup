@@ -590,7 +590,7 @@ class LaporanController
     }
 
     /**
-     * Add signature to PDF - Format Formal Indonesia yang Rapi
+     * Add signature to PDF - Format yang Benar-Benar Rapi
      */
     private function addSignatureToPDF($pdf, $role)
     {
@@ -605,68 +605,62 @@ class LaporanController
         $tahun = date('Y');
         $tempatTanggal = "Panyabungan, $tanggal $nama_bulan $tahun";
 
-        // Pindah ke bawah untuk tanda tangan
-        $pdf->SetY(200);
+        // Set posisi awal untuk signature block di pojok kanan
+        $startX = 200;  // Posisi X di pojok kanan
+        $startY = 120;  // Posisi Y untuk mulai signature (lebih tinggi)
 
         if ($defaultSignature) {
-            // 1. Tempat dan Tanggal - rata kanan
+            // 1. Tempat dan Tanggal - menggunakan koordinat spesifik
             $pdf->SetFont('times', '', 11);
-            $pdf->Cell(0, 7, $tempatTanggal, 0, 1, 'R');
+            $pdf->SetXY($startX, $startY);
+            $pdf->Cell(70, 6, $tempatTanggal, 0, 0, 'L');
 
-            // Spasi untuk tanda tangan
-            $pdf->Ln(25);
-
-            // 2. Jabatan - uppercase, rata kanan
+            // 2. Jabatan - menggunakan koordinat spesifik
             $pdf->SetFont('times', 'B', 11);
-            $jabatan = strtoupper($defaultSignature['jabatan_penanda_tangan']);
-            $pdf->Cell(0, 6, $jabatan, 0, 1, 'R');
+            $pdf->SetXY($startX, $startY + -4 + 10);
+            $pdf->MultiCell(70, 5, strtoupper($defaultSignature['jabatan_penanda_tangan']), 0, 'L');
 
-            // Spasi untuk nama
-            $pdf->Ln(25);
-
-            // 3. Nama - uppercase, rata kanan
+            // 3. Nama - menggunakan koordinat spesifik
             $pdf->SetFont('times', 'B', 11);
-            $nama = strtoupper($defaultSignature['nama_penanda_tangan']);
-            $pdf->Cell(0, 6, $nama, 0, 1, 'R');
-            $pdf->Ln(3);
+            $pdf->SetXY($startX, $startY + 6 + 20 + 20);
+            $pdf->Cell(70, 6, strtoupper($defaultSignature['nama_penanda_tangan']), 0, 0, 'L');
 
-            // 4. Pangkat - italic, rata kanan
+            // 4. Pangkat - menggunakan koordinat spesifik
             $pdf->SetFont('times', 'I', 10);
-            $pangkat = $defaultSignature['pangkat'] ?? 'PEMBINA UTAMA MUDA';
-            $pdf->Cell(0, 5, $pangkat, 0, 1, 'R');
-            $pdf->Ln(2);
+            $pdf->SetXY($startX, $startY + 6 + 10 + 15 + 6);
+            $pdf->Cell(70, 5, $defaultSignature['pangkat'] ?? 'PEMBINA UTAMA MUDA', 0, 0, 'L');
 
-            // 5. NIP - rata kanan
+            // 5. NIP - menggunakan koordinat spesifik
             $pdf->SetFont('times', '', 10);
-            $pdf->Cell(0, 5, 'NIP. ' . $defaultSignature['nip'], 0, 1, 'R');
+            $pdf->SetXY($startX, $startY + 6 + 10 + 15 + 6 + 5);
+            $pdf->Cell(70, 5, 'NIP. ' . $defaultSignature['nip'], 0, 0, 'L');
 
         } else {
-            // Default ketika tidak ada data signature
+            // Default ketika tidak ada data signature - menggunakan koordinat spesifik
             // 1. Tempat dan Tanggal
             $pdf->SetFont('times', '', 11);
-            $pdf->Cell(0, 7, $tempatTanggal, 0, 1, 'R');
-            $pdf->Ln(25);
+            $pdf->SetXY($startX, $startY);
+            $pdf->Cell(70, 6, $tempatTanggal, 0, 0, 'L');
 
-            // 2. Jabatan - multi-line jika perlu
+            // 2. Jabatan
             $pdf->SetFont('times', 'B', 11);
-            $pdf->Cell(0, 6, 'PLT. KEPALA DINAS KOMUNIKASI DAN INFORMATIKA', 0, 1, 'R');
-            $pdf->Ln(6);
-            $pdf->Cell(0, 6, 'KABUPATEN MANDAILING NATAL', 0, 1, 'R');
-            $pdf->Ln(25);
+            $pdf->SetXY($startX, $startY + 6 + 10);
+            $pdf->MultiCell(70, 5, "PLT. KEPALA DINAS KOMUNIKASI DAN INFORMATIKA\nKABUPATEN MANDAILING NATAL", 0, 'L');
 
             // 3. Nama
             $pdf->SetFont('times', 'B', 11);
-            $pdf->Cell(0, 6, 'RAHMAD HIDAYAT, S.Pd', 0, 1, 'R');
-            $pdf->Ln(3);
+            $pdf->SetXY($startX, $startY + 6 + 10 + 15);
+            $pdf->Cell(70, 6, 'RAHMAD HIDAYAT, S.Pd', 0, 0, 'L');
 
             // 4. Pangkat
             $pdf->SetFont('times', 'I', 10);
-            $pdf->Cell(0, 5, 'PEMBINA UTAMA MUDA', 0, 1, 'R');
-            $pdf->Ln(2);
+            $pdf->SetXY($startX, $startY + 6 + 10 + 15 + 6);
+            $pdf->Cell(70, 5, 'PEMBINA UTAMA MUDA', 0, 0, 'L');
 
             // 5. NIP
             $pdf->SetFont('times', '', 10);
-            $pdf->Cell(0, 5, 'NIP. 19730417 199903 1 003', 0, 1, 'R');
+            $pdf->SetXY($startX, $startY + 6 + 10 + 15 + 6 + 5);
+            $pdf->Cell(70, 5, 'NIP. 19730417 199903 1 003', 0, 0, 'L');
         }
     }
 
