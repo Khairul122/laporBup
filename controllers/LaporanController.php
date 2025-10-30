@@ -615,18 +615,18 @@ class LaporanController
             $pdf->SetXY($startX, $startY);
             $pdf->Cell(70, 6, $tempatTanggal, 0, 0, 'L');
 
-            // 2. Jabatan - menggunakan koordinat spesifik
+            // 2. Jabatan Penandatangan - menggunakan koordinat spesifik
             $pdf->SetFont('times', 'B', 11);
             $pdf->SetXY($startX, $startY + -4 + 10);
             $pdf->MultiCell(70, 5, strtoupper($defaultSignature['jabatan_penanda_tangan']), 0, 'L');
 
             // 3. Nama - menggunakan koordinat spesifik
             $pdf->SetFont('times', 'B', 11);
-            $pdf->SetXY($startX, $startY + 6 + 20 + 20);
+            $pdf->SetXY($startX, $startY + 6 + 13 + 13);
             $pdf->Cell(70, 6, strtoupper($defaultSignature['nama_penanda_tangan']), 0, 0, 'L');
 
             // 4. Pangkat - menggunakan koordinat spesifik
-            $pdf->SetFont('times', 'I', 10);
+            $pdf->SetFont('times', '', 10);
             $pdf->SetXY($startX, $startY + 6 + 10 + 15 + 6);
             $pdf->Cell(70, 5, $defaultSignature['pangkat'] ?? 'PEMBINA UTAMA MUDA', 0, 0, 'L');
 
@@ -642,7 +642,7 @@ class LaporanController
             $pdf->SetXY($startX, $startY);
             $pdf->Cell(70, 6, $tempatTanggal, 0, 0, 'L');
 
-            // 2. Jabatan
+            // 2. Jabatan Penandatangan
             $pdf->SetFont('times', 'B', 11);
             $pdf->SetXY($startX, $startY + 6 + 10);
             $pdf->MultiCell(70, 5, "PLT. KEPALA DINAS KOMUNIKASI DAN INFORMATIKA\nKABUPATEN MANDAILING NATAL", 0, 'L');

@@ -445,10 +445,10 @@ class LaporanModel {
      * Save signature data
      */
     public function saveSignature($data) {
-        $jabatan = escapeString($data['jabatan']);
-        $nama_penanda_tangan = escapeString($data['nama_penanda_tangan']);
         $jabatan_penanda_tangan = escapeString($data['jabatan_penanda_tangan']);
-        $nip = escapeString($data['nip']);
+        $nama_penanda_tangan = escapeString($data['nama_penanda_tangan']);
+        $pangkat = escapeString($data['pangkat'] ?? '');
+        $nip = escapeString($data['nip'] ?? '');
 
         // Check if signature already exists
         $checkQuery = "SELECT id_ttd_laporan FROM ttd_laporan LIMIT 1";
@@ -458,17 +458,17 @@ class LaporanModel {
             // Update existing signature
             $id_ttd = $checkResult->fetch_assoc()['id_ttd_laporan'];
             $query = "UPDATE ttd_laporan SET
-                      jabatan = '$jabatan',
-                      nama_penanda_tangan = '$nama_penanda_tangan',
                       jabatan_penanda_tangan = '$jabatan_penanda_tangan',
+                      nama_penanda_tangan = '$nama_penanda_tangan',
+                      pangkat = '$pangkat',
                       nip = '$nip'
                       WHERE id_ttd_laporan = $id_ttd";
         } else {
             // Insert new signature
             $query = "INSERT INTO ttd_laporan
-                      (jabatan, nama_penanda_tangan, jabatan_penanda_tangan, nip)
+                      (jabatan_penanda_tangan, nama_penanda_tangan, pangkat, nip)
                       VALUES
-                      ('$jabatan', '$nama_penanda_tangan', '$jabatan_penanda_tangan', '$nip')";
+                      ('$jabatan_penanda_tangan', '$nama_penanda_tangan', '$pangkat', '$nip')";
         }
 
         $result = $this->db->query($query);
@@ -503,8 +503,7 @@ class LaporanModel {
 
             // Map fields for compatibility
             $signature['nama_penandatangan'] = $signature['nama_penanda_tangan'];
-            $signature['jabatan'] = $signature['jabatan_penanda_tangan'];
-            $signature['pangkat'] = ''; // Not in new table structure
+            $signature['jabatan_penanda_tangan'] = $signature['jabatan_penanda_tangan'];
 
             return $signature;
         }
@@ -517,9 +516,9 @@ class LaporanModel {
     public function createTTDTable() {
         $query = "CREATE TABLE IF NOT EXISTS ttd_laporan (
             id_ttd_laporan INT AUTO_INCREMENT PRIMARY KEY,
-            jabatan VARCHAR(100) NOT NULL,
-            nama_penanda_tangan VARCHAR(100) NOT NULL,
             jabatan_penanda_tangan VARCHAR(100) NOT NULL,
+            nama_penanda_tangan VARCHAR(100) NOT NULL,
+            pangkat VARCHAR(100) DEFAULT NULL,
             nip VARCHAR(50) DEFAULT NULL
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
 
@@ -541,10 +540,10 @@ class LaporanModel {
             $signature['tempat'] = 'Panyabungan';
             $signature['tanggal_format'] = $this->formatTanggalIndo(date('Y-m-d'));
 
-            // Map fields for compatibility
+            // Map fields for compatibility - sesuai struktur tabel baru
             $signature['nama_penandatangan'] = $signature['nama_penanda_tangan'];
-            $signature['jabatan'] = $signature['jabatan_penanda_tangan'];
-            $signature['pangkat'] = ''; // Not in new table structure
+            $signature['jabatan_penanda_tangan'] = $signature['jabatan_penanda_tangan'];
+            // pangkat dan nip sudah ada di tabel baru
 
             return $signature;
         }
