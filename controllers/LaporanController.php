@@ -467,99 +467,93 @@ class LaporanController
     }
 
     /**
-     * Add signature to Excel
+     * Add signature to Excel - Format sesuai PDF (5 field)
      */
     private function addSignatureToExcel($sheet, $role, $startRow)
     {
         // Get default signature data
         $defaultSignature = $this->laporanModel->getDefaultSignature($role);
 
-        // Format tanggal otomatis
-        $hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-        $bulan = [
-            'Januari',
-            'Februari',
-            'Maret',
-            'April',
-            'Mei',
-            'Juni',
-            'Juli',
-            'Agustus',
-            'September',
-            'Oktober',
-            'November',
-            'Desember'
-        ];
+        // Format tanggal otomatis (sesuai PDF)
+        $bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                  'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
 
-        $nama_hari = $hari[date('w')];
         $tanggal = date('d');
         $nama_bulan = $bulan[date('n') - 1];
         $tahun = date('Y');
+        $tempatTanggal = "Panyabungan, $tanggal $nama_bulan $tahun";
 
-        $tempatTanggal = "Panyabungan, $nama_hari $tanggal $nama_bulan $tahun";
+        // Add empty rows for spacing
+        $startRow += 3;
 
-        // Add empty row for spacing
-        $startRow += 2;
-
-        // Add signature header
-        $sheet->setCellValue('A' . $startRow, 'TANDA TANGAN');
-        $sheet->mergeCells('A' . $startRow . ':' . $sheet->getHighestColumn() . $startRow);
-
-        // Style signature header
-        $headerStyle = [
-            'font' => ['bold' => true, 'size' => 14],
-            'alignment' => ['horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER]
-        ];
-        $sheet->getStyle('A' . $startRow . ':' . $sheet->getHighestColumn() . $startRow)->applyFromArray($headerStyle);
-
-        $startRow += 2;
+        // Get last column for right alignment
+        $lastColumn = $sheet->getHighestColumn();
 
         if ($defaultSignature) {
-            // Tempat dan tanggal otomatis
-            $sheet->setCellValue($sheet->getHighestColumn() . $startRow, $tempatTanggal);
+            // 1. Tempat dan Tanggal
+            $sheet->setCellValue($lastColumn . $startRow, $tempatTanggal);
+            $sheet->getStyle($lastColumn . $startRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
-            // Jabatan
-            $startRow += 2;
-            $sheet->setCellValue($sheet->getHighestColumn() . $startRow, $defaultSignature['jabatan_penanda_tangan']);
+            // Spasi untuk tanda tangan
+            $startRow += 5;
 
-            // Space for signature
-            $startRow += 3;
-            $sheet->setCellValue($sheet->getHighestColumn() . $startRow, '(Tanda Tangan)');
+            // 2. Jabatan Penandatangan (uppercase, bold)
+            $sheet->setCellValue($lastColumn . $startRow, strtoupper($defaultSignature['jabatan_penanda_tangan']));
+            $sheet->getStyle($lastColumn . $startRow)->getFont()->setBold(true);
+            $sheet->getStyle($lastColumn . $startRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
-            // Nama
+            // Spasi untuk nama
+            $startRow += 4;
+
+            // 3. Nama Penandatangan (uppercase, bold)
+            $sheet->setCellValue($lastColumn . $startRow, strtoupper($defaultSignature['nama_penanda_tangan']));
+            $sheet->getStyle($lastColumn . $startRow)->getFont()->setBold(true);
+            $sheet->getStyle($lastColumn . $startRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+
+            // 4. Pangkat (italic)
             $startRow += 1;
-            $sheet->setCellValue($sheet->getHighestColumn() . $startRow, $defaultSignature['nama_penanda_tangan']);
+            $sheet->setCellValue($lastColumn . $startRow, $defaultSignature['pangkat'] ?? 'PEMBINA UTAMA MUDA');
+            $sheet->getStyle($lastColumn . $startRow)->getFont()->setItalic(true);
+            $sheet->getStyle($lastColumn . $startRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
-            // NIP
+            // 5. NIP
             $startRow += 1;
-            $sheet->setCellValue($sheet->getHighestColumn() . $startRow, 'NIP. ' . $defaultSignature['nip']);
+            $sheet->setCellValue($lastColumn . $startRow, 'NIP. ' . $defaultSignature['nip']);
+            $sheet->getStyle($lastColumn . $startRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+
         } else {
             // Default signature
-            $sheet->setCellValue($sheet->getHighestColumn() . $startRow, $tempatTanggal);
+            // 1. Tempat dan Tanggal
+            $sheet->setCellValue($lastColumn . $startRow, $tempatTanggal);
+            $sheet->getStyle($lastColumn . $startRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
-            $startRow += 2;
-            $sheet->setCellValue($sheet->getHighestColumn() . $startRow, 'Plt. KEPALA DINAS KOMUNIKASI DAN INFORMATIKA');
+            // Spasi untuk tanda tangan
+            $startRow += 5;
 
-            $startRow += 3;
-            $sheet->setCellValue($sheet->getHighestColumn() . $startRow, '(Tanda Tangan)');
+            // 2. Jabatan Penandatangan
+            $sheet->setCellValue($lastColumn . $startRow, 'PLT. KEPALA DINAS KOMUNIKASI DAN INFORMATIKA KABUPATEN MANDAILING NATAL');
+            $sheet->getStyle($lastColumn . $startRow)->getFont()->setBold(true);
+            $sheet->getStyle($lastColumn . $startRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
+            // Spasi untuk nama
+            $startRow += 4;
+
+            // 3. Nama
+            $sheet->setCellValue($lastColumn . $startRow, 'RAHMAD HIDAYAT, S.Pd');
+            $sheet->getStyle($lastColumn . $startRow)->getFont()->setBold(true);
+            $sheet->getStyle($lastColumn . $startRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+
+            // 4. Pangkat
             $startRow += 1;
-            $sheet->setCellValue($sheet->getHighestColumn() . $startRow, 'RAHMAD HIDAYAT, S.Pd');
+            $sheet->setCellValue($lastColumn . $startRow, 'PEMBINA UTAMA MUDA');
+            $sheet->getStyle($lastColumn . $startRow)->getFont()->setItalic(true);
+            $sheet->getStyle($lastColumn . $startRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
+            // 5. NIP
             $startRow += 1;
-            $sheet->setCellValue($sheet->getHighestColumn() . $startRow, 'PEMBINA UTAMA MUDA');
-
-            $startRow += 1;
-            $sheet->setCellValue($sheet->getHighestColumn() . $startRow, 'NIP. 19730417 199903 1 003');
+            $sheet->setCellValue($lastColumn . $startRow, 'NIP. 19730417 199903 1 003');
+            $sheet->getStyle($lastColumn . $startRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
         }
-
-        // Style signature section
-        $lastColumn = $sheet->getHighestColumn();
-        $signatureStyle = [
-            'font' => ['bold' => true],
-            'alignment' => ['horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT]
-        ];
-        $sheet->getStyle($lastColumn . ($startRow - 7) . ':' . $lastColumn . $startRow)->applyFromArray($signatureStyle);
     }
 
     /**
