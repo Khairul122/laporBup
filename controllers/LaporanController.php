@@ -282,10 +282,10 @@ class LaporanController
 
         $html = '<h1 align="center" style="font-size: 18px; font-weight: bold; margin-top: 20px; line-height: 1.0;">' . $title . '</h1>';
 
-        $html .= '<table border="1" cellpadding="5">
+        $html .= '<table border="1" cellpadding="5" cellspacing="0" style="border-collapse:collapse; width:100%; text-align:justify; vertical-align:middle;">
         <thead>
             <tr style="background-color:#f0f0f0;">
-                <th>No</th>';
+                <th style="width:30px">No</th>';
 
         if ($role === 'opd') {
             $html .= '<th>Nama OPD</th>
@@ -336,7 +336,7 @@ class LaporanController
         $no = 1;
         foreach ($data as $row) {
             $html .= '<tr>
-                <td>' . $no++ . '</td>';
+                <td style="width:30px">' . $no++ . '</td>';
 
             if ($role === 'opd') {
                 // Convert 'dinas kominfo' to 'Dinas Komunikasi dan Informatika'
