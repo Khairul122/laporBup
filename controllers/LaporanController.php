@@ -471,98 +471,109 @@ class LaporanController
      */
     private function addSignatureToExcel($sheet, $role, $startRow)
     {
-        // Get default signature data
         $defaultSignature = $this->laporanModel->getDefaultSignature($role);
 
-        // Format tanggal otomatis (sesuai PDF)
-        $bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-                  'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+        $bulan = [
+            'Januari',
+            'Februari',
+            'Maret',
+            'April',
+            'Mei',
+            'Juni',
+            'Juli',
+            'Agustus',
+            'September',
+            'Oktober',
+            'November',
+            'Desember'
+        ];
 
         $tanggal = date('d');
         $nama_bulan = $bulan[date('n') - 1];
         $tahun = date('Y');
         $tempatTanggal = "Panyabungan, $tanggal $nama_bulan $tahun";
 
-        // Add spacing between table data and signature
         $startRow += 5;
-
-        // Get last column for right alignment
         $lastColumn = $sheet->getHighestColumn();
 
         if ($defaultSignature) {
-            // 1. Tempat dan Tanggal - match PDF font size (11), aligned right
             $sheet->setCellValue($lastColumn . $startRow, $tempatTanggal);
             $sheet->getStyle($lastColumn . $startRow)->getFont()->setSize(11);
-            $sheet->getStyle($lastColumn . $startRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+            $sheet->getStyle($lastColumn . $startRow)->getAlignment()
+                ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT)
+                ->setIndent(3);
 
-            // Spasi 3 baris kosong antara tempat/tanggal dan jabatan (as requested)
             $startRow += 1;
 
-            // 2. Jabatan Penandatangan (uppercase, bold) - match PDF, aligned right
             $sheet->setCellValue($lastColumn . $startRow, strtoupper($defaultSignature['jabatan_penanda_tangan']));
             $sheet->getStyle($lastColumn . $startRow)->getFont()->setBold(true);
             $sheet->getStyle($lastColumn . $startRow)->getFont()->setSize(11);
-            $sheet->getStyle($lastColumn . $startRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+            $sheet->getStyle($lastColumn . $startRow)->getAlignment()
+                ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT)
+                ->setIndent(3);
 
-            // Spasi untuk nama (4 rows to match PDF spacing)
             $startRow += 4;
 
-            // 3. Nama Penandatangan (uppercase, bold), aligned right
             $sheet->setCellValue($lastColumn . $startRow, strtoupper($defaultSignature['nama_penanda_tangan']));
             $sheet->getStyle($lastColumn . $startRow)->getFont()->setBold(true);
             $sheet->getStyle($lastColumn . $startRow)->getFont()->setSize(11);
-            $sheet->getStyle($lastColumn . $startRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+            $sheet->getStyle($lastColumn . $startRow)->getAlignment()
+                ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT)
+                ->setIndent(3);
 
-            // 4. Pangkat (italic), aligned right
             $startRow += 1;
             $sheet->setCellValue($lastColumn . $startRow, $defaultSignature['pangkat'] ?? 'PEMBINA UTAMA MUDA');
             $sheet->getStyle($lastColumn . $startRow)->getFont()->setItalic(true);
             $sheet->getStyle($lastColumn . $startRow)->getFont()->setSize(10);
-            $sheet->getStyle($lastColumn . $startRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+            $sheet->getStyle($lastColumn . $startRow)->getAlignment()
+                ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT)
+                ->setIndent(3);
 
-            // 5. NIP, aligned right
             $startRow += 1;
             $sheet->setCellValue($lastColumn . $startRow, 'NIP. ' . $defaultSignature['nip']);
             $sheet->getStyle($lastColumn . $startRow)->getFont()->setSize(10);
-            $sheet->getStyle($lastColumn . $startRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
-
+            $sheet->getStyle($lastColumn . $startRow)->getAlignment()
+                ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT)
+                ->setIndent(3);
         } else {
-            // Default signature
-            // 1. Tempat dan Tanggal - aligned right
             $sheet->setCellValue($lastColumn . $startRow, $tempatTanggal);
             $sheet->getStyle($lastColumn . $startRow)->getFont()->setSize(11);
-            $sheet->getStyle($lastColumn . $startRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+            $sheet->getStyle($lastColumn . $startRow)->getAlignment()
+                ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT)
+                ->setIndent(3);
 
-            // Spasi 3 baris kosong antara tempat/tanggal dan jabatan (as requested)
             $startRow += 3;
 
-            // 2. Jabatan Penandatangan - aligned right
             $sheet->setCellValue($lastColumn . $startRow, 'PLT. KEPALA DINAS KOMUNIKASI DAN INFORMATIKA KABUPATEN MANDAILING NATAL');
             $sheet->getStyle($lastColumn . $startRow)->getFont()->setBold(true);
             $sheet->getStyle($lastColumn . $startRow)->getFont()->setSize(11);
-            $sheet->getStyle($lastColumn . $startRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+            $sheet->getStyle($lastColumn . $startRow)->getAlignment()
+                ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT)
+                ->setIndent(3);
 
-            // Spasi untuk nama (4 rows to match PDF spacing)
             $startRow += 4;
 
-            // 3. Nama - aligned right
             $sheet->setCellValue($lastColumn . $startRow, 'RAHMAD HIDAYAT, S.Pd');
             $sheet->getStyle($lastColumn . $startRow)->getFont()->setBold(true);
             $sheet->getStyle($lastColumn . $startRow)->getFont()->setSize(11);
-            $sheet->getStyle($lastColumn . $startRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+            $sheet->getStyle($lastColumn . $startRow)->getAlignment()
+                ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT)
+                ->setIndent(3);
 
-            // 4. Pangkat - aligned right
             $startRow += 1;
             $sheet->setCellValue($lastColumn . $startRow, 'PEMBINA UTAMA MUDA');
             $sheet->getStyle($lastColumn . $startRow)->getFont()->setItalic(true);
             $sheet->getStyle($lastColumn . $startRow)->getFont()->setSize(10);
-            $sheet->getStyle($lastColumn . $startRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+            $sheet->getStyle($lastColumn . $startRow)->getAlignment()
+                ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT)
+                ->setIndent(3);
 
-            // 5. NIP - aligned right
             $startRow += 1;
             $sheet->setCellValue($lastColumn . $startRow, 'NIP. 19730417 199903 1 003');
             $sheet->getStyle($lastColumn . $startRow)->getFont()->setSize(10);
-            $sheet->getStyle($lastColumn . $startRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+            $sheet->getStyle($lastColumn . $startRow)->getAlignment()
+                ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT)
+                ->setIndent(3);
         }
     }
 
@@ -601,8 +612,20 @@ class LaporanController
         $defaultSignature = $this->laporanModel->getDefaultSignature($role);
 
         // Format tanggal formal Indonesia
-        $bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-                  'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+        $bulan = [
+            'Januari',
+            'Februari',
+            'Maret',
+            'April',
+            'Mei',
+            'Juni',
+            'Juli',
+            'Agustus',
+            'September',
+            'Oktober',
+            'November',
+            'Desember'
+        ];
 
         $tanggal = date('d');
         $nama_bulan = $bulan[date('n') - 1];
@@ -638,7 +661,6 @@ class LaporanController
             $pdf->SetFont('times', '', 10);
             $pdf->SetXY($startX, $startY + 6 + 10 + 15 + 6 + 5);
             $pdf->Cell(70, 5, 'NIP. ' . $defaultSignature['nip'], 0, 0, 'L');
-
         } else {
             // Default ketika tidak ada data signature - menggunakan koordinat spesifik
             // 1. Tempat dan Tanggal
