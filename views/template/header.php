@@ -2,7 +2,18 @@
 // views/template/header.php
 // Ambil role dari session untuk dinamisasi
 $user_role = $_SESSION['role'] ?? 'user';
-$title = isset($title) ? $title : 'Dashboard - LaporBup';
+
+// Load profile for dynamic title
+require_once __DIR__ . '/../../models/ProfileModel.php';
+$profileModel = new ProfileModel();
+$profiles = $profileModel->getProfilesByRole($user_role);
+$profile = !empty($profiles) ? $profiles[0] : null;
+
+// Fallback profile data if no profile exists for the role
+$profile_nama_aplikasi = $profile ? $profile['nama_aplikasi'] : 'LaporBup';
+
+// Set title with dynamic profile name
+$title = isset($title) ? $title : 'Dashboard - ' . $profile_nama_aplikasi;
 ?>
 
 <!DOCTYPE html>
@@ -545,6 +556,20 @@ $title = isset($title) ? $title : 'Dashboard - LaporBup';
                 font-size: clamp(12px, 1.6vw, 13px);
                 padding: clamp(4px, 0.8vw, 6px) clamp(10px, 1.5vw, 14px);
             }
+        }
+        
+        /* App Logo Styles */
+        .app-logo {
+            height: 30px;
+            width: auto;
+            margin-right: 12px;
+            vertical-align: middle;
+            border-radius: 4px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
         }
     </style>
 </head>

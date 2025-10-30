@@ -12,7 +12,7 @@
   .toast {
     min-width: 250px;
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
 
   .toast.success {
@@ -46,9 +46,6 @@
               <div class="page-header d-flex justify-content-between align-items-center mb-4">
                 <div>
                   <h2 class="page-title"><?php echo $kecamatan ? 'Edit Kecamatan' : 'Tambah Kecamatan'; ?></h2>
-                  <p class="text-muted mb-0">
-                    <?php echo $kecamatan ? 'Ubah data kecamatan yang sudah ada' : 'Tambah data kecamatan baru'; ?>
-                  </p>
                 </div>
                 <a href="../views/wilayah/index-kecamatan.php" class="btn btn-secondary">
                   <i class="mdi mdi-arrow-left me-2"></i> Kembali
@@ -77,9 +74,9 @@
                             <i class="mdi mdi-map-marker"></i>
                           </span>
                           <input type="text" class="form-control" id="nama_kecamatan"
-                                 name="nama_kecamatan"
-                                 value="<?php echo $kecamatan ? htmlspecialchars($kecamatan['nama_kecamatan']) : ''; ?>"
-                                 placeholder="Masukkan nama kecamatan" required>
+                            name="nama_kecamatan"
+                            value="<?php echo $kecamatan ? htmlspecialchars($kecamatan['nama_kecamatan']) : ''; ?>"
+                            placeholder="Masukkan nama kecamatan" required>
                         </div>
                         <div class="invalid-feedback">
                           Nama kecamatan wajib diisi
@@ -95,7 +92,7 @@
                           <?php echo $kecamatan ? 'Update' : 'Simpan'; ?>
                         </button>
                         <a href="index.php?controller=wilayah&action=index&tab=kecamatan"
-                           class="btn btn-secondary">
+                          class="btn btn-secondary">
                           <i class="mdi mdi-close-circle me-2"></i> Batal
                         </a>
                       </div>
@@ -112,7 +109,7 @@
   </div>
   <?php include 'template/script.php'; ?>
 
-  
+
   <!-- Custom Scripts -->
   <script>
     // Simple notification function
@@ -218,38 +215,38 @@
 
         // Send via AJAX
         fetch(form.action, {
-          method: 'POST',
-          body: formData,
-          headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-          }
-        })
-        .then(response => {
-          console.log('Response status:', response.status);
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          return response.json();
-        })
-        .then(data => {
-          console.log('Response data:', data); // Debug log
-          if (data.success) {
-            showNotification(data.message, 'success');
-            setTimeout(() => {
-              window.location.href = '../views/wilayah/index-kecamatan.php';
-            }, 1500);
-          } else {
-            showNotification(data.message, 'error');
+            method: 'POST',
+            body: formData,
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest'
+            }
+          })
+          .then(response => {
+            console.log('Response status:', response.status);
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then(data => {
+            console.log('Response data:', data); // Debug log
+            if (data.success) {
+              showNotification(data.message, 'success');
+              setTimeout(() => {
+                window.location.href = '../views/wilayah/index-kecamatan.php';
+              }, 1500);
+            } else {
+              showNotification(data.message, 'error');
+              submitBtn.disabled = false;
+              submitBtn.innerHTML = originalText;
+            }
+          })
+          .catch(error => {
+            console.error('Fetch Error:', error);
+            showNotification('Terjadi kesalahan saat menyimpan data: ' + error.message, 'error');
             submitBtn.disabled = false;
             submitBtn.innerHTML = originalText;
-          }
-        })
-        .catch(error => {
-          console.error('Fetch Error:', error);
-          showNotification('Terjadi kesalahan saat menyimpan data: ' + error.message, 'error');
-          submitBtn.disabled = false;
-          submitBtn.innerHTML = originalText;
-        });
+          });
       } else {
         form.classList.add('was-validated');
       }
@@ -268,7 +265,7 @@
       showNotification('<?php echo addslashes($_SESSION['error']); ?>', 'error');
       <?php unset($_SESSION['error']); ?>
     <?php endif; ?>
-
-      </script>
+  </script>
 </body>
+
 </html>

@@ -15,9 +15,6 @@
               <div class="page-header d-flex justify-content-between align-items-center mb-4">
                 <div>
                   <h2 class="page-title"><?php echo $desa ? 'Edit Desa' : 'Tambah Desa'; ?></h2>
-                  <p class="text-muted mb-0">
-                    <?php echo $desa ? 'Ubah data desa yang sudah ada' : 'Tambah data desa baru'; ?>
-                  </p>
                 </div>
                 <a href="../views/wilayah/index-desa.php" class="btn btn-secondary">
                   <i class="mdi mdi-arrow-left me-2"></i> Kembali

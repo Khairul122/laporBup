@@ -155,10 +155,6 @@
                           <a href="index.php?controller=laporanCamatAdmin&action=index" class="btn btn-outline-secondary">
                             <i class="mdi mdi-refresh"></i> Reset
                           </a>
-                          <a href="index.php?controller=laporanCamatAdmin&action=export&format=csv"
-                             class="btn btn-outline-success">
-                            <i class="mdi mdi-download me-1"></i>Export CSV
-                          </a>
                         </div>
                       </div>
                     </div>

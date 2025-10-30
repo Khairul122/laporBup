@@ -83,12 +83,7 @@
                             <i class="fas fa-arrow-rotate-left"></i> Reset
                           </button>
                         </div>
-                        <div class="col-md-1">
-                          <label class="form-label small text-muted">&nbsp;</label>
-                          <button type="button" class="btn btn-success w-100" onclick="exportData()">
-                            <i class="fas fa-download"></i> Export
-                          </button>
-                        </div>
+                       
                       </form>
 
                       <!-- Info Bar -->

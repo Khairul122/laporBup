@@ -15,13 +15,9 @@
               <div class="welcome-content mb-4">
                 <div class="d-flex align-items-center justify-content-between">
                   <div class="welcome-text">
-                    <h4 class="mb-1">Selamat datang, <?php echo htmlspecialchars($user['username']); ?>!</h4>
-                    <p class="mb-0 text-muted">Dashboard Admin - Sistem Informasi Laporan Gabungan Wilayah Kecamatan</p>
+                    <h4 class="mb-1">Selamat datang, <?php echo htmlspecialchars($user['username']); ?></h4>
                   </div>
                   <div class="welcome-action">
-                    <button class="btn btn-primary btn-sm" onclick="window.print()">
-                      <i class="fas fa-print"></i> Cetak Laporan
-                    </button>
                   </div>
                 </div>
               </div>

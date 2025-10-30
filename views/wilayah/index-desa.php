@@ -15,7 +15,6 @@
               <div class="page-header d-flex justify-content-between align-items-center mb-4">
                 <div>
                   <h2 class="page-title">Manajemen Desa</h2>
-                  <p class="text-muted mb-0">Kelola data desa</p>
                 </div>
                 <div>
                   <a href="index.php?controller=desa&action=form" class="btn btn-primary">

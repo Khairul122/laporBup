@@ -15,12 +15,8 @@
               <div class="page-header d-flex justify-content-between align-items-center mb-4">
                 <div>
                   <h2 class="page-title">Manajemen Kecamatan</h2>
-                  <p class="text-muted mb-0">Kelola data kecamatan</p>
                 </div>
                 <div>
-                  <a href="index-desa.php" class="btn btn-outline-secondary me-2">
-                    <i class="mdi mdi-home-map-marker me-2"></i> Ke Desa
-                  </a>
                   <a href="index.php?controller=wilayah&action=formKecamatan" class="btn btn-primary">
                     <i class="mdi mdi-plus-circle me-2"></i> Tambah Kecamatan
                   </a>

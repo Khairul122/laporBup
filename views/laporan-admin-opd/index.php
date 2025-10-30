@@ -23,12 +23,6 @@
                 <div>
                   <h2 class="page-title">Manajemen Laporan OPD</h2>
                 </div>
-                <div>
-                  <a href="index.php?controller=laporanOPDAdmin&action=export&format=csv"
-                     class="btn btn-outline-success">
-                    <i class="mdi mdi-download me-2"></i>Export CSV
-                  </a>
-                </div>
               </div>
 
               <!-- Statistics Cards -->
