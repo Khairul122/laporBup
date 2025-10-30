@@ -290,7 +290,7 @@ class LaporanController
         if ($role === 'opd') {
             $html .= '<th>Nama OPD</th>
                     <th>Nama Kegiatan</th>
-                    <th>Uraian Laporan</th>
+                    <th style="width:230px">Uraian Laporan</th>
                     <th>Tujuan</th>
                     <th>Tanggal</th>';
         } else {
@@ -349,7 +349,7 @@ class LaporanController
                 
                 $html .= '<td>' . htmlspecialchars($row['nama_opd'] ?? '') . '</td>
                         <td>' . htmlspecialchars($row['nama_kegiatan'] ?? '') . '</td>
-                        <td>' . htmlspecialchars(strip_tags($row['uraian_laporan'] ?? '')) . '</td>
+                        <td style="width:230px">' . htmlspecialchars(strip_tags($row['uraian_laporan'] ?? '')) . '</td>
                         <td>' . htmlspecialchars($tujuan_display) . '</td>
                         <td>' . $this->formatTanggalIndonesia($row['created_at']) . '</td>';
             } else {
