@@ -234,11 +234,14 @@
                             </button>
                           </div>
 
-                          <div class="col-md-2">
+                          <div class="col-md-3">
                             <label class="form-label">&nbsp;</label>
                             <div class="btn-group w-100">
                               <a href="index.php?controller=laporan&action=index&tab=camat" class="btn btn-outline-secondary">
                                 <i class="mdi mdi-refresh"></i> Reset
+                              </a>
+                              <a href="index.php?controller=laporan&action=tandaTangan&id=0&type=camat" class="btn btn-outline-info">
+                                <i class="mdi mdi-draw me-1"></i>TTD
                               </a>
                               <button type="button" class="btn btn-outline-danger" onclick="generatePDF('camat')">
                                 <i class="mdi mdi-file-pdf me-1"></i>PDF
@@ -511,6 +514,9 @@
                               </button>
                               <a href="index.php?controller=laporan&action=index&tab=opd" class="btn btn-outline-secondary">
                                 <i class="mdi mdi-refresh"></i> Reset
+                              </a>
+                              <a href="index.php?controller=laporan&action=tandaTangan&id=0&type=opd" class="btn btn-outline-info">
+                                <i class="mdi mdi-draw me-1"></i>TTD
                               </a>
                               <button type="button" class="btn btn-outline-danger" onclick="generatePDF('opd')">
                                 <i class="mdi mdi-file-pdf me-1"></i>PDF

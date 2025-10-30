@@ -2,14 +2,17 @@
 
 require_once 'models/AuthModel.php';
 require_once 'models/LaporanOPDModel.php';
+require_once 'models/OPDModel.php';
 
 class LaporanOPDController {
     private $authModel;
     private $laporanOPDModel;
+    private $opdModel;
 
     public function __construct() {
         $this->authModel = new AuthModel();
         $this->laporanOPDModel = new LaporanOPDModel();
+        $this->opdModel = new OPDModel();
     }
 
     /**
@@ -109,6 +112,10 @@ class LaporanOPDController {
         $this->requireOPDRole();
         $currentUser = $this->getCurrentUser();
 
+        // Load OPD list untuk dropdown tujuan
+        $opd_result = $this->opdModel->getAllOPD(1, 1000, '');
+        $opd_list = $opd_result['data'];
+
         require_once 'views/laporan-opd/form.php';
     }
 
@@ -128,6 +135,10 @@ class LaporanOPDController {
             header('Location: index.php?controller=laporanOPD&action=index');
             exit;
         }
+
+        // Load OPD list untuk dropdown tujuan
+        $opd_result = $this->opdModel->getAllOPD(1, 1000, '');
+        $opd_list = $opd_result['data'];
 
         require_once 'views/laporan-opd/form.php';
     }

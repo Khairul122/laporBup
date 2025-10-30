@@ -111,12 +111,26 @@ include 'views/template/header.php';
                             <i class="fas fa-bullseye"></i>
                             Tujuan Pengiriman
                         </label>
-                        <select id="tujuan" name="tujuan" class="form-control">
-                            <option value="dinas kominfo" <?php echo (isset($old_input['tujuan']) ? $old_input['tujuan'] : (isset($laporan) ? $laporan['tujuan'] : 'dinas kominfo')) === 'dinas kominfo' ? 'selected' : ''; ?>>
-                                Dinas Komunikasi dan Informatika
-                            </option>
+                        <select id="tujuan" name="tujuan" class="form-control" required>
+                            <option value="">Pilih Tujuan OPD</option>
+                            <?php if (isset($opd_list)): ?>
+                                <?php foreach ($opd_list as $opd): ?>
+                                    <option value="<?php echo $opd['nama_opd']; ?>"
+                                            <?php
+                                            $selected_tujuan = null;
+                                            if (isset($old_input['tujuan'])) {
+                                                $selected_tujuan = $old_input['tujuan'];
+                                            } else if (isset($laporan)) {
+                                                $selected_tujuan = $laporan['tujuan'];
+                                            }
+                                            echo $selected_tujuan == $opd['nama_opd'] ? 'selected' : '';
+                                            ?>>
+                                        <?php echo htmlspecialchars($opd['nama_opd']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </select>
-                        <small class="form-text">Pilih tujuan instansi yang akan menerima laporan ini.</small>
+                        <small class="form-text">Pilih OPD yang akan menerima laporan ini.</small>
                     </div>
                 </div>
             </div>

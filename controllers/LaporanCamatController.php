@@ -1,14 +1,17 @@
 <?php
 require_once 'models/LaporanCamatModel.php';
 require_once 'models/AuthModel.php';
+require_once 'models/WilayahModel.php';
 
 class LaporanCamatController {
     private $laporanCamatModel;
     private $authModel;
+    private $wilayahModel;
 
     public function __construct() {
         $this->laporanCamatModel = new LaporanCamatModel();
         $this->authModel = new AuthModel();
+        $this->wilayahModel = new WilayahModel();
     }
 
     /**
@@ -100,6 +103,12 @@ class LaporanCamatController {
             exit;
         }
         
+        // Load kecamatan and desa data for the form
+        $kecamatan_list = $this->wilayahModel->getKecamatanOptions();
+        $desa_list = [];
+        $selected_kecamatan_id = null;
+        $selected_desa_id = null;
+        
         require_once 'views/laporan-camat/form.php';
     }
 
@@ -122,19 +131,32 @@ class LaporanCamatController {
         
         // Validate input
         $nama_pelapor = trim($_POST['nama_pelapor'] ?? '');
-        $nama_desa = trim($_POST['nama_desa'] ?? '');
-        $nama_kecamatan = trim($_POST['nama_kecamatan'] ?? '');
+        $id_desa = (int)($_POST['id_desa'] ?? 0);
+        $id_kecamatan = (int)($_POST['id_kecamatan'] ?? 0);
         $waktu_kejadian = $_POST['waktu_kejadian'] ?? '';
         $tujuan = $_POST['tujuan'] ?? '';
         $uraian_laporan = trim($_POST['uraian_laporan'] ?? '');
         
         // Validation
-        if (empty($nama_pelapor) || empty($nama_desa) || empty($nama_kecamatan) || 
+        if (empty($nama_pelapor) || empty($id_desa) || empty($id_kecamatan) || 
             empty($waktu_kejadian) || empty($tujuan) || empty($uraian_laporan)) {
             $_SESSION['error'] = 'Semua field wajib diisi';
             header('Location: index.php?controller=laporan_camat&action=create');
             exit;
         }
+        
+        // Get nama_desa and nama_kecamatan from ID
+        $desa = $this->wilayahModel->getDesaById($id_desa);
+        $kecamatan = $this->wilayahModel->getKecamatanById($id_kecamatan);
+        
+        if (!$desa || !$kecamatan) {
+            $_SESSION['error'] = 'Data desa atau kecamatan tidak valid';
+            header('Location: index.php?controller=laporan_camat&action=create');
+            exit;
+        }
+        
+        $nama_desa = $desa['nama_desa'];
+        $nama_kecamatan = $kecamatan['nama_kecamatan'];
         
         // Validate waktu kejadian format
         if (!strtotime($waktu_kejadian)) {
@@ -257,6 +279,35 @@ class LaporanCamatController {
             exit;
         }
         
+        // Load kecamatan and desa data for the form
+        $kecamatan_list = $this->wilayahModel->getKecamatanOptions();
+
+        // For edit mode, we need to find the kecamatan ID first, then get all desa for that kecamatan
+        $selected_kecamatan_id = null;
+        $selected_desa_id = null;
+
+        // Find kecamatan ID based on laporan data
+        foreach($kecamatan_list as $kec) {
+            if($kec['nama_kecamatan'] === $laporan['nama_kecamatan']) {
+                $selected_kecamatan_id = $kec['id_kecamatan'];
+                break;
+            }
+        }
+
+        // Get ALL desa for the selected kecamatan
+        $desa_list = [];
+        if($selected_kecamatan_id) {
+            $desa_list = $this->wilayahModel->getDesaByKecamatan($selected_kecamatan_id);
+
+            // Find the specific desa ID that matches the laporan
+            foreach($desa_list as $d) {
+                if($d['nama_desa'] === $laporan['nama_desa']) {
+                    $selected_desa_id = $d['id_desa'];
+                    break;
+                }
+            }
+        }
+          
         require_once 'views/laporan-camat/form.php';
     }
 
@@ -304,19 +355,32 @@ class LaporanCamatController {
         
         // Validate input
         $nama_pelapor = trim($_POST['nama_pelapor'] ?? '');
-        $nama_desa = trim($_POST['nama_desa'] ?? '');
-        $nama_kecamatan = trim($_POST['nama_kecamatan'] ?? '');
+        $id_desa = (int)($_POST['id_desa'] ?? 0);
+        $id_kecamatan = (int)($_POST['id_kecamatan'] ?? 0);
         $waktu_kejadian = $_POST['waktu_kejadian'] ?? '';
         $tujuan = $_POST['tujuan'] ?? '';
         $uraian_laporan = trim($_POST['uraian_laporan'] ?? '');
         
         // Validation
-        if (empty($nama_pelapor) || empty($nama_desa) || empty($nama_kecamatan) || 
+        if (empty($nama_pelapor) || empty($id_desa) || empty($id_kecamatan) || 
             empty($waktu_kejadian) || empty($tujuan) || empty($uraian_laporan)) {
             $_SESSION['error'] = 'Semua field wajib diisi';
             header('Location: index.php?controller=laporan_camat&action=edit&id=' . $id);
             exit;
         }
+        
+        // Get nama_desa and nama_kecamatan from ID
+        $desa = $this->wilayahModel->getDesaById($id_desa);
+        $kecamatan = $this->wilayahModel->getKecamatanById($id_kecamatan);
+        
+        if (!$desa || !$kecamatan) {
+            $_SESSION['error'] = 'Data desa atau kecamatan tidak valid';
+            header('Location: index.php?controller=laporan_camat&action=edit&id=' . $id);
+            exit;
+        }
+        
+        $nama_desa = $desa['nama_desa'];
+        $nama_kecamatan = $kecamatan['nama_kecamatan'];
         
         // Validate waktu kejadian format
         if (!strtotime($waktu_kejadian)) {

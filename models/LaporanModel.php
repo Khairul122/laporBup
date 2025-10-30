@@ -405,4 +405,168 @@ class LaporanModel {
             12 => 'Desember'
         ];
     }
+
+    /**
+     * Get laporan Camat by ID
+     */
+    public function getLaporanCamatById($id) {
+        $id = (int)$id;
+        $query = "SELECT lc.*, d.nama_desa, k.nama_kecamatan
+                  FROM laporan_camat lc
+                  LEFT JOIN desa d ON lc.id_desa = d.id_desa
+                  LEFT JOIN kecamatan k ON lc.id_kecamatan = k.id_kecamatan
+                  WHERE lc.id_laporan_camat = $id";
+        $result = $this->db->query($query);
+
+        if ($result && $result->num_rows > 0) {
+            return $result->fetch_assoc();
+        }
+        return null;
+    }
+
+    /**
+     * Get laporan OPD by ID
+     */
+    public function getLaporanOPDById($id) {
+        $id = (int)$id;
+        $query = "SELECT lo.*, u.username, u.jabatan
+                  FROM laporan_opd lo
+                  LEFT JOIN users u ON lo.id_user = u.id_user
+                  WHERE lo.id_laporan_opd = $id";
+        $result = $this->db->query($query);
+
+        if ($result && $result->num_rows > 0) {
+            return $result->fetch_assoc();
+        }
+        return null;
+    }
+
+    /**
+     * Save signature data
+     */
+    public function saveSignature($data) {
+        $jabatan = escapeString($data['jabatan']);
+        $nama_penanda_tangan = escapeString($data['nama_penanda_tangan']);
+        $jabatan_penanda_tangan = escapeString($data['jabatan_penanda_tangan']);
+        $nip = escapeString($data['nip']);
+
+        // Check if signature already exists
+        $checkQuery = "SELECT id_ttd_laporan FROM ttd_laporan LIMIT 1";
+        $checkResult = $this->db->query($checkQuery);
+
+        if ($checkResult && $checkResult->num_rows > 0) {
+            // Update existing signature
+            $id_ttd = $checkResult->fetch_assoc()['id_ttd_laporan'];
+            $query = "UPDATE ttd_laporan SET
+                      jabatan = '$jabatan',
+                      nama_penanda_tangan = '$nama_penanda_tangan',
+                      jabatan_penanda_tangan = '$jabatan_penanda_tangan',
+                      nip = '$nip'
+                      WHERE id_ttd_laporan = $id_ttd";
+        } else {
+            // Insert new signature
+            $query = "INSERT INTO ttd_laporan
+                      (jabatan, nama_penanda_tangan, jabatan_penanda_tangan, nip)
+                      VALUES
+                      ('$jabatan', '$nama_penanda_tangan', '$jabatan_penanda_tangan', '$nip')";
+        }
+
+        $result = $this->db->query($query);
+
+        if ($result) {
+            return [
+                'success' => true,
+                'message' => 'Tanda tangan berhasil disimpan'
+            ];
+        } else {
+            return [
+                'success' => false,
+                'message' => 'Gagal menyimpan tanda tangan: ' . $this->db->error
+            ];
+        }
+    }
+
+    /**
+     * Get signature data
+     */
+    public function getSignature($id_laporan = null, $type = null) {
+        // Get the latest signature (only one record should exist)
+        $query = "SELECT * FROM ttd_laporan ORDER BY id_ttd_laporan DESC LIMIT 1";
+        $result = $this->db->query($query);
+
+        if ($result && $result->num_rows > 0) {
+            $signature = $result->fetch_assoc();
+
+            // Add automatic date and place
+            $signature['tempat'] = 'Panyabungan';
+            $signature['tanggal_format'] = $this->formatTanggalIndo(date('Y-m-d'));
+
+            // Map fields for compatibility
+            $signature['nama_penandatangan'] = $signature['nama_penanda_tangan'];
+            $signature['jabatan'] = $signature['jabatan_penanda_tangan'];
+            $signature['pangkat'] = ''; // Not in new table structure
+
+            return $signature;
+        }
+        return null;
+    }
+
+    /**
+     * Create ttd_laporan table if not exists
+     */
+    public function createTTDTable() {
+        $query = "CREATE TABLE IF NOT EXISTS ttd_laporan (
+            id_ttd_laporan INT AUTO_INCREMENT PRIMARY KEY,
+            jabatan VARCHAR(100) NOT NULL,
+            nama_penanda_tangan VARCHAR(100) NOT NULL,
+            jabatan_penanda_tangan VARCHAR(100) NOT NULL,
+            nip VARCHAR(50) DEFAULT NULL
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+
+        return $this->db->query($query);
+    }
+
+    /**
+     * Get default signature data
+     */
+    public function getDefaultSignature($type = null) {
+        // Get the latest signature (only one record should exist)
+        $query = "SELECT * FROM ttd_laporan ORDER BY id_ttd_laporan DESC LIMIT 1";
+        $result = $this->db->query($query);
+
+        if ($result && $result->num_rows > 0) {
+            $signature = $result->fetch_assoc();
+
+            // Add automatic date and place
+            $signature['tempat'] = 'Panyabungan';
+            $signature['tanggal_format'] = $this->formatTanggalIndo(date('Y-m-d'));
+
+            // Map fields for compatibility
+            $signature['nama_penandatangan'] = $signature['nama_penanda_tangan'];
+            $signature['jabatan'] = $signature['jabatan_penanda_tangan'];
+            $signature['pangkat'] = ''; // Not in new table structure
+
+            return $signature;
+        }
+
+        // Return null if no signature found
+        return null;
+    }
+
+    /**
+     * Format tanggal dalam bahasa Indonesia
+     */
+    private function formatTanggalIndo($tanggal) {
+        $hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        $bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                  'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+        $timestamp = strtotime($tanggal);
+        $nama_hari = $hari[date('w', $timestamp)];
+        $tanggal_num = date('d', $timestamp);
+        $nama_bulan = $bulan[date('n', $timestamp) - 1];
+        $tahun = date('Y', $timestamp);
+
+        return "$nama_hari, $tanggal_num $nama_bulan $tahun";
+    }
 }
