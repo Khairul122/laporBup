@@ -61,6 +61,13 @@ include 'views/template/header.php';
                         <i class="fas fa-times"></i>
                         Reset
                     </button>
+                    
+                    <?php if ($_SESSION['role'] === 'camat'): ?>
+                    <a href="index.php?controller=laporanCamat&action=exportToExcel&<?php echo http_build_query(array_filter($_GET)); ?>" class="btn btn-success">
+                        <i class="fas fa-file-excel"></i>
+                        Export Excel
+                    </a>
+                    <?php endif; ?>
                 </div>
             </form>
         </div>
