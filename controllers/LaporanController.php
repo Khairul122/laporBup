@@ -292,7 +292,6 @@ class LaporanController
                     <th>Nama Kegiatan</th>
                     <th>Uraian Laporan</th>
                     <th>Tujuan</th>
-                    <th>Status</th>
                     <th>Tanggal</th>';
         } else {
             $html .= '<th>Nama Pelapor</th>
@@ -300,7 +299,6 @@ class LaporanController
                     <th>Nama Kecamatan</th>
                     <th>Tujuan</th>
                     <th>Uraian Laporan</th>
-                    <th>Status</th>
                     <th>Tanggal</th>';
         }
 
@@ -341,19 +339,33 @@ class LaporanController
                 <td>' . $no++ . '</td>';
 
             if ($role === 'opd') {
+                // Convert 'dinas kominfo' to 'Dinas Komunikasi dan Informatika'
+                $tujuan = $row['tujuan'] ?? '';
+                if ($tujuan === 'dinas kominfo') {
+                    $tujuan_display = 'DINAS KOMUNIKASI DAN INFORMATIKA';
+                } else {
+                    $tujuan_display = $tujuan;
+                }
+                
                 $html .= '<td>' . htmlspecialchars($row['nama_opd'] ?? '') . '</td>
                         <td>' . htmlspecialchars($row['nama_kegiatan'] ?? '') . '</td>
                         <td>' . htmlspecialchars(strip_tags($row['uraian_laporan'] ?? '')) . '</td>
-                        <td>' . htmlspecialchars($row['tujuan'] ?? '') . '</td>
-                        <td>' . ucfirst($row['status_laporan'] ?? '') . '</td>
+                        <td>' . htmlspecialchars($tujuan_display) . '</td>
                         <td>' . $this->formatTanggalIndonesia($row['created_at']) . '</td>';
             } else {
+                // Convert 'dinas kominfo' to 'Dinas Komunikasi dan Informatika'
+                $tujuan = $row['tujuan'] ?? '';
+                if ($tujuan === 'dinas kominfo') {
+                    $tujuan_display = 'DINAS KOMUNIKASI DAN INFORMATIKA';
+                } else {
+                    $tujuan_display = $tujuan;
+                }
+                
                 $html .= '<td>' . htmlspecialchars($row['nama_pelapor'] ?? '') . '</td>
                         <td>' . htmlspecialchars($row['nama_desa'] ?? '') . '</td>
                         <td>' . htmlspecialchars($row['nama_kecamatan'] ?? '') . '</td>
-                        <td>' . htmlspecialchars($row['tujuan'] ?? '') . '</td>
+                        <td>' . htmlspecialchars($tujuan_display) . '</td>
                         <td>' . htmlspecialchars(strip_tags($row['uraian_laporan'] ?? '')) . '</td>
-                        <td>' . ucfirst($row['status_laporan'] ?? '') . '</td>
                         <td>' . $this->formatTanggalIndonesia($row['created_at']) . '</td>';
             }
 
@@ -639,6 +651,23 @@ class LaporanController
      */
     private function addSignatureToPDF($pdf, $role)
     {
+        // Get page height and current Y position to determine if we need a new page
+        $pageHeight = $pdf->getPageHeight();
+        $currentY = $pdf->GetY();
+        $pageMargin = 20; // Standard margin
+        $usablePageHeight = $pageHeight - (2 * $pageMargin);
+        $tableThreshold = 0.7 * $usablePageHeight; // 70% of usable page height
+
+        // Check if table content exceeds 70% of the page
+        if ($currentY > $tableThreshold) {
+            // Add new page for signature
+            $pdf->AddPage();
+            $startY = 120; // Start from a standard position on the new page
+        } else {
+            // Add spacing below the table on the same page
+            $startY = $currentY + 20; // Add 20 units spacing
+        }
+
         $defaultSignature = $this->laporanModel->getDefaultSignature($role);
 
         // Format tanggal formal Indonesia
@@ -664,7 +693,6 @@ class LaporanController
 
         // Set posisi awal untuk signature block di pojok kanan
         $startX = 200;  // Posisi X di pojok kanan
-        $startY = 120;  // Posisi Y untuk mulai signature (lebih tinggi)
 
         if ($defaultSignature) {
             // 1. Tempat dan Tanggal - menggunakan koordinat spesifik
