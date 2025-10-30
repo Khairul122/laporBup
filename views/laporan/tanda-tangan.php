@@ -198,14 +198,23 @@ include 'template/header.php';
       function updatePreview() {
         const nama = document.getElementById('nama_penanda_tangan').value;
         const jabatan = document.getElementById('jabatan_penanda_tangan').value;
+        const pangkat = document.getElementById('pangkat').value;
         const nip = document.getElementById('nip').value;
-        document.getElementById('previewNama').textContent = nama || 'Nama Penandatangan';
-        document.getElementById('previewJabatan').textContent = jabatan ? jabatan.toUpperCase() : 'JABATAN';
-        document.getElementById('previewNIP').textContent = 'NIP. ' + (nip || 'NIP');
+        
+        document.getElementById('previewNama').textContent = nama || 'RAHMAD HIDAYAT, S.Pd';
+        document.getElementById('previewJabatan').textContent = jabatan || 'Plt. KEPALA DINAS KOMUNIKASI DAN INFORMATIKA<br>KABUPATEN MANDAILING NATAL';
+        document.getElementById('previewNIP').textContent = 'NIP. ' + (nip || '19730417 199903 1 003');
+        
+        // Update pangkat in preview - find the <em> element in the preview area
+        const previewPangkatElement = document.querySelector('.border.rounded.p-4.bg-white em');
+        if (previewPangkatElement) {
+          previewPangkatElement.textContent = pangkat || 'PEMBINA UTAMA MUDA';
+        }
       }
 
       document.getElementById('nama_penanda_tangan').addEventListener('input', updatePreview);
       document.getElementById('jabatan_penanda_tangan').addEventListener('input', updatePreview);
+      document.getElementById('pangkat').addEventListener('input', updatePreview);
       document.getElementById('nip').addEventListener('input', updatePreview);
 
       form.addEventListener('submit', function(e) {

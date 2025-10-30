@@ -172,8 +172,8 @@ class LaporanOPDAdminController {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = [
                 'nama_opd' => trim($_POST['nama_opd']),
-                'nama_kegiatan' => trim($_POST['nama_kegiatan']),
                 'uraian_laporan' => trim($_POST['uraian_laporan']),
+                'tujuan' => $_POST['tujuan'] ?? 'dinas kominfo',
                 'status_laporan' => $_POST['status_laporan']
             ];
 

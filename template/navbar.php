@@ -34,7 +34,7 @@
     <ul class="navbar-nav ms-auto">
       <li class="nav-item dropdown d-none d-lg-block user-dropdown">
         <a class="nav-link" id="UserDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-          <img class="img-md rounded-circle" src="uploads/user.png" style="width: 35px;" alt="Profile image" />
+          <img class="img-md rounded-circle" src="<?php echo file_exists('uploads/' . $foto_profile) ? 'uploads/' . $foto_profile : 'uploads/user.png'; ?>" style="width: 35px;" alt="Profile image" />
         </a>
         <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
           <div class="dropdown-header text-center">

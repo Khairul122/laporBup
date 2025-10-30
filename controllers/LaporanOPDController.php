@@ -352,11 +352,26 @@ class LaporanOPDController {
     private function validateInput($data, $excludeId = null) {
         $errors = [];
 
-        // Validasi nama OPD
+        // Validasi nama OPD - check if selected from dropdown
         if (empty(trim($data['nama_opd']))) {
-            $errors[] = 'Nama OPD harus diisi';
-        } elseif (strlen(trim($data['nama_opd'])) < 3) {
-            $errors[] = 'Nama OPD minimal 3 karakter';
+            $errors[] = 'Nama OPD harus dipilih';
+        } else {
+            // Verify that the selected OPD exists in the database
+            $opd_result = $this->opdModel->getAllOPD(1, 1000, '');
+            $valid_opds = $opd_result['data'];
+            $selected_opd = trim($data['nama_opd']);
+            $found = false;
+            
+            foreach ($valid_opds as $opd) {
+                if ($opd['nama_opd'] === $selected_opd) {
+                    $found = true;
+                    break;
+                }
+            }
+            
+            if (!$found) {
+                $errors[] = 'Nama OPD yang dipilih tidak valid';
+            }
         }
 
         // Validasi nama kegiatan

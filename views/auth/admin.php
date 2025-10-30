@@ -622,14 +622,6 @@
                             <span id="loginText">Login</span>
                         </button>
                     </form>
-
-                    <!-- Back Link -->
-                    <div class="back-link">
-                        <a href="index.php">
-                            <i class="fas fa-arrow-left"></i>
-                            Kembali ke Pilihan Login
-                        </a>
-                    </div>
                 </div>
             </div>
         </div>

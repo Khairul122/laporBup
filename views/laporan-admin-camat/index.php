@@ -176,7 +176,7 @@
                     <table class="table table-hover mb-0">
                       <thead class="table-light">
                         <tr>
-                          <th width="60" class="text-center">#</th>
+                          <th width="60" class="text-center">No</th>
                           <th>Kecamatan / Kegiatan</th>
                           <th>Uraian Laporan</th>
                           <th width="120" class="text-center">Status</th>

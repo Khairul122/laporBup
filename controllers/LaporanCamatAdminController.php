@@ -182,8 +182,8 @@ class LaporanCamatAdminController {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = [
                 'nama_kecamatan' => trim($_POST['nama_kecamatan']),
-                'nama_kegiatan' => trim($_POST['nama_kegiatan']),
                 'uraian_laporan' => trim($_POST['uraian_laporan']),
+                'tujuan' => $_POST['tujuan'] ?? 'bupati',
                 'status_laporan' => $_POST['status_laporan']
             ];
 

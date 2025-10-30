@@ -44,14 +44,26 @@ include 'views/template/header.php';
                             <i class="fas fa-hospital"></i>
                             Nama OPD/Instansi <span class="required">*</span>
                         </label>
-                        <input type="text"
-                               id="nama_opd"
-                               name="nama_opd"
-                               class="form-control"
-                               placeholder="Masukkan nama OPD atau instansi"
-                               value="<?php echo isset($old_input['nama_opd']) ? htmlspecialchars($old_input['nama_opd']) : (isset($laporan) ? htmlspecialchars($laporan['nama_opd']) : ''); ?>"
-                               required>
-                        <small class="form-text">Contoh: Dinas Pendidikan, Dinas Kesehatan, dll.</small>
+                        <select id="nama_opd" name="nama_opd" class="form-control" required>
+                            <option value="">Pilih Nama OPD</option>
+                            <?php if (isset($opd_list)): ?>
+                                <?php foreach ($opd_list as $opd): ?>
+                                    <option value="<?php echo htmlspecialchars($opd['nama_opd']); ?>"
+                                            <?php
+                                            $selected_nama_opd = null;
+                                            if (isset($old_input['nama_opd'])) {
+                                                $selected_nama_opd = $old_input['nama_opd'];
+                                            } else if (isset($laporan)) {
+                                                $selected_nama_opd = $laporan['nama_opd'];
+                                            }
+                                            echo $selected_nama_opd == $opd['nama_opd'] ? 'selected' : '';
+                                            ?>>
+                                        <?php echo htmlspecialchars($opd['nama_opd']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </select>
+                        <small class="form-text">Pilih nama OPD atau instansi dari daftar.</small>
                     </div>
                 </div>
             </div>
@@ -112,25 +124,20 @@ include 'views/template/header.php';
                             Tujuan Pengiriman
                         </label>
                         <select id="tujuan" name="tujuan" class="form-control" required>
-                            <option value="">Pilih Tujuan OPD</option>
-                            <?php if (isset($opd_list)): ?>
-                                <?php foreach ($opd_list as $opd): ?>
-                                    <option value="<?php echo $opd['nama_opd']; ?>"
-                                            <?php
-                                            $selected_tujuan = null;
-                                            if (isset($old_input['tujuan'])) {
-                                                $selected_tujuan = $old_input['tujuan'];
-                                            } else if (isset($laporan)) {
-                                                $selected_tujuan = $laporan['tujuan'];
-                                            }
-                                            echo $selected_tujuan == $opd['nama_opd'] ? 'selected' : '';
-                                            ?>>
-                                        <?php echo htmlspecialchars($opd['nama_opd']); ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
+                            <option value="dinas kominfo"
+                                    <?php
+                                    $selected_tujuan = null;
+                                    if (isset($old_input['tujuan'])) {
+                                        $selected_tujuan = $old_input['tujuan'];
+                                    } else if (isset($laporan)) {
+                                        $selected_tujuan = $laporan['tujuan'];
+                                    }
+                                    echo $selected_tujuan == 'dinas kominfo' ? 'selected' : '';
+                                    ?>>
+                                Dinas Komunikasi dan Informasi
+                            </option>
                         </select>
-                        <small class="form-text">Pilih OPD yang akan menerima laporan ini.</small>
+                        <small class="form-text">Laporan ini akan dikirim ke Dinas Komunikasi dan Informasi.</small>
                     </div>
                 </div>
             </div>
@@ -383,6 +390,97 @@ select.form-control {
     margin-top: clamp(10px, 1.5vw, 15px);
     font-size: clamp(12px, 1.5vw, 14px);
     color: #666;
+}
+
+/* Style for select dropdown */
+select.form-control {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23333' viewBox='0 0 20 20'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1em;
+    padding-right: 2.5rem;
+}
+
+/* Ensure dropdown container has enough space */
+.form-group {
+    position: relative;
+    overflow: visible; /* Allow dropdown to extend beyond container */
+}
+
+/* Custom Select Styles */
+.custom-select {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.custom-select-input {
+    position: relative;
+    display: block;
+    width: 100%;
+    padding: 10px 40px 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    background: white;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.custom-select-input:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(47, 88, 205, 0.1);
+}
+
+.custom-select-arrow {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #666;
+    font-size: 12px;
+    user-select: none;
+}
+
+.custom-select-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: white;
+    border: 1px solid #ddd;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    /* Always position below the input */
+    transform: none;
+}
+
+.custom-select-option {
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.custom-select-option:hover {
+    background-color: #f0f0f0;
+}
+
+.custom-select-option.selected {
+    background-color: #e3f2fd;
+}
+
+/* Error state for custom select */
+.custom-select-input.error {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
 }
 
 .allowed-types, .max-size {
@@ -713,6 +811,72 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Create custom dropdown for nama_opd
+    const originalSelect = document.getElementById('nama_opd');
+    if (originalSelect) {
+        // Create custom dropdown structure
+        const originalParent = originalSelect.parentNode;
+        const customSelect = document.createElement('div');
+        customSelect.className = 'custom-select';
+        customSelect.innerHTML = `
+            <input type="text" id="custom_nama_opd_input" class="form-control" placeholder="Pilih Nama OPD" readonly>
+            <div class="custom-select-arrow">▼</div>
+            <div class="custom-select-options" style="display: none;">
+                <div class="custom-select-option" data-value="">Pilih Nama OPD</div>
+                ${Array.from(originalSelect.options).slice(1).map(option => 
+                    `<div class="custom-select-option" data-value="${option.value}">${option.text}</div>`
+                ).join('')}
+            </div>
+            <input type="hidden" id="nama_opd" name="nama_opd" value="${originalSelect.value}">
+        `;
+        
+        // Replace original select with custom dropdown
+        originalSelect.parentNode.replaceChild(customSelect, originalSelect);
+        
+        // Add event listeners for custom dropdown
+        const customInput = customSelect.querySelector('#custom_nama_opd_input');
+        const optionsContainer = customSelect.querySelector('.custom-select-options');
+        const hiddenInput = customSelect.querySelector('#nama_opd');
+        const options = customSelect.querySelectorAll('.custom-select-option');
+        
+        // Set initial value
+        if (hiddenInput.value) {
+            const selectedOption = Array.from(options).find(opt => opt.dataset.value === hiddenInput.value);
+            if (selectedOption) {
+                customInput.value = selectedOption.textContent;
+            }
+        }
+        
+        // Toggle options
+        customInput.addEventListener('click', function() {
+            optionsContainer.style.display = optionsContainer.style.display === 'block' ? 'none' : 'block';
+        });
+        
+        customSelect.querySelector('.custom-select-arrow').addEventListener('click', function() {
+            optionsContainer.style.display = optionsContainer.style.display === 'block' ? 'none' : 'block';
+        });
+        
+        // Select option
+        options.forEach(option => {
+            option.addEventListener('click', function() {
+                const value = this.dataset.value;
+                hiddenInput.value = value;
+                customInput.value = this.textContent;
+                optionsContainer.style.display = 'none';
+                
+                // Trigger change event for validation
+                hiddenInput.dispatchEvent(new Event('change'));
+            });
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!customSelect.contains(e.target)) {
+                optionsContainer.style.display = 'none';
+            }
+        });
+    }
+
     // Form validation
     const form = document.getElementById('laporanForm');
     const submitBtn = document.getElementById('submitBtn');
@@ -722,17 +886,21 @@ document.addEventListener('DOMContentLoaded', function() {
             let isValid = true;
             const errors = [];
 
-            // Validate required fields
-            const namaOPD = document.getElementById('nama_opd');
+            // Validate required fields - using hidden input for validation
+            const hiddenNamaOPD = document.getElementById('nama_opd');
             const namaKegiatan = document.getElementById('nama_kegiatan');
             const uraianLaporan = document.getElementById('uraian_laporan');
 
-            if (!namaOPD.value.trim()) {
-                errors.push('Nama OPD harus diisi');
-                namaOPD.classList.add('error');
+            if (!hiddenNamaOPD.value.trim()) {
+                errors.push('Nama OPD harus dipilih');
+                // Add error class to custom input
+                const customInput = document.querySelector('#custom_nama_opd_input');
+                if (customInput) customInput.classList.add('error');
                 isValid = false;
             } else {
-                namaOPD.classList.remove('error');
+                // Remove error class from custom input
+                const customInput = document.querySelector('#custom_nama_opd_input');
+                if (customInput) customInput.classList.remove('error');
             }
 
             if (!namaKegiatan.value.trim()) {

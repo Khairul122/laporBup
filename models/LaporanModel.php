@@ -34,7 +34,7 @@ class LaporanModel {
         }
 
         // Main query
-        $query = "SELECT lo.*, u.username, u.jabatan, '' as nama_kegiatan
+        $query = "SELECT lo.*, u.username, '' as nama_kegiatan
                   FROM laporan_opd lo
                   LEFT JOIN users u ON lo.id_user = u.id_user
                   $whereClause
@@ -104,7 +104,7 @@ class LaporanModel {
         }
 
         // Main query
-        $query = "SELECT lc.*, u.username, u.jabatan, '' as nama_kegiatan
+        $query = "SELECT lc.*, u.username, '' as nama_kegiatan
                   FROM laporan_camat lc
                   LEFT JOIN users u ON lc.id_user = u.id_user
                   $whereClause
@@ -249,7 +249,7 @@ class LaporanModel {
             }
         }
 
-        $query = "SELECT lo.*, u.username, u.jabatan
+        $query = "SELECT lo.*, u.username
                   FROM laporan_opd lo
                   LEFT JOIN users u ON lo.id_user = u.id_user
                   $whereClause
@@ -324,7 +324,7 @@ class LaporanModel {
             }
         }
 
-        $query = "SELECT lc.*, u.username, u.jabatan
+        $query = "SELECT lc.*, u.username
                   FROM laporan_camat lc
                   LEFT JOIN users u ON lc.id_user = u.id_user
                   $whereClause
@@ -429,7 +429,7 @@ class LaporanModel {
      */
     public function getLaporanOPDById($id) {
         $id = (int)$id;
-        $query = "SELECT lo.*, u.username, u.jabatan
+        $query = "SELECT lo.*, u.username, u.pangkat
                   FROM laporan_opd lo
                   LEFT JOIN users u ON lo.id_user = u.id_user
                   WHERE lo.id_laporan_opd = $id";

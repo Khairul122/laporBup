@@ -167,6 +167,9 @@ class AuthController {
      * Proses logout
      */
     public function logout() {
+        // Simpan role sebelum session dihancurkan
+        $currentRole = $_SESSION['role'] ?? 'user';
+        
         session_destroy();
 
         // Hapus cookie session
@@ -174,8 +177,23 @@ class AuthController {
             setcookie(session_name(), '', time() - 3600, '/');
         }
 
-        // Redirect langsung ke halaman login
-        header('Location: index.php?controller=auth&action=index');
+        // Redirect ke halaman login sesuai role sebelum logout
+        switch ($currentRole) {
+            case 'admin':
+                $redirectUrl = 'index.php?controller=auth&action=admin';
+                break;
+            case 'opd':
+                $redirectUrl = 'index.php?controller=auth&action=opd';
+                break;
+            case 'camat':
+                $redirectUrl = 'index.php?controller=auth&action=camat';
+                break;
+            default:
+                $redirectUrl = 'index.php?controller=auth&action=index';
+                break;
+        }
+
+        header('Location: ' . $redirectUrl);
         exit;
     }
 

@@ -81,15 +81,7 @@
                             <small class="text-muted">Masukkan nama lengkap instansi OPD yang membuat laporan</small>
                           </div>
 
-                          <!-- Nama Kegiatan -->
-                          <div class="mb-3">
-                            <label for="nama_kegiatan" class="form-label">Nama Kegiatan <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="nama_kegiatan" name="nama_kegiatan"
-                                   value="<?php echo htmlspecialchars($laporan['nama_kegiatan']); ?>"
-                                   required maxlength="150"
-                                   placeholder="Masukkan nama kegiatan yang dilaporkan">
-                            <small class="text-muted">Jelaskan nama kegiatan yang menjadi subjek laporan</small>
-                          </div>
+
 
                           <!-- Uraian Laporan -->
                           <div class="mb-3">
@@ -152,16 +144,12 @@
 
                             <div class="col-md-6">
                               <div class="mb-3">
-                                <label class="form-label">Tujuan Laporan</label>
-                                <div class="bg-light p-2 rounded">
-                                  <div class="d-flex align-items-center">
-                                    <i class="mdi mdi-map-marker text-primary me-2"></i>
-                                    <div>
-                                      <div class="fw-semibold"><?php echo htmlspecialchars(ucfirst($laporan['tujuan'])); ?></div>
-                                      <small class="text-muted">Tujuan laporan tidak dapat diubah</small>
-                                    </div>
-                                  </div>
-                                </div>
+                                <label for="tujuan" class="form-label">Tujuan Laporan <span class="text-danger">*</span></label>
+                                <select class="form-select" id="tujuan" name="tujuan" required>
+                                  <option value="">Pilih Tujuan</option>
+                                  <option value="dinas kominfo" <?php echo $laporan['tujuan'] === 'dinas kominfo' ? 'selected' : ''; ?>>Dinas Komunikasi dan Informasi</option>
+                                </select>
+                                <small class="text-muted">Pilih tujuan penerima laporan</small>
                               </div>
                             </div>
                           </div>
@@ -415,11 +403,16 @@
         // Additional validation
         const uraian = document.getElementById('uraian_laporan').value.trim();
         const namaOPD = document.getElementById('nama_opd').value.trim();
-        const namaKegiatan = document.getElementById('nama_kegiatan').value.trim();
 
         if (uraian.length < 10) {
           e.preventDefault();
           alert('Uraian laporan minimal 10 karakter!');
+          return false;
+        }
+
+        if (!namaOPD.trim()) {
+          e.preventDefault();
+          alert('Nama OPD harus diisi!');
           return false;
         }
 

@@ -346,7 +346,7 @@ class LaporanController
                         <td>' . htmlspecialchars(strip_tags($row['uraian_laporan'] ?? '')) . '</td>
                         <td>' . htmlspecialchars($row['tujuan'] ?? '') . '</td>
                         <td>' . ucfirst($row['status_laporan'] ?? '') . '</td>
-                        <td>' . formatTanggalIndonesia($row['created_at']) . '</td>';
+                        <td>' . $this->formatTanggalIndonesia($row['created_at']) . '</td>';
             } else {
                 $html .= '<td>' . htmlspecialchars($row['nama_pelapor'] ?? '') . '</td>
                         <td>' . htmlspecialchars($row['nama_desa'] ?? '') . '</td>
@@ -354,7 +354,7 @@ class LaporanController
                         <td>' . htmlspecialchars($row['tujuan'] ?? '') . '</td>
                         <td>' . htmlspecialchars(strip_tags($row['uraian_laporan'] ?? '')) . '</td>
                         <td>' . ucfirst($row['status_laporan'] ?? '') . '</td>
-                        <td>' . formatTanggalIndonesia($row['created_at']) . '</td>';
+                        <td>' . $this->formatTanggalIndonesia($row['created_at']) . '</td>';
             }
 
             $html .= '</tr>';
@@ -371,6 +371,36 @@ class LaporanController
         $filename = $title . '_' . date('Y-m-d_H-i-s') . '.pdf';
         $pdf->Output($filename, 'I');
         exit;
+    }
+
+    /**
+     * Format tanggal dalam format Indonesia
+     */
+    private function formatTanggalIndonesia($tanggal)
+    {
+        $hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        $bulan = [
+            'Januari',
+            'Februari',
+            'Maret',
+            'April',
+            'Mei',
+            'Juni',
+            'Juli',
+            'Agustus',
+            'September',
+            'Oktober',
+            'November',
+            'Desember'
+        ];
+
+        $timestamp = strtotime($tanggal);
+        $nama_hari = $hari[date('w', $timestamp)];
+        $tanggal_num = date('d', $timestamp);
+        $nama_bulan = $bulan[date('n', $timestamp) - 1];
+        $tahun = date('Y', $timestamp);
+
+        return "$nama_hari, $tanggal_num $nama_bulan $tahun";
     }
 
     /**
@@ -740,9 +770,9 @@ class LaporanController
 
         // Prepare signature data according to table structure
         $data = [
-            'jabatan' => trim($_POST['jabatan'] ?? ''),
             'nama_penanda_tangan' => trim($_POST['nama_penanda_tangan'] ?? ''),
             'jabatan_penanda_tangan' => trim($_POST['jabatan_penanda_tangan'] ?? ''),
+            'pangkat' => trim($_POST['pangkat'] ?? ''),
             'nip' => trim($_POST['nip'] ?? '')
         ];
 
