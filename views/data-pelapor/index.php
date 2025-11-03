@@ -1,5 +1,6 @@
 <?php include('template/header.php'); ?>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/brands.min.css" integrity="sha512-APz+y2aUHgE2S3i8/CEM5A6z+oGnf5GBlhQYCzBjVjG6HkpKzzAfmzrPwKs6wI9M6PqH+4yKv6QyBvJNvNxg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 <body class="with-welcome-text">
   <div class="container-scroller">
@@ -131,6 +132,7 @@
                                 <th class="border-top-0">No</th>
                                 <th class="border-top-0">Username</th>
                                 <th class="border-top-0">Email</th>
+                                <th class="border-top-0">No. Telepon</th>
                                 <th class="border-top-0">Jabatan</th>
                                 <th class="border-top-0">Role</th>
                                 <th class="border-top-0">Total Laporan</th>
@@ -158,6 +160,18 @@
                                     <a href="mailto:<?php echo htmlspecialchars($pelapor['email']); ?>" class="text-decoration-none">
                                       <?php echo htmlspecialchars($pelapor['email']); ?>
                                     </a>
+                                  </td>
+                                  <td>
+                                    <?php
+                                    $no_telp = $pelapor['no_telp'] ?? '';
+                                    if (!empty($no_telp)) {
+                                        echo '<a href="https://wa.me/' . preg_replace('/[^0-9]/', '', $no_telp) . '" target="_blank" class="text-decoration-none text-success">';
+                                        echo '<i class="fab fa-whatsapp"></i> ' . htmlspecialchars($no_telp);
+                                        echo '</a>';
+                                    } else {
+                                        echo '<span class="text-muted">-</span>';
+                                    }
+                                    ?>
                                   </td>
                                   <td>
                                     <?php echo htmlspecialchars($pelapor['jabatan']); ?>

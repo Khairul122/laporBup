@@ -19,8 +19,9 @@ class DataPelaporModel {
         $params = [];
 
         if (!empty($search)) {
-            $whereClause .= " WHERE (u.username LIKE ? OR u.email LIKE ? OR u.jabatan LIKE ?)";
+            $whereClause .= " WHERE (u.username LIKE ? OR u.email LIKE ? OR u.jabatan LIKE ? OR u.no_telp LIKE ?)";
             $searchTerm = '%' . $search . '%';
+            $params[] = $searchTerm;
             $params[] = $searchTerm;
             $params[] = $searchTerm;
             $params[] = $searchTerm;
@@ -48,6 +49,7 @@ class DataPelaporModel {
                     u.id_user,
                     u.username,
                     u.email,
+                    u.no_telp,
                     u.jabatan,
                     u.role,
                     u.created_at,
@@ -82,6 +84,7 @@ class DataPelaporModel {
                     u.id_user,
                     u.username,
                     u.email,
+                    u.no_telp,
                     u.jabatan,
                     u.role,
                     u.created_at,
@@ -99,14 +102,17 @@ class DataPelaporModel {
      * Create new data pelapor
      */
     public function createDataPelapor($data) {
-        // Check if username already exists
+        // Check if username, email, or no_telp already exists
         $checkQuery = "SELECT id_user FROM users WHERE username = '" . escapeString($data['username']) . "' OR email = '" . escapeString($data['email']) . "'";
+        if (!empty($data['no_telp'])) {
+            $checkQuery .= " OR no_telp = '" . escapeString($data['no_telp']) . "'";
+        }
         $checkResult = query($checkQuery);
 
         if ($checkResult->num_rows > 0) {
             return [
                 'success' => false,
-                'message' => 'Username atau email sudah digunakan'
+                'message' => 'Username, email, atau nomor telepon sudah digunakan'
             ];
         }
 
@@ -114,8 +120,8 @@ class DataPelaporModel {
         $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
 
         // Insert new user
-        $query = "INSERT INTO users (username, email, password, jabatan, role, created_at)
-                  VALUES ('" . escapeString($data['username']) . "', '" . escapeString($data['email']) . "', '" . $hashedPassword . "', '" . escapeString($data['jabatan']) . "', '" . escapeString($data['role']) . "', NOW())";
+        $query = "INSERT INTO users (username, email, no_telp, password, jabatan, role, created_at)
+                  VALUES ('" . escapeString($data['username']) . "', '" . escapeString($data['email']) . "', '" . escapeString($data['no_telp']) . "', '" . $hashedPassword . "', '" . escapeString($data['jabatan']) . "', '" . escapeString($data['role']) . "', NOW())";
 
         $result = query($query);
 
@@ -137,14 +143,18 @@ class DataPelaporModel {
      * Update data pelapor
      */
     public function updateDataPelapor($id, $data) {
-        // Check if username/email already exists (excluding current user)
-        $checkQuery = "SELECT id_user FROM users WHERE (username = '" . escapeString($data['username']) . "' OR email = '" . escapeString($data['email']) . "') AND id_user != " . (int)$id;
+        // Check if username/email/no_telp already exists (excluding current user)
+        $checkQuery = "SELECT id_user FROM users WHERE (username = '" . escapeString($data['username']) . "' OR email = '" . escapeString($data['email']) . "'";
+        if (!empty($data['no_telp'])) {
+            $checkQuery .= " OR no_telp = '" . escapeString($data['no_telp']) . "'";
+        }
+        $checkQuery .= ") AND id_user != " . (int)$id;
         $checkResult = query($checkQuery);
 
         if ($checkResult->num_rows > 0) {
             return [
                 'success' => false,
-                'message' => 'Username atau email sudah digunakan'
+                'message' => 'Username, email, atau nomor telepon sudah digunakan'
             ];
         }
 
@@ -154,6 +164,7 @@ class DataPelaporModel {
 
         $fields[] = "username = '" . escapeString($data['username']) . "'";
         $fields[] = "email = '" . escapeString($data['email']) . "'";
+        $fields[] = "no_telp = '" . escapeString($data['no_telp']) . "'";
         $fields[] = "jabatan = '" . escapeString($data['jabatan']) . "'";
         $fields[] = "role = '" . escapeString($data['role']) . "'";
 
@@ -231,6 +242,7 @@ class DataPelaporModel {
                     u.id_user,
                     u.username,
                     u.email,
+                    u.no_telp,
                     u.jabatan,
                     u.created_at,
                     0 as total_laporan_camat,
@@ -258,6 +270,7 @@ class DataPelaporModel {
                     u.id_user,
                     u.username,
                     u.email,
+                    u.no_telp,
                     u.jabatan,
                     u.role,
                     u.created_at,
@@ -266,7 +279,7 @@ class DataPelaporModel {
                     0 as total_laporan
                   FROM users u
                   WHERE u.role IN ('camat', 'opd')
-                    AND (u.username LIKE '" . escapeString($searchTerm) . "' OR u.email LIKE '" . escapeString($searchTerm) . "' OR u.jabatan LIKE '" . escapeString($searchTerm) . "')
+                    AND (u.username LIKE '" . escapeString($searchTerm) . "' OR u.email LIKE '" . escapeString($searchTerm) . "' OR u.jabatan LIKE '" . escapeString($searchTerm) . "' OR u.no_telp LIKE '" . escapeString($searchTerm) . "')
                   ORDER BY u.created_at DESC
                   LIMIT 10";
 

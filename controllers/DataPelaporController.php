@@ -142,6 +142,7 @@ class DataPelaporController {
                 $email = trim($_POST['email'] ?? '');
                 $jabatan = trim($_POST['jabatan'] ?? '');
                 $role = $_POST['role'] ?? '';
+                $no_telp = trim($_POST['no_telp'] ?? '');
                 $password = $_POST['password'] ?? '';
                 $confirmPassword = $_POST['confirm_password'] ?? '';
                 $id = $_POST['id'] ?? null;
@@ -158,6 +159,14 @@ class DataPelaporController {
                 }
                 if (empty($role) || !in_array($role, ['camat', 'opd'])) {
                     $errors[] = 'Role harus dipilih (camat atau opd)';
+                }
+
+                // Validasi nomor telepon (opsional)
+                if (!empty($no_telp)) {
+                    // Validasi format nomor telepon Indonesia
+                    if (!preg_match('/^(^\\+62|62|^08)[0-9]{8,13}$/', $no_telp)) {
+                        $errors[] = 'Format nomor telepon tidak valid. Gunakan format: 08xxxxxxxxxx atau +62xxxxxxxxxx';
+                    }
                 }
 
                 // Validasi format
@@ -198,7 +207,8 @@ class DataPelaporController {
                         'username' => $username,
                         'email' => $email,
                         'jabatan' => $jabatan,
-                        'role' => $role
+                        'role' => $role,
+                        'no_telp' => $no_telp
                     ];
 
                     // Tambahkan password hanya jika diisi
@@ -364,7 +374,7 @@ class DataPelaporController {
             $output = fopen('php://output', 'w');
 
             // Header
-            fputcsv($output, ['ID', 'Username', 'Email', 'Jabatan', 'Role', 'Total Laporan', 'Tanggal Dibuat']);
+            fputcsv($output, ['ID', 'Username', 'Email', 'No. Telepon', 'Jabatan', 'Role', 'Total Laporan', 'Tanggal Dibuat']);
 
             // Data
             foreach ($data as $row) {
@@ -372,6 +382,7 @@ class DataPelaporController {
                     $row['id_user'],
                     $row['username'],
                     $row['email'],
+                    $row['no_telp'] ?? '-',
                     $row['jabatan'],
                     ucfirst($row['role']),
                     $row['total_laporan'],

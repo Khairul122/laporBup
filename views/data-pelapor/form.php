@@ -112,6 +112,24 @@
                           <small class="text-muted">Pilih role pelapor (Camat atau OPD)</small>
                         </div>
 
+                        <!-- Nomor Telepon Field -->
+                        <div class="form-group mb-4">
+                          <label for="no_telp" class="form-label fw-semibold">
+                            Nomor Telepon <span class="text-muted">(Opsional)</span>
+                          </label>
+                          <div class="input-group">
+                            <span class="input-group-text">
+                              <i class="fas fa-phone"></i>
+                            </span>
+                            <input type="tel" class="form-control" id="no_telp" name="no_telp"
+                                   value="<?php echo htmlspecialchars($dataPelapor['no_telp'] ?? ''); ?>"
+                                   placeholder="Contoh: 08123456789 atau +628123456789"
+                                   pattern="(^\\+62|62|^08)[0-9]{8,13}"
+                                   title="Format: 08xxxxxxxxxx atau +62xxxxxxxxxx">
+                          </div>
+                          <small class="text-muted">Nomor telepon WhatsApp/SMS untuk komunikasi</small>
+                        </div>
+
                         <!-- Jabatan Field -->
                         <div class="form-group mb-4">
                           <label for="jabatan" class="form-label fw-semibold">
@@ -347,6 +365,29 @@
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
       if (email.length > 0 && !emailRegex.test(email)) {
+        e.target.classList.add('is-invalid');
+      } else {
+        e.target.classList.remove('is-invalid');
+      }
+    });
+
+    // Phone number validation
+    document.getElementById('no_telp').addEventListener('input', function(e) {
+      let value = e.target.value;
+
+      // Allow only numbers, +, and spaces
+      value = value.replace(/[^0-9+\s]/g, '');
+
+      // Format: If starts with 0, keep as is. If starts with 62, add + at the beginning
+      if (value.startsWith('62')) {
+        value = '+' + value;
+      }
+
+      e.target.value = value;
+
+      // Validate format
+      const phoneRegex = /^(^\+62|62|^08)[0-9]{8,13}$/;
+      if (value.length > 0 && !phoneRegex.test(value.replace(/\s/g, ''))) {
         e.target.classList.add('is-invalid');
       } else {
         e.target.classList.remove('is-invalid');
