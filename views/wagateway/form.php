@@ -35,10 +35,6 @@
                       </h5>
                       <small class="text-muted">Lengkapi form berikut untuk mengirim pesan WhatsApp</small>
                     </div>
-                    <span class="badge bg-<?php echo $message ? 'warning' : 'success'; ?>">
-                      <i class="fas fa-<?php echo $message ? 'edit' : 'plus-circle'; ?> me-1"></i>
-                      <?php echo $message ? 'Edit Mode' : 'New Message'; ?>
-                    </span>
                   </div>
                 </div>
                 <div class="card-body">
@@ -167,13 +163,6 @@
                         <i class="fas fa-clock me-1"></i>
                         <span id="previewTime"><?php echo $message ? formatDateIndo($message['tanggal_kirim']) : 'Sekarang'; ?></span>
                       </div>
-                    </div>
-                  </div>
-
-                  <div class="preview-info mt-3">
-                    <div class="alert alert-info mb-2">
-                      <i class="fas fa-info-circle me-2"></i>
-                      <small>Preview akan menampilkan format pesan WhatsApp yang sebenarnya</small>
                     </div>
                   </div>
                 </div>
