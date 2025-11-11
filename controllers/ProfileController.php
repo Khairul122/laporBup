@@ -149,8 +149,8 @@ class ProfileController {
     public function edit($id = null) {
         $this->requireAdminLogin();
 
-        // Get ID from parameter or from GET request
-        $id = $id ?? $_GET['id'] ?? 0;
+        // Get ID from parameter or from GET/POST request
+        $id = $id ?? $_GET['id'] ?? $_POST['id'] ?? 0;
 
         if (!$id) {
             $_SESSION['error'] = 'ID profile tidak ditemukan';
@@ -175,8 +175,8 @@ class ProfileController {
     public function update($id = null) {
         $this->requireAdminLogin();
 
-        // Get ID from parameter or from GET request
-        $id = $id ?? $_GET['id'] ?? 0;
+        // Get ID from parameter or from GET/POST request
+        $id = $id ?? $_GET['id'] ?? $_POST['id'] ?? 0;
 
         if (!$id) {
             $_SESSION['error'] = 'ID profile tidak ditemukan';
@@ -260,8 +260,8 @@ class ProfileController {
     public function delete($id = null) {
         $this->requireAdminLogin();
 
-        // Get ID from parameter or from GET request
-        $id = $id ?? $_GET['id'] ?? 0;
+        // Get ID from parameter or from GET/POST request
+        $id = $id ?? $_GET['id'] ?? $_POST['id'] ?? 0;
 
         if (!$id) {
             $_SESSION['error'] = 'ID profile tidak ditemukan';

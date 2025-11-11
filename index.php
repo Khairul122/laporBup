@@ -36,7 +36,20 @@ if (file_exists($controllerFile)) {
 
         // Memeriksa apakah method (action) ada di dalam controller
         if (method_exists($controllerInstance, $action)) {
-            $controllerInstance->$action();
+            // Get additional parameters from URL or POST
+            $params = [];
+            if (isset($_GET['id'])) {
+                $params[] = $_GET['id'];
+            } elseif (isset($_POST['id'])) {
+                $params[] = $_POST['id'];
+            }
+
+            // Call method with parameters if available
+            if (!empty($params)) {
+                call_user_func_array([$controllerInstance, $action], $params);
+            } else {
+                $controllerInstance->$action();
+            }
         } else {
             // Jika action tidak ditemukan, gunakan action default
             if (method_exists($controllerInstance, 'index')) {

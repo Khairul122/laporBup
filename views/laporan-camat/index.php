@@ -63,7 +63,7 @@ include 'views/template/header.php';
                     </button>
                     
                     <?php if ($_SESSION['role'] === 'camat'): ?>
-                    <a href="index.php?controller=laporanCamat&action=exportToExcel&<?php echo http_build_query(array_filter($_GET)); ?>" class="btn btn-success">
+                    <a href="index.php?controller=laporanCamat&action=exportToExcel&search=<?php echo urlencode($_GET['search'] ?? ''); ?>&status=<?php echo urlencode($_GET['status'] ?? ''); ?>" class="btn btn-success">
                         <i class="fas fa-file-excel"></i>
                         Export Excel
                     </a>

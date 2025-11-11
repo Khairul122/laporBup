@@ -656,15 +656,196 @@ class LaporanCamatController {
             'application/msword' => '.doc',
             'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => '.docx'
         ];
-        
+
         return $mimeTypes[$mimeType] ?? '.file';
+    }
+
+    /**
+     * Download file attachment
+     */
+    public function download($id = null) {
+        $this->requireLogin();
+
+        // Get ID from parameter or from GET request
+        $id = $id ?? $_GET['id'] ?? 0;
+
+        if (!$id) {
+            $_SESSION['error'] = 'ID laporan tidak ditemukan';
+            header('Location: index.php?controller=laporanCamat&action=index');
+            exit;
+        }
+
+        $laporan = $this->laporanCamatModel->getById($id);
+
+        if (!$laporan) {
+            $_SESSION['error'] = 'Laporan tidak ditemukan';
+            header('Location: index.php?controller=laporanCamat&action=index');
+            exit;
+        }
+
+        // Check permission
+        if (!$this->hasPermission($laporan['id_user'])) {
+            $_SESSION['error'] = 'Anda tidak memiliki akses ke file ini';
+            header('Location: index.php?controller=laporanCamat&action=index');
+            exit;
+        }
+
+        // Check if file exists
+        if (empty($laporan['upload_file']) || !file_exists($laporan['upload_file'])) {
+            $_SESSION['error'] = 'File tidak ditemukan';
+            header('Location: index.php?controller=laporanCamat&action=detail&id=' . $id);
+            exit;
+        }
+
+        $filePath = $laporan['upload_file'];
+        $fileName = basename($filePath);
+
+        // Get file info
+        $fileSize = filesize($filePath);
+        $fileType = mime_content_type($filePath);
+
+        // Set headers for download
+        header('Content-Type: ' . $fileType);
+        header('Content-Disposition: attachment; filename="' . $fileName . '"');
+        header('Content-Length: ' . $fileSize);
+        header('Cache-Control: private, no-cache, no-store, must-revalidate');
+        header('Pragma: no-cache');
+        header('Expires: 0');
+
+        // Clear output buffer
+        if (ob_get_level()) {
+            ob_clean();
+        }
+
+        // Read file and output
+        readfile($filePath);
+        exit;
+    }
+
+    /**
+     * Export data to Excel
+     */
+    public function exportToExcel() {
+        $this->requireLogin();
+
+        // Only camat can export
+        if ($_SESSION['role'] !== 'camat') {
+            $_SESSION['error'] = 'Hanya camat yang dapat mengekspor data';
+            header('Location: index.php?controller=laporanCamat&action=index');
+            exit;
+        }
+
+        // Get filter parameters
+        $search = $_GET['search'] ?? '';
+        $status = $_GET['status'] ?? '';
+        $tanggal_awal = $_GET['tanggal_awal'] ?? '';
+        $tanggal_akhir = $_GET['tanggal_akhir'] ?? '';
+
+        $current_user_id = $_SESSION['user_id'];
+
+        try {
+            // Debug logging
+            error_log("Export attempt - User ID: " . $current_user_id . ", Role: " . $_SESSION['role']);
+            error_log("Filters - Search: '" . $search . "', Status: '" . $status . "'");
+
+            // Get data based on filters
+            $laporans = $this->laporanCamatModel->getAllReportsForExport(
+                $current_user_id,
+                $search,
+                $status,
+                $tanggal_awal,
+                $tanggal_akhir
+            );
+
+            error_log("Found " . count($laporans) . " records to export");
+
+            if (empty($laporans)) {
+                $_SESSION['error'] = 'Tidak ada data untuk diekspor';
+                header('Location: index.php?controller=laporanCamat&action=index');
+                exit;
+            }
+
+            // Generate HTML Excel output
+            $filename = 'laporan_camat_' . date('Y-m-d_H-i-s') . '.xls';
+
+            // Clear all output buffers first
+            while (ob_get_level()) {
+                ob_end_clean();
+            }
+
+            // Set headers for download
+            header('Content-Type: application/vnd.ms-excel; charset=utf-8');
+            header('Content-Disposition: attachment; filename="' . $filename . '"');
+            header('Cache-Control: private, no-cache, no-store, must-revalidate');
+            header('Pragma: no-cache');
+            header('Expires: 0');
+            header('Content-Transfer-Encoding: binary');
+
+            // Start HTML output
+            echo '<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Laporan Camat</title>
+</head>
+<body>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID Laporan</th>
+                <th>Tanggal Laporan</th>
+                <th>Nama Pelapor</th>
+                <th>Nama Desa</th>
+                <th>Nama Kecamatan</th>
+                <th>Waktu Kejadian</th>
+                <th>Tujuan</th>
+                <th>Uraian Laporan</th>
+                <th>Status</th>
+                <th>Lampiran File</th>
+            </tr>
+        </thead>
+        <tbody>';
+
+            // Output data rows
+            foreach ($laporans as $laporan) {
+                echo '<tr>';
+                echo '<td>' . htmlspecialchars($laporan['id_laporan_camat']) . '</td>';
+                echo '<td>' . (isset($laporan['created_at']) ? date('d/m/Y H:i', strtotime($laporan['created_at'])) : '') . '</td>';
+                echo '<td>' . htmlspecialchars($laporan['nama_pelapor'] ?? '') . '</td>';
+                echo '<td>' . htmlspecialchars($laporan['nama_desa'] ?? '') . '</td>';
+                echo '<td>' . htmlspecialchars($laporan['nama_kecamatan'] ?? '') . '</td>';
+                echo '<td>' . (isset($laporan['waktu_kejadian']) ? date('d/m/Y H:i', strtotime($laporan['waktu_kejadian'])) : '') . '</td>';
+                echo '<td>' . htmlspecialchars(ucfirst($laporan['tujuan'] ?? '')) . '</td>';
+                echo '<td>' . htmlspecialchars(strip_tags($laporan['uraian_laporan'] ?? '')) . '</td>';
+                echo '<td>' . htmlspecialchars(ucfirst($laporan['status_laporan'] ?? '')) . '</td>';
+                echo '<td>' . htmlspecialchars(!empty($laporan['upload_file']) ? basename($laporan['upload_file']) : 'Tidak ada') . '</td>';
+                echo '</tr>';
+            }
+
+            echo '
+        </tbody>
+    </table>
+</body>
+</html>';
+
+            exit;
+
+        } catch (Exception $e) {
+            // Log error for debugging
+            error_log("Excel Export Error: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
+
+            $_SESSION['error'] = 'Terjadi kesalahan saat mengekspor data. Silakan coba lagi atau hubungi administrator.';
+            header('Location: index.php?controller=laporanCamat&action=index');
+            exit;
+        }
     }
 }
 
 // Handle request
 if (isset($_GET['action'])) {
     $laporanCamatController = new LaporanCamatController();
-    
+
     switch ($_GET['action']) {
         case 'create':
             $laporanCamatController->create();
@@ -691,6 +872,13 @@ if (isset($_GET['action'])) {
         case 'updateStatus':
             $id = $_GET['id'] ?? 0;
             $laporanCamatController->updateStatus($id);
+            break;
+        case 'download':
+            $id = $_GET['id'] ?? 0;
+            $laporanCamatController->download($id);
+            break;
+        case 'exportToExcel':
+            $laporanCamatController->exportToExcel();
             break;
         default:
             $laporanCamatController->index();

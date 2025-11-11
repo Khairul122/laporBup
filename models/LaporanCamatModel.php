@@ -195,22 +195,20 @@ class LaporanCamatModel {
     public function getAllReportsForExport($id_user, $search = '', $status = '', $tanggal_awal = '', $tanggal_akhir = '') {
         $query = "SELECT * FROM laporan_camat WHERE id_user = ?";
         $params = [$id_user];
-        
+
         // Add search condition
         if (!empty($search)) {
-            $search = escapeString($search);
             $query .= " AND (nama_pelapor LIKE ? OR nama_desa LIKE ? OR nama_kecamatan LIKE ? OR uraian_laporan LIKE ?)";
             $searchParam = '%' . $search . '%';
             $params = array_merge($params, [$searchParam, $searchParam, $searchParam, $searchParam]);
         }
-        
+
         // Add status filter
         if (!empty($status)) {
-            $status = escapeString($status);
             $query .= " AND status_laporan = ?";
             $params[] = $status;
         }
-        
+
         // Add date range filter
         if (!empty($tanggal_awal) && !empty($tanggal_akhir)) {
             $query .= " AND DATE(created_at) BETWEEN ? AND ?";
@@ -223,19 +221,36 @@ class LaporanCamatModel {
             $query .= " AND DATE(created_at) <= ?";
             $params[] = $tanggal_akhir;
         }
-        
+
         $query .= " ORDER BY created_at DESC";
-        
-        $stmt = $this->db->prepare($query);
-        $stmt->bind_param(str_repeat('s', count($params)), ...$params);
-        $stmt->execute();
-        
-        $result = $stmt->get_result();
-        $data = [];
-        while ($row = $result->fetch_assoc()) {
-            $data[] = $row;
+
+        try {
+            $stmt = $this->db->prepare($query);
+            if ($stmt === false) {
+                throw new Exception('Query preparation failed: ' . $this->db->error);
+            }
+
+            // Build parameter type string
+            $types = str_repeat('s', count($params));
+            $stmt->bind_param($types, ...$params);
+
+            $execute_result = $stmt->execute();
+            if ($execute_result === false) {
+                throw new Exception('Query execution failed: ' . $stmt->error);
+            }
+
+            $result = $stmt->get_result();
+            $data = [];
+            while ($row = $result->fetch_assoc()) {
+                $data[] = $row;
+            }
+
+            $stmt->close();
+            return $data;
+
+        } catch (Exception $e) {
+            error_log("Error in getAllReportsForExport: " . $e->getMessage());
+            return [];
         }
-        
-        return $data;
     }
 }
