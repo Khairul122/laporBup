@@ -9,7 +9,7 @@ $profiles = $profileModel->getProfilesByRole($current_role);
 $profile = !empty($profiles) ? $profiles[0] : null;
 
 // Fallback profile data if no profile exists for the role
-$profile_nama_aplikasi = $profile ? $profile['nama_aplikasi'] : 'LaporBup';
+$profile_nama_aplikasi = $profile ? $profile['nama_aplikasi'] : '';
 $profile_logo = $profile ? $profile['logo'] : null;
 ?>
 

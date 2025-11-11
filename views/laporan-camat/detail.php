@@ -1,5 +1,5 @@
 <?php
-$title = 'Detail Laporan Camat - LaporBup';
+$title = 'Detail Laporan Camat - ';
 include 'views/template/header.php';
 ?>
 <?php include 'views/template/navbar.php'; ?>

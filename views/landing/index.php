@@ -307,7 +307,7 @@
                     <i class="fas fa-user-shield"></i>
                 </div>
                 <h2 class="login-title">Administrator</h2>
-                <p class="login-subtitle">LaporBup</p>
+                <p class="login-subtitle"></p>
                 <button class="login-btn">
                     <i class="fas fa-sign-in-alt me-2"></i>
                     Login Admin

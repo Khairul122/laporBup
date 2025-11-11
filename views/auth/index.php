@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Sistem LaporBup</title>
+    <title>Login - Sistem </title>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -492,7 +492,7 @@
         <!-- Left Panel - Info Section -->
         <div class="left-panel">
             <h1>Selamat Datang</h1>
-            <p>Sistem Informasi LaporBup - Platform pelaporan digital untuk pemerintahan daerah</p>
+            <p>Sistem Informasi  - Platform pelaporan digital untuk pemerintahan daerah</p>
 
             <div class="feature-list">
                 <div class="feature-item">
@@ -568,7 +568,7 @@
 
             <!-- Footer -->
             <div class="auth-footer">
-                <p>&copy; 2024 Sistem LaporBup. Dikelola oleh <strong>Dinas Kominfo</strong></p>
+                <p>&copy; 2024 Sistem . Dikelola oleh <strong>Dinas Kominfo</strong></p>
                 <p><a href="#">Kebijakan Privasi</a> | <a href="#">Bantuan</a></p>
             </div>
         </div>

@@ -10,7 +10,7 @@ $profiles = $profileModel->getProfilesByRole($user_role);
 $profile = !empty($profiles) ? $profiles[0] : null;
 
 // Fallback profile data if no profile exists for the role
-$profile_nama_aplikasi = $profile ? $profile['nama_aplikasi'] : 'LaporBup';
+$profile_nama_aplikasi = $profile ? $profile['nama_aplikasi'] : '';
 
 // Set title with dynamic profile name
 $title = isset($title) ? $title : 'Dashboard - ' . $profile_nama_aplikasi;

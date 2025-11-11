@@ -31,8 +31,8 @@ class AuthController {
         }
 
         $appData = [
-            'name' => 'LaporBup',
-            'title' => 'Login Administrator - LaporBup',
+            'name' => '',
+            'title' => 'Login Administrator - ',
             'role' => 'admin',
             'description' => 'Sistem Informasi Laporan Gabungan Wilayah Kecamatan',
             'icon' => 'fas fa-user-shield'

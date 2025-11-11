@@ -1,4 +1,4 @@
-# LaporBup (Lapor Bupati) - Sistem Informasi Laporan Gabungan Wilayah Kecamatan (SILAP GAWAT)
+#  (Lapor Bupati) - Sistem Informasi Laporan Gabungan Wilayah Kecamatan (SILAP GAWAT)
 
 **LaporBup** atau **SILAP GAWAT (Sistem Informasi Laporan Gabungan Wilayah Kecamatan)** adalah sistem informasi pelaporan berbasis web yang berfungsi sebagai pusat layanan aduan dan pelaporan wilayah untuk Pemerintah Kabupaten Mandailing Natal. Sistem ini mengadopsi konsep helpdesk, di mana Camat dan OPD berperan sebagai pelapor, sedangkan Admin (Dinas Kominfo) bertugas sebagai penerima, pengelola, dan pengarah tindak lanjut laporan.
 

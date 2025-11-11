@@ -1,5 +1,5 @@
 <?php
-$title = 'Detail Laporan OPD - LaporBup';
+$title = 'Detail Laporan OPD - ';
 include 'views/template/header.php';
 ?>
 <?php include 'views/template/navbar.php'; ?>

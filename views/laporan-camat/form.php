@@ -1,5 +1,5 @@
 <?php
-$title = isset($laporan) ? 'Edit Laporan Camat - LaporBup' : 'Buat Laporan Camat Baru - LaporBup';
+$title = isset($laporan) ? 'Edit Laporan Camat - ' : 'Buat Laporan Camat Baru - ';
 include 'views/template/header.php';
 ?>
 <?php include 'views/template/navbar.php'; ?>

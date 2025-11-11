@@ -1,5 +1,5 @@
 <?php
-$title = 'Tanda Tangan Laporan - LaporBup';
+$title = 'Tanda Tangan Laporan - ';
 include 'template/header.php';
 ?>
 

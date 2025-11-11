@@ -7,12 +7,12 @@ define('DB_PASS', '');
 define('DB_NAME', 'helpdesk');
 
 // Konfigurasi Aplikasi
-define('APP_NAME', 'Sistem LaporBup');
+define('APP_NAME', 'Sistem ');
 define('APP_VERSION', '1.0.0');
 define('BASE_URL', 'http://localhost/helpdesk');
 
 // Konfigurasi Session
-define('SESSION_NAME', 'laporbup_session');
+define('SESSION_NAME', '_session');
 define('SESSION_LIFETIME', 7200); // 2 jam dalam detik
 
 // Konfigurasi Keamanan

@@ -1,5 +1,5 @@
 <?php
-$title = isset($profile) ? 'Edit Profile - LaporBup' : 'Tambah Profile Baru - LaporBup';
+$title = isset($profile) ? 'Edit Profile - ' : 'Tambah Profile Baru - ';
 include 'template/header.php';
 ?>
 

@@ -1,5 +1,5 @@
 <?php
-$title = 'Manajemen Profile - LaporBup';
+$title = 'Manajemen Profile - ';
 include 'template/header.php';
 ?>
 
