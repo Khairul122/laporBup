@@ -13,13 +13,13 @@ class LaporanCamatModel {
      */
     public function getAllByUserId($id_user, $limit = 10, $offset = 0, $search = '') {
         $query = "SELECT * FROM laporan_camat WHERE id_user = ?";
-        
+
         if (!empty($search)) {
             $query .= " AND (nama_pelapor LIKE ? OR nama_desa LIKE ? OR nama_kecamatan LIKE ? OR uraian_laporan LIKE ?)";
         }
-        
+
         $query .= " ORDER BY created_at DESC LIMIT ? OFFSET ?";
-        
+
         $params = [$id_user];
         if (!empty($search)) {
             $searchParam = '%' . $search . '%';
@@ -27,10 +27,15 @@ class LaporanCamatModel {
         }
         $params[] = $limit;
         $params[] = $offset;
-        
+
         $stmt = $this->db->prepare($query);
-        $stmt->execute($params);
-        
+
+        // Build parameter type string
+        $types = str_repeat('s', count($params) - 2) . 'ii'; // last 2 params are integers (limit, offset)
+        $stmt->bind_param($types, ...$params);
+
+        $stmt->execute();
+
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
@@ -39,21 +44,23 @@ class LaporanCamatModel {
      */
     public function getTotalByUserId($id_user, $search = '') {
         $query = "SELECT COUNT(*) as total FROM laporan_camat WHERE id_user = ?";
-        
+
         if (!empty($search)) {
             $query .= " AND (nama_pelapor LIKE ? OR nama_desa LIKE ? OR nama_kecamatan LIKE ? OR uraian_laporan LIKE ?)";
         }
-        
+
         $params = [$id_user];
         if (!empty($search)) {
             $searchParam = '%' . $search . '%';
             $params = array_merge($params, [$searchParam, $searchParam, $searchParam, $searchParam]);
         }
-        
+
         $stmt = $this->db->prepare($query);
-        $stmt->execute($params);
+        $types = str_repeat('s', count($params));
+        $stmt->bind_param($types, ...$params);
+        $stmt->execute();
         $result = $stmt->get_result()->fetch_assoc();
-        
+
         return $result['total'];
     }
 
@@ -63,7 +70,8 @@ class LaporanCamatModel {
     public function getById($id) {
         $query = "SELECT * FROM laporan_camat WHERE id_laporan_camat = ?";
         $stmt = $this->db->prepare($query);
-        $stmt->execute([$id]);
+        $stmt->bind_param('i', $id);
+        $stmt->execute();
         return $stmt->get_result()->fetch_assoc();
     }
 
@@ -71,11 +79,13 @@ class LaporanCamatModel {
      * Create new laporan camat
      */
     public function create($data) {
-        $query = "INSERT INTO laporan_camat (id_user, nama_pelapor, nama_desa, nama_kecamatan, waktu_kejadian, tujuan, uraian_laporan, upload_file) 
+        $query = "INSERT INTO laporan_camat (id_user, nama_pelapor, nama_desa, nama_kecamatan, waktu_kejadian, tujuan, uraian_laporan, upload_file)
                   VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        
+
         $stmt = $this->db->prepare($query);
-        $result = $stmt->execute([
+
+        $upload_file = $data['upload_file'] ?? null;
+        $stmt->bind_param('isssssss',
             $data['id_user'],
             $data['nama_pelapor'],
             $data['nama_desa'],
@@ -83,9 +93,11 @@ class LaporanCamatModel {
             $data['waktu_kejadian'],
             $data['tujuan'],
             $data['uraian_laporan'],
-            $data['upload_file'] ?? null
-        ]);
-        
+            $upload_file
+        );
+
+        $result = $stmt->execute();
+
         if ($result) {
             return $this->db->insert_id;
         }
@@ -96,22 +108,26 @@ class LaporanCamatModel {
      * Update laporan camat
      */
     public function update($id, $data) {
-        $query = "UPDATE laporan_camat 
-                 SET nama_pelapor = ?, nama_desa = ?, nama_kecamatan = ?, waktu_kejadian = ?, 
-                     tujuan = ?, uraian_laporan = ?, upload_file = ? 
+        $query = "UPDATE laporan_camat
+                 SET nama_pelapor = ?, nama_desa = ?, nama_kecamatan = ?, waktu_kejadian = ?,
+                     tujuan = ?, uraian_laporan = ?, upload_file = ?
                  WHERE id_laporan_camat = ?";
-        
+
         $stmt = $this->db->prepare($query);
-        return $stmt->execute([
+
+        $upload_file = $data['upload_file'] ?? null;
+        $stmt->bind_param('sssssssi',
             $data['nama_pelapor'],
             $data['nama_desa'],
             $data['nama_kecamatan'],
             $data['waktu_kejadian'],
             $data['tujuan'],
             $data['uraian_laporan'],
-            $data['upload_file'] ?? null,
+            $upload_file,
             $id
-        ]);
+        );
+
+        return $stmt->execute();
     }
 
     /**
@@ -120,7 +136,8 @@ class LaporanCamatModel {
     public function updateStatus($id, $status) {
         $query = "UPDATE laporan_camat SET status_laporan = ? WHERE id_laporan_camat = ?";
         $stmt = $this->db->prepare($query);
-        return $stmt->execute([$status, $id]);
+        $stmt->bind_param('si', $status, $id);
+        return $stmt->execute();
     }
 
     /**
@@ -129,36 +146,48 @@ class LaporanCamatModel {
     public function delete($id) {
         $query = "DELETE FROM laporan_camat WHERE id_laporan_camat = ?";
         $stmt = $this->db->prepare($query);
-        return $stmt->execute([$id]);
+        $stmt->bind_param('i', $id);
+        return $stmt->execute();
     }
 
     /**
      * Get laporan camat with pagination
      */
     public function getWithPagination($limit = 10, $offset = 0, $search = '', $status = null) {
-        $query = "SELECT lc.*, u.username FROM laporan_camat lc 
+        $query = "SELECT lc.*, u.username FROM laporan_camat lc
                   LEFT JOIN users u ON lc.id_user = u.id_user WHERE 1=1";
-        
+
         $params = [];
-        
+
         if (!empty($search)) {
             $query .= " AND (lc.nama_pelapor LIKE ? OR lc.nama_desa LIKE ? OR lc.nama_kecamatan LIKE ? OR lc.uraian_laporan LIKE ? OR u.username LIKE ?)";
             $searchParam = '%' . $search . '%';
             $params = array_merge($params, [$searchParam, $searchParam, $searchParam, $searchParam, $searchParam]);
         }
-        
+
         if ($status) {
             $query .= " AND lc.status_laporan = ?";
             $params[] = $status;
         }
-        
+
         $query .= " ORDER BY lc.created_at DESC LIMIT ? OFFSET ?";
         $params[] = $limit;
         $params[] = $offset;
-        
+
         $stmt = $this->db->prepare($query);
-        $stmt->execute($params);
-        
+
+        // Build parameter type string
+        if (!empty($search) && $status) {
+            $types = str_repeat('s', count($params) - 2) . 'ii';
+        } elseif (!empty($search) || $status) {
+            $types = str_repeat('s', count($params) - 2) . 'ii';
+        } else {
+            $types = 'ii';
+        }
+        $stmt->bind_param($types, ...$params);
+
+        $stmt->execute();
+
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
@@ -166,26 +195,32 @@ class LaporanCamatModel {
      * Get total count with filters
      */
     public function getTotalWithFilters($search = '', $status = null) {
-        $query = "SELECT COUNT(*) as total FROM laporan_camat lc 
+        $query = "SELECT COUNT(*) as total FROM laporan_camat lc
                   LEFT JOIN users u ON lc.id_user = u.id_user WHERE 1=1";
-        
+
         $params = [];
-        
+
         if (!empty($search)) {
             $query .= " AND (lc.nama_pelapor LIKE ? OR lc.nama_desa LIKE ? OR lc.nama_kecamatan LIKE ? OR lc.uraian_laporan LIKE ? OR u.username LIKE ?)";
             $searchParam = '%' . $search . '%';
             $params = array_merge($params, [$searchParam, $searchParam, $searchParam, $searchParam, $searchParam]);
         }
-        
+
         if ($status) {
             $query .= " AND lc.status_laporan = ?";
             $params[] = $status;
         }
-        
+
         $stmt = $this->db->prepare($query);
-        $stmt->execute($params);
+
+        if (!empty($params)) {
+            $types = str_repeat('s', count($params));
+            $stmt->bind_param($types, ...$params);
+        }
+
+        $stmt->execute();
         $result = $stmt->get_result()->fetch_assoc();
-        
+
         return $result['total'];
     }
 
