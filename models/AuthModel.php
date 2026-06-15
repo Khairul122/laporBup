@@ -12,14 +12,13 @@ class AuthModel extends BaseModel {
      */
     public function login($username, $password) {
         try {
-            $username = escapeString($username);
+            $user = $this->fetchOne(
+                "SELECT * FROM users WHERE username = ? LIMIT 1",
+                's',
+                [$username]
+            );
 
-            $query = "SELECT * FROM users WHERE username = '$username' LIMIT 1";
-            $result = query($query);
-
-            if ($result && $result->num_rows === 1) {
-                $user = $result->fetch_assoc();
-
+            if ($user) {
                 // Verifikasi password
                 if (password_verify($password, $user['password'])) {
                     // Update last login
@@ -42,9 +41,11 @@ class AuthModel extends BaseModel {
      */
     private function updateLastLogin($userId) {
         try {
-            $userId = (int)$userId;
-            $query = "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id_user = $userId";
-            query($query);
+            $this->query(
+                "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id_user = ?",
+                'i',
+                [(int)$userId]
+            );
         } catch (Exception $e) {
             error_log("Update last login error: " . $e->getMessage());
         }
@@ -56,15 +57,13 @@ class AuthModel extends BaseModel {
      * @return array|false
      */
     public function getUserById($userId) {
-        $userId = (int)$userId;
-        $query = "SELECT id_user, username, email, jabatan, role, created_at FROM users WHERE id_user = $userId LIMIT 1";
-        $result = query($query);
+        $user = $this->fetchOne(
+            "SELECT id_user, username, email, jabatan, role, created_at FROM users WHERE id_user = ? LIMIT 1",
+            'i',
+            [(int)$userId]
+        );
 
-        if ($result->num_rows === 1) {
-            return $result->fetch_assoc();
-        }
-
-        return false;
+        return $user ?: false;
     }
 
     /**

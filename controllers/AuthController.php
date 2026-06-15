@@ -108,12 +108,19 @@ class AuthController extends BaseController {
                     $errors[] = 'Role login tidak valid';
                 }
 
+                // Brute-force protection: batasi percobaan login per sesi
+                if (empty($errors) && $this->isLoginLocked()) {
+                    $remaining = $this->getLoginLockRemaining();
+                    $errors[] = 'Terlalu banyak percobaan login gagal. Coba lagi dalam ' . ceil($remaining / 60) . ' menit.';
+                }
+
                 if (empty($errors)) {
                     $user = $this->authModel->login($username, $password);
 
                     if ($user) {
                         // Validasi role sesuai dengan halaman login
                         if ($user['role'] !== $loginRole) {
+                            $this->recordLoginAttempt(false);
                             $response = [
                                 'success' => false,
                                 'message' => 'Username atau password salah',
@@ -121,6 +128,11 @@ class AuthController extends BaseController {
                                 'correct_role' => $user['role']
                             ];
                         } else {
+                            $this->recordLoginAttempt(true);
+
+                            // Regenerate session ID untuk mencegah session fixation
+                            session_regenerate_id(true);
+
                             // Set session
                             $_SESSION['user_id'] = $user['id_user'];
                             $_SESSION['username'] = $user['username'];
@@ -137,6 +149,7 @@ class AuthController extends BaseController {
                             ];
                         }
                     } else {
+                        $this->recordLoginAttempt(false);
                         $response = [
                             'success' => false,
                             'message' => 'Username atau password salah'
@@ -161,6 +174,49 @@ class AuthController extends BaseController {
             echo json_encode($response);
             exit;
         }
+    }
+
+    /**
+     * Cek apakah login sedang dikunci karena terlalu banyak percobaan gagal
+     */
+    private function isLoginLocked() {
+        return $this->getLoginLockRemaining() > 0;
+    }
+
+    /**
+     * Sisa waktu lockout dalam detik (0 jika tidak terkunci)
+     */
+    private function getLoginLockRemaining() {
+        $attempts = $_SESSION['login_attempts'] ?? 0;
+        $lastAttempt = $_SESSION['login_last_attempt'] ?? 0;
+
+        if ($attempts < MAX_LOGIN_ATTEMPTS) {
+            return 0;
+        }
+
+        $elapsed = time() - $lastAttempt;
+        $remaining = LOGIN_TIMEOUT - $elapsed;
+
+        if ($remaining <= 0) {
+            // Lockout sudah berakhir, reset counter
+            unset($_SESSION['login_attempts'], $_SESSION['login_last_attempt']);
+            return 0;
+        }
+
+        return $remaining;
+    }
+
+    /**
+     * Catat hasil percobaan login untuk rate limiting
+     */
+    private function recordLoginAttempt($success) {
+        if ($success) {
+            unset($_SESSION['login_attempts'], $_SESSION['login_last_attempt']);
+            return;
+        }
+
+        $_SESSION['login_attempts'] = ($_SESSION['login_attempts'] ?? 0) + 1;
+        $_SESSION['login_last_attempt'] = time();
     }
 
     /**

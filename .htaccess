@@ -1,0 +1,71 @@
+# =====================================================================
+# LaporBup - Root .htaccess
+# Hardening dasar: security headers, blokir direktori sensitif,
+# cegah directory listing, dan mitigasi bot/scraper sederhana.
+# =====================================================================
+
+# ---------------------------------------------------------------------
+# Security Headers
+# ---------------------------------------------------------------------
+<IfModule mod_headers.c>
+    # Cegah halaman di-embed via iframe (clickjacking)
+    Header always set X-Frame-Options "SAMEORIGIN"
+
+    # Cegah browser menebak content-type (MIME sniffing)
+    Header always set X-Content-Type-Options "nosniff"
+
+    # Kontrol referrer yang dikirim ke pihak lain
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+    # Batasi penggunaan fitur browser sensitif
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+
+    # XSS protection (legacy browsers)
+    Header always set X-XSS-Protection "1; mode=block"
+
+    # Sembunyikan informasi server
+    Header unset X-Powered-By
+    Header unset Server
+</IfModule>
+
+# ---------------------------------------------------------------------
+# Nonaktifkan directory listing & signature server
+# ---------------------------------------------------------------------
+Options -Indexes
+ServerSignature Off
+
+# ---------------------------------------------------------------------
+# Blokir akses langsung ke direktori & file sensitif
+# ---------------------------------------------------------------------
+RewriteEngine On
+
+# Blokir akses ke folder konfigurasi, model, controller, core, vendor
+RewriteRule ^(config|core|controllers|models)(/.*)?$ - [F,L]
+
+# Blokir akses ke file sistem/dotfiles & file konfigurasi
+<FilesMatch "^(\.env|\.git.*|composer\.(json|lock)|package(-lock)?\.json|\.htaccess)$">
+    Require all denied
+</FilesMatch>
+
+# Blokir eksekusi PHP di folder upload (cegah upload shell disalahgunakan)
+<IfModule mod_php.c>
+    <Directory "uploads">
+        php_flag engine off
+    </Directory>
+</IfModule>
+<FilesMatch "\.(php|phtml|php\d?)$">
+    <If "%{REQUEST_URI} =~ m#^/uploads/#">
+        Require all denied
+    </If>
+</FilesMatch>
+
+# ---------------------------------------------------------------------
+# Mitigasi scraping / bad bot sederhana berdasarkan User-Agent
+# ---------------------------------------------------------------------
+RewriteCond %{HTTP_USER_AGENT} (^$|libwww-perl|wget|curl|python-requests|scrapy|httrack|sqlmap|nikto|masscan|nmap) [NC]
+RewriteRule ^ - [F,L]
+
+# ---------------------------------------------------------------------
+# Limit ukuran request body (mitigasi upload abuse / sebagian DDOS)
+# ---------------------------------------------------------------------
+LimitRequestBody 10485760

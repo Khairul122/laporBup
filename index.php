@@ -5,6 +5,9 @@ session_start();
 // Memuat koneksi database
 require_once 'config/koneksi.php';
 
+// Pasang security header dasar
+applySecurityHeaders();
+
 // Base controller (auth guard, render, redirect helper)
 require_once 'core/BaseController.php';
 

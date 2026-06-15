@@ -1,0 +1,13 @@
+User-agent: *
+Disallow: /config/
+Disallow: /core/
+Disallow: /controllers/
+Disallow: /models/
+Disallow: /vendor/
+Disallow: /uploads/
+Disallow: /index.php?controller=auth
+Disallow: /index.php?controller=dashboard
+Disallow: /*?*action=login
+Disallow: /*?*action=logout
+
+Crawl-delay: 10
