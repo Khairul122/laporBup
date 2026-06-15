@@ -47,20 +47,7 @@ class AuthModel extends BaseModel {
                 [(int)$userId]
             );
         } catch (Exception $e) {
-            if (stripos($e->getMessage(), 'last_login') !== false) {
-                try {
-                    $this->db->query("ALTER TABLE users ADD COLUMN last_login DATETIME NULL DEFAULT NULL");
-                    $this->query(
-                        "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id_user = ?",
-                        'i',
-                        [(int)$userId]
-                    );
-                } catch (Exception $e2) {
-                    error_log("Update last login error: " . $e2->getMessage());
-                }
-            } else {
-                error_log("Update last login error: " . $e->getMessage());
-            }
+            error_log("Update last login error: " . $e->getMessage());
         }
     }
 
