@@ -100,7 +100,7 @@
                             <i class="fas fa-database text-primary me-2"></i>
                             <div>
                               <small class="text-muted">Total Data</small>
-                              <div class="fw-bold"><?php echo number_format($result['total']); ?> pelapor</div>
+                              <div class="fw-bold" id="totalDataCount"><?php echo number_format($result['total']); ?> pelapor</div>
                             </div>
                           </div>
                         </div>
@@ -109,7 +109,7 @@
                             <i class="fas fa-file-alt text-info me-2"></i>
                             <div class="text-center">
                               <small class="text-muted">Halaman</small>
-                              <div class="fw-bold"><?php echo $result['page']; ?> dari <?php echo max(1, $result['total_pages']); ?></div>
+                              <div class="fw-bold" id="pageInfo"><?php echo $result['page']; ?> dari <?php echo max(1, $result['total_pages']); ?></div>
                             </div>
                           </div>
                         </div>
@@ -118,7 +118,7 @@
                             <i class="fas fa-list-ol text-success me-2"></i>
                             <div class="text-md-end">
                               <small class="text-muted">Menampilkan</small>
-                              <div class="fw-bold">
+                              <div class="fw-bold" id="rangeInfo">
                                 <?php
                                 $rangeStart = $result['total'] > 0 ? (($result['page'] - 1) * $limit) + 1 : 0;
                                 $rangeEnd = min($result['page'] * $limit, $result['total']);
@@ -144,7 +144,7 @@
                         Daftar Data Pelapor
                       </h5>
                     </div>
-                    <div class="card-body pb-4">
+                    <div class="card-body pb-4" id="dataContent">
                       <?php if (!empty($result['data'])): ?>
                         <div class="table-responsive">
                           <table class="table table-hover">
@@ -230,63 +230,8 @@
                           </table>
                         </div>
 
-                        <!-- Pagination -->
-                        <?php if ($result['total_pages'] > 1): ?>
-                          <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 mt-4">
-                            <div class="text-muted small text-center text-md-start">
-                              Menampilkan <?php echo $rangeStart; ?>-<?php echo $rangeEnd; ?> dari <?php echo number_format($result['total']); ?> data
-                            </div>
-                            <nav>
-                              <ul class="pagination pagination-sm flex-wrap justify-content-center mb-0">
-                                <?php $pageBaseUrl = route('dataPelapor', 'index') . '&search=' . urlencode($search) . '&role=' . urlencode($role) . '&limit=' . $limit; ?>
-
-                                <?php if ($result['page'] > 1): ?>
-                                  <li class="page-item">
-                                    <a class="page-link" href="<?php echo $pageBaseUrl; ?>&page=<?php echo $result['page'] - 1; ?>">
-                                      <i class="fas fa-chevron-left"></i>
-                                    </a>
-                                  </li>
-                                <?php endif; ?>
-
-                                <?php
-                                $startPage = max(1, $result['page'] - 2);
-                                $endPage = min($result['total_pages'], $result['page'] + 2);
-
-                                if ($startPage > 1) {
-                                  echo '<li class="page-item"><a class="page-link" href="' . $pageBaseUrl . '&page=1">1</a></li>';
-                                  if ($startPage > 2) {
-                                    echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
-                                  }
-                                }
-
-                                for ($i = $startPage; $i <= $endPage; $i++) {
-                                  $activeClass = $i == $result['page'] ? 'active' : '';
-                                  echo '<li class="page-item ' . $activeClass . '">
-                                          <a class="page-link" href="' . $pageBaseUrl . '&page=' . $i . '">' . $i . '</a>
-                                        </li>';
-                                }
-
-                                if ($endPage < $result['total_pages']) {
-                                  if ($endPage < $result['total_pages'] - 1) {
-                                    echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
-                                  }
-                                  echo '<li class="page-item">
-                                          <a class="page-link" href="' . $pageBaseUrl . '&page=' . $result['total_pages'] . '">' . $result['total_pages'] . '</a>
-                                        </li>';
-                                }
-                                ?>
-
-                                <?php if ($result['page'] < $result['total_pages']): ?>
-                                  <li class="page-item">
-                                    <a class="page-link" href="<?php echo $pageBaseUrl; ?>&page=<?php echo $result['page'] + 1; ?>">
-                                      <i class="fas fa-chevron-right"></i>
-                                    </a>
-                                  </li>
-                                <?php endif; ?>
-                              </ul>
-                            </nav>
-                          </div>
-                        <?php endif; ?>
+                        <!-- Pagination (dirender ulang secara dinamis via JS) -->
+                        <div id="paginationWrapper"></div>
                       <?php else: ?>
                         <div class="text-center py-5">
                           <i class="fas fa-users text-muted" style="font-size: 3rem;"></i>
@@ -330,7 +275,24 @@ function formatDateIndo($date) {
 
   <!-- Custom JavaScript -->
   <script>
-    
+
+    // State filter saat ini (diisi dari render awal PHP)
+    const dpState = {
+      search: <?php echo json_encode($search); ?>,
+      role: <?php echo json_encode($role); ?>,
+      limit: <?php echo json_encode((int)$limit); ?>,
+      page: <?php echo json_encode((int)$result['page']); ?>
+    };
+
+    // Render pagination awal berdasarkan data dari PHP
+    document.addEventListener('DOMContentLoaded', function() {
+      renderPagination({
+        current_page: <?php echo (int)$result['page']; ?>,
+        total_pages: <?php echo (int)$result['total_pages']; ?>,
+        total: <?php echo (int)$result['total']; ?>
+      });
+    });
+
     // Edit pelapor
     function editPelapor(id) {
       window.location.href = 'index.php?controller=dataPelapor&action=form&id=' + id;
@@ -387,23 +349,237 @@ function formatDateIndo($date) {
       document.getElementById('searchInput').value = '';
       document.getElementById('roleFilter').value = '';
       document.getElementById('limitSelect').value = '10';
-      window.location.href = 'index.php?controller=dataPelapor&action=index';
+      loadData(1);
     }
 
     // Ganti jumlah data per halaman
     function changeLimit() {
+      loadData(1);
+    }
+
+    // Bangun query string dari filter saat ini
+    function buildQuery(page) {
       const search = document.getElementById('searchInput').value;
       const role = document.getElementById('roleFilter').value;
       const limit = document.getElementById('limitSelect').value;
 
       const params = new URLSearchParams();
       params.append('controller', 'dataPelapor');
-      params.append('action', 'index');
       if (search) params.append('search', search);
       if (role) params.append('role', role);
       params.append('limit', limit);
+      params.append('page', page);
 
-      window.location.href = 'index.php?' + params.toString();
+      return { params, search, role, limit };
+    }
+
+    // Muat data secara dinamis (AJAX) sesuai filter, limit, dan halaman
+    function loadData(page) {
+      const { params, search, role, limit } = buildQuery(page);
+
+      const fetchParams = new URLSearchParams(params);
+      fetchParams.set('action', 'getData');
+
+      fetch('index.php?' + fetchParams.toString(), {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      })
+        .then(response => response.json())
+        .then(json => {
+          if (!json.success) {
+            showAlert('danger', json.message || 'Gagal memuat data');
+            return;
+          }
+
+          const result = json.data;
+          result.current_page = result.page; // normalisasi key dari API (page -> current_page)
+
+          dpState.search = search;
+          dpState.role = role;
+          dpState.limit = parseInt(limit, 10);
+          dpState.page = result.current_page;
+
+          renderTable(result);
+          renderInfo(result);
+          renderPagination(result);
+
+          // Update URL browser tanpa reload halaman
+          const urlParams = new URLSearchParams(params);
+          urlParams.set('action', 'index');
+          const newUrl = 'index.php?' + urlParams.toString();
+          window.history.replaceState(null, '', newUrl);
+        })
+        .catch(error => {
+          showAlert('danger', 'Error: ' + error.message);
+        });
+    }
+
+    // Render isi tabel data pelapor
+    function renderTable(result) {
+      const content = document.getElementById('dataContent');
+
+      if (!result.data || result.data.length === 0) {
+        content.innerHTML = `
+          <div class="text-center py-5">
+            <i class="fas fa-users text-muted" style="font-size: 3rem;"></i>
+            <h5 class="mt-3 text-muted">Belum ada data pelapor</h5>
+            <p class="text-muted">Tambahkan data pelapor untuk memulai</p>
+            <a href="index.php?controller=dataPelapor&action=form" class="btn btn-primary">
+              <i class="fas fa-plus-circle"></i> Tambah Pelapor
+            </a>
+          </div>`;
+        return;
+      }
+
+      let rows = '';
+      result.data.forEach((pelapor, idx) => {
+        const no = (result.current_page - 1) * dpState.limit + idx + 1;
+        const roleBadgeColor = pelapor.role === 'camat' ? 'primary' : 'info';
+        const roleIcon = pelapor.role === 'camat' ? 'map-marker-alt' : 'building';
+        const initial = (pelapor.username || '').charAt(0).toUpperCase();
+
+        let phoneCell = '<span class="text-muted">-</span>';
+        if (pelapor.no_telp) {
+          const cleanPhone = String(pelapor.no_telp).replace(/[^0-9]/g, '');
+          phoneCell = `<a href="https://wa.me/${cleanPhone}" target="_blank" class="text-decoration-none text-success">
+            <i class="fab fa-whatsapp"></i> ${escapeHtml(pelapor.no_telp)}</a>`;
+        }
+
+        rows += `
+          <tr>
+            <td><span class="fw-bold">${no}</span></td>
+            <td>
+              <div class="d-flex align-items-center">
+                <div class="avatar-sm bg-${roleBadgeColor} text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
+                  ${initial}
+                </div>
+                <div class="fw-semibold">${escapeHtml(pelapor.username)}</div>
+              </div>
+            </td>
+            <td><a href="mailto:${escapeHtml(pelapor.email)}" class="text-decoration-none">${escapeHtml(pelapor.email)}</a></td>
+            <td>${phoneCell}</td>
+            <td>${escapeHtml(pelapor.jabatan)}</td>
+            <td>
+              <span class="badge bg-${roleBadgeColor}">
+                <i class="fas fa-${roleIcon}"></i> ${pelapor.role.charAt(0).toUpperCase() + pelapor.role.slice(1)}
+              </span>
+            </td>
+            <td>
+              <div class="d-flex flex-column">
+                <span class="fw-bold">${Number(pelapor.total_laporan || 0).toLocaleString('id-ID')}</span>
+                <small class="text-muted">Camat: ${pelapor.total_laporan_camat || 0} | OPD: ${pelapor.total_laporan_opd || 0}</small>
+              </div>
+            </td>
+            <td><small class="text-muted">${formatDateIndoJS(pelapor.created_at)}</small></td>
+            <td class="text-center">
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-primary" onclick="editPelapor(${pelapor.id_user})" title="Edit"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-outline-danger" onclick="deletePelapor(${pelapor.id_user}, '${escapeHtml(pelapor.username)}')" title="Hapus"><i class="fas fa-trash"></i></button>
+              </div>
+            </td>
+          </tr>`;
+      });
+
+      content.innerHTML = `
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th class="border-top-0">No</th>
+                <th class="border-top-0">Username</th>
+                <th class="border-top-0">Email</th>
+                <th class="border-top-0">No. Telepon</th>
+                <th class="border-top-0">Jabatan</th>
+                <th class="border-top-0">Role</th>
+                <th class="border-top-0">Total Laporan</th>
+                <th class="border-top-0">Tanggal Dibuat</th>
+                <th class="border-top-0 text-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="dataTableBody">${rows}</tbody>
+          </table>
+        </div>
+        <div id="paginationWrapper"></div>`;
+    }
+
+    // Render info bar (total data, halaman, range)
+    function renderInfo(result) {
+      const limit = dpState.limit;
+      const rangeStart = result.total > 0 ? ((result.current_page - 1) * limit) + 1 : 0;
+      const rangeEnd = Math.min(result.current_page * limit, result.total);
+
+      document.getElementById('totalDataCount').textContent = Number(result.total).toLocaleString('id-ID') + ' pelapor';
+      document.getElementById('pageInfo').textContent = result.current_page + ' dari ' + Math.max(1, result.total_pages);
+      document.getElementById('rangeInfo').textContent = rangeStart + '-' + rangeEnd + ' dari ' + Number(result.total).toLocaleString('id-ID');
+    }
+
+    // Render navigasi pagination secara dinamis
+    function renderPagination(result) {
+      const wrapper = document.getElementById('paginationWrapper');
+      if (!wrapper) return;
+
+      if (result.total_pages <= 1) {
+        wrapper.innerHTML = '';
+        return;
+      }
+
+      const limit = dpState.limit;
+      const rangeStart = result.total > 0 ? ((result.current_page - 1) * limit) + 1 : 0;
+      const rangeEnd = Math.min(result.current_page * limit, result.total);
+
+      let html = `
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 mt-4">
+          <div class="text-muted small text-center text-md-start">
+            Menampilkan ${rangeStart}-${rangeEnd} dari ${Number(result.total).toLocaleString('id-ID')} data
+          </div>
+          <nav>
+            <ul class="pagination pagination-sm flex-wrap justify-content-center mb-0">`;
+
+      const page = result.current_page;
+      const totalPages = result.total_pages;
+
+      if (page > 1) {
+        html += `<li class="page-item"><a class="page-link" href="#" onclick="loadData(${page - 1}); return false;"><i class="fas fa-chevron-left"></i></a></li>`;
+      }
+
+      const startPage = Math.max(1, page - 2);
+      const endPage = Math.min(totalPages, page + 2);
+
+      if (startPage > 1) {
+        html += `<li class="page-item"><a class="page-link" href="#" onclick="loadData(1); return false;">1</a></li>`;
+        if (startPage > 2) {
+          html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+        }
+      }
+
+      for (let i = startPage; i <= endPage; i++) {
+        const activeClass = i === page ? 'active' : '';
+        html += `<li class="page-item ${activeClass}"><a class="page-link" href="#" onclick="loadData(${i}); return false;">${i}</a></li>`;
+      }
+
+      if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+          html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+        }
+        html += `<li class="page-item"><a class="page-link" href="#" onclick="loadData(${totalPages}); return false;">${totalPages}</a></li>`;
+      }
+
+      if (page < totalPages) {
+        html += `<li class="page-item"><a class="page-link" href="#" onclick="loadData(${page + 1}); return false;"><i class="fas fa-chevron-right"></i></a></li>`;
+      }
+
+      html += `</ul></nav></div>`;
+      wrapper.innerHTML = html;
+    }
+
+    // Escape HTML sederhana untuk mencegah XSS saat render via JS
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
     }
 
     // Show alert
@@ -425,28 +601,8 @@ function formatDateIndo($date) {
     // Search form submission
     document.getElementById('searchForm').addEventListener('submit', function(e) {
       e.preventDefault();
-
-      const search = document.getElementById('searchInput').value;
-      const role = document.getElementById('roleFilter').value;
-      const limit = document.getElementById('limitSelect').value;
-
-      const params = new URLSearchParams();
-      params.append('controller', 'dataPelapor');
-      params.append('action', 'index');
-      if (search) params.append('search', search);
-      if (role) params.append('role', role);
-      params.append('limit', limit);
-
-      window.location.href = 'index.php?' + params.toString();
+      loadData(1);
     });
-
-    // Auto-refresh data (optional - every 30 seconds)
-    setInterval(() => {
-      // Only refresh if no modal is open
-      if (!document.querySelector('.modal.show')) {
-        // Optional: Implement auto-refresh logic here
-      }
-    }, 30000);
   </script>
 </body>
 </html>

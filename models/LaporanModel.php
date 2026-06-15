@@ -517,7 +517,13 @@ class LaporanModel extends BaseModel {
             nip VARCHAR(50) DEFAULT NULL
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
 
-        return $this->db->query($query);
+        try {
+            return $this->db->query($query);
+        } catch (\mysqli_sql_exception $e) {
+            // User DB tidak punya privilege CREATE TABLE; abaikan jika tabel sudah ada
+            error_log("createTTDTable skipped: " . $e->getMessage());
+            return false;
+        }
     }
 
     /**
