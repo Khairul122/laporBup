@@ -54,16 +54,9 @@ RewriteRule ^(config|core|controllers|models|\.git|\.claude)(/.*)?$ - [F,L]
 </FilesMatch>
 
 # Blokir eksekusi PHP di folder upload (cegah upload shell disalahgunakan)
-<IfModule mod_php.c>
-    <Directory "uploads">
-        php_flag engine off
-    </Directory>
-</IfModule>
-<FilesMatch "\.(php|phtml|php\d?)$">
-    <If "%{REQUEST_URI} =~ m#^/uploads/#">
-        Require all denied
-    </If>
-</FilesMatch>
+RewriteCond %{REQUEST_URI} ^/uploads/ [NC]
+RewriteCond %{REQUEST_URI} \.(php|phtml|php[0-9]?)$ [NC]
+RewriteRule ^ - [F,L]
 
 # ---------------------------------------------------------------------
 # Mitigasi scraping / bad bot sederhana berdasarkan User-Agent
