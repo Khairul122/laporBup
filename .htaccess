@@ -39,11 +39,17 @@ ServerSignature Off
 # ---------------------------------------------------------------------
 RewriteEngine On
 
-# Blokir akses ke folder konfigurasi, model, controller, core, vendor
-RewriteRule ^(config|core|controllers|models)(/.*)?$ - [F,L]
+# Blokir akses ke folder konfigurasi, model, controller, core, vendor, dan
+# folder development tooling (.git, .claude)
+RewriteRule ^(config|core|controllers|models|\.git|\.claude)(/.*)?$ - [F,L]
 
 # Blokir akses ke file sistem/dotfiles & file konfigurasi
 <FilesMatch "^(\.env|\.git.*|composer\.(json|lock)|package(-lock)?\.json|\.htaccess)$">
+    Require all denied
+</FilesMatch>
+
+# Blokir dump database & file backup di root (tidak berlaku untuk uploads/)
+<FilesMatch "\.(sql|sqlite|bak)$">
     Require all denied
 </FilesMatch>
 
