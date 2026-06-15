@@ -1,6 +1,5 @@
 <?php include('views/layouts/admin-header.php'); ?>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/brands.min.css" integrity="sha512-APz+y2aUHgE2S3i8/CEM5A6z+oGnf5GBlhQYCzBjVjG6HkpKzzAfmzrPwKs6wI9M6PqH+4yKv6QyBvJNvNxg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 <body class="with-welcome-text">
   <div class="container-scroller">
@@ -78,13 +77,20 @@
                             <i class="fas fa-search"></i> Cari
                           </button>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-1">
                           <label class="form-label small text-muted">&nbsp;</label>
-                          <button type="button" class="btn btn-secondary w-100" onclick="resetFilter()">
-                            <i class="fas fa-arrow-rotate-left"></i> Reset
+                          <button type="button" class="btn btn-secondary w-100" onclick="resetFilter()" title="Reset filter">
+                            <i class="fas fa-arrow-rotate-left"></i>
                           </button>
                         </div>
-                       
+                        <div class="col-md-1">
+                          <label class="form-label small text-muted">Tampil</label>
+                          <select class="form-select" id="limitSelect" onchange="changeLimit()">
+                            <?php foreach ([10, 25, 50, 100] as $opt): ?>
+                              <option value="<?php echo $opt; ?>" <?php echo $limit == $opt ? 'selected' : ''; ?>><?php echo $opt; ?></option>
+                            <?php endforeach; ?>
+                          </select>
+                        </div>
                       </form>
 
                       <!-- Info Bar -->
@@ -103,7 +109,22 @@
                             <i class="fas fa-file-alt text-info me-2"></i>
                             <div class="text-center">
                               <small class="text-muted">Halaman</small>
-                              <div class="fw-bold"><?php echo $result['page']; ?> dari <?php echo $result['total_pages']; ?></div>
+                              <div class="fw-bold"><?php echo $result['page']; ?> dari <?php echo max(1, $result['total_pages']); ?></div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="d-flex align-items-center justify-content-md-end">
+                            <i class="fas fa-list-ol text-success me-2"></i>
+                            <div class="text-md-end">
+                              <small class="text-muted">Menampilkan</small>
+                              <div class="fw-bold">
+                                <?php
+                                $rangeStart = $result['total'] > 0 ? (($result['page'] - 1) * $limit) + 1 : 0;
+                                $rangeEnd = min($result['page'] * $limit, $result['total']);
+                                echo $rangeStart . '-' . $rangeEnd . ' dari ' . number_format($result['total']);
+                                ?>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -211,15 +232,17 @@
 
                         <!-- Pagination -->
                         <?php if ($result['total_pages'] > 1): ?>
-                          <div class="d-flex justify-content-between align-items-center mt-4">
-                            <div class="text-muted">
-                              Menampilkan <?php echo count($result['data']); ?> dari <?php echo $result['total']; ?> data
+                          <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 mt-4">
+                            <div class="text-muted small text-center text-md-start">
+                              Menampilkan <?php echo $rangeStart; ?>-<?php echo $rangeEnd; ?> dari <?php echo number_format($result['total']); ?> data
                             </div>
                             <nav>
-                              <ul class="pagination pagination-sm mb-0">
+                              <ul class="pagination pagination-sm flex-wrap justify-content-center mb-0">
+                                <?php $pageBaseUrl = route('dataPelapor', 'index') . '&search=' . urlencode($search) . '&role=' . urlencode($role) . '&limit=' . $limit; ?>
+
                                 <?php if ($result['page'] > 1): ?>
                                   <li class="page-item">
-                                    <a class="page-link" href="?page=<?php echo $result['page'] - 1; ?>&search=<?php echo urlencode($search); ?>&role=<?php echo $role; ?>">
+                                    <a class="page-link" href="<?php echo $pageBaseUrl; ?>&page=<?php echo $result['page'] - 1; ?>">
                                       <i class="fas fa-chevron-left"></i>
                                     </a>
                                   </li>
@@ -230,7 +253,7 @@
                                 $endPage = min($result['total_pages'], $result['page'] + 2);
 
                                 if ($startPage > 1) {
-                                  echo '<li class="page-item"><a class="page-link" href="?page=1&search=' . urlencode($search) . '&role=' . $role . '">1</a></li>';
+                                  echo '<li class="page-item"><a class="page-link" href="' . $pageBaseUrl . '&page=1">1</a></li>';
                                   if ($startPage > 2) {
                                     echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
                                   }
@@ -239,7 +262,7 @@
                                 for ($i = $startPage; $i <= $endPage; $i++) {
                                   $activeClass = $i == $result['page'] ? 'active' : '';
                                   echo '<li class="page-item ' . $activeClass . '">
-                                          <a class="page-link" href="?page=' . $i . '&search=' . urlencode($search) . '&role=' . $role . '">' . $i . '</a>
+                                          <a class="page-link" href="' . $pageBaseUrl . '&page=' . $i . '">' . $i . '</a>
                                         </li>';
                                 }
 
@@ -248,14 +271,14 @@
                                     echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
                                   }
                                   echo '<li class="page-item">
-                                          <a class="page-link" href="?page=' . $result['total_pages'] . '&search=' . urlencode($search) . '&role=' . $role . '">' . $result['total_pages'] . '</a>
+                                          <a class="page-link" href="' . $pageBaseUrl . '&page=' . $result['total_pages'] . '">' . $result['total_pages'] . '</a>
                                         </li>';
                                 }
                                 ?>
 
                                 <?php if ($result['page'] < $result['total_pages']): ?>
                                   <li class="page-item">
-                                    <a class="page-link" href="?page=<?php echo $result['page'] + 1; ?>&search=<?php echo urlencode($search); ?>&role=<?php echo $role; ?>">
+                                    <a class="page-link" href="<?php echo $pageBaseUrl; ?>&page=<?php echo $result['page'] + 1; ?>">
                                       <i class="fas fa-chevron-right"></i>
                                     </a>
                                   </li>
@@ -363,7 +386,24 @@ function formatDateIndo($date) {
     function resetFilter() {
       document.getElementById('searchInput').value = '';
       document.getElementById('roleFilter').value = '';
-      window.location.href = 'index.php?controller=dataPelapor';
+      document.getElementById('limitSelect').value = '10';
+      window.location.href = 'index.php?controller=dataPelapor&action=index';
+    }
+
+    // Ganti jumlah data per halaman
+    function changeLimit() {
+      const search = document.getElementById('searchInput').value;
+      const role = document.getElementById('roleFilter').value;
+      const limit = document.getElementById('limitSelect').value;
+
+      const params = new URLSearchParams();
+      params.append('controller', 'dataPelapor');
+      params.append('action', 'index');
+      if (search) params.append('search', search);
+      if (role) params.append('role', role);
+      params.append('limit', limit);
+
+      window.location.href = 'index.php?' + params.toString();
     }
 
     // Show alert
@@ -388,12 +428,16 @@ function formatDateIndo($date) {
 
       const search = document.getElementById('searchInput').value;
       const role = document.getElementById('roleFilter').value;
+      const limit = document.getElementById('limitSelect').value;
 
       const params = new URLSearchParams();
+      params.append('controller', 'dataPelapor');
+      params.append('action', 'index');
       if (search) params.append('search', search);
       if (role) params.append('role', role);
+      params.append('limit', limit);
 
-      window.location.href = 'index.php?controller=dataPelapor&' + params.toString();
+      window.location.href = 'index.php?' + params.toString();
     });
 
     // Auto-refresh data (optional - every 30 seconds)

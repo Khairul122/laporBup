@@ -40,8 +40,14 @@ class DataPelaporController extends BaseController {
         $user = $this->getCurrentUser();
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
         $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
+        if (!in_array($limit, [10, 25, 50, 100])) {
+            $limit = 10;
+        }
         $search = $_GET['search'] ?? '';
         $role = $_GET['role'] ?? '';
+        if (!in_array($role, ['camat', 'opd'])) {
+            $role = '';
+        }
 
         // Get data pelapor
         $result = $this->dataPelaporModel->getAllDataPelapor($page, $limit, $search, $role);
@@ -230,6 +236,9 @@ class DataPelaporController extends BaseController {
             $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
             $search = $_GET['search'] ?? '';
             $role = $_GET['role'] ?? '';
+            if (!in_array($role, ['camat', 'opd'])) {
+                $role = '';
+            }
 
             $result = $this->dataPelaporModel->getAllDataPelapor($page, $limit, $search, $role);
 
