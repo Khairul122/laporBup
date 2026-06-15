@@ -7,27 +7,27 @@
     name="viewport"
     content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <title>Lapor Bupati</title>
-  <link rel="stylesheet" href="assets/vendors/feather/feather.css" />
+  <link rel="stylesheet" href="<?= asset('assets/vendors/feather/feather.css') ?>" />
   <link
     rel="stylesheet"
-    href="assets/vendors/mdi/css/materialdesignicons.min.css" />
+    href="<?= asset('assets/vendors/mdi/css/materialdesignicons.min.css') ?>" />
   <link
     rel="stylesheet"
-    href="assets/vendors/ti-icons/css/themify-icons.css" />
-  <link rel="stylesheet" href="assets/vendors/typicons/typicons.css" />
+    href="<?= asset('assets/vendors/ti-icons/css/themify-icons.css') ?>" />
+  <link rel="stylesheet" href="<?= asset('assets/vendors/typicons/typicons.css') ?>" />
   <link
     rel="stylesheet"
-    href="assets/vendors/simple-line-icons/css/simple-line-icons.css" />
-  <link rel="stylesheet" href="assets/vendors/css/vendor.bundle.base.css" />
+    href="<?= asset('assets/vendors/simple-line-icons/css/simple-line-icons.css') ?>" />
+  <link rel="stylesheet" href="<?= asset('assets/vendors/css/vendor.bundle.base.css') ?>" />
   <link
     rel="stylesheet"
-    href="assets/vendors/datatables.net-bs4/dataTables.bootstrap4.css" />
+    href="<?= asset('assets/vendors/datatables.net-bs4/dataTables.bootstrap4.css') ?>" />
   <link
     rel="stylesheet"
     type="text/css"
-    href="assets/js/select.dataTables.min.css" />
-  <link rel="stylesheet" href="assets/css/vertical-layout-light/style.css" />
-  <link rel="shortcut icon" href="assets/images/favicon.png" />
+    href="<?= asset('assets/js/select.dataTables.min.css') ?>" />
+  <link rel="stylesheet" href="<?= asset('assets/css/vertical-layout-light/style.css') ?>" />
+  <link rel="shortcut icon" href="<?= asset('assets/images/favicon.png') ?>" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
   <script>

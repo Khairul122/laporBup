@@ -2,65 +2,11 @@
 
 require_once 'models/LaporanCamatAdminModel.php';
 
-class LaporanCamatAdminController {
+class LaporanCamatAdminController extends BaseController {
     private $laporanCamatAdminModel;
 
     public function __construct() {
         $this->laporanCamatAdminModel = new LaporanCamatAdminModel();
-    }
-
-    /**
-     * Cek apakah user sudah login
-     */
-    private function isLoggedIn() {
-        return isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
-    }
-
-    /**
-     * Mendapatkan role user yang sedang login
-     */
-    private function getUserRole() {
-        return $_SESSION['role'] ?? null;
-    }
-
-    /**
-     * Mendapatkan data user yang sedang login
-     */
-    private function getCurrentUser() {
-        if ($this->isLoggedIn()) {
-            return [
-                'id_user' => $_SESSION['user_id'],
-                'username' => $_SESSION['username'],
-                'email' => $_SESSION['email'],
-                'jabatan' => $_SESSION['jabatan'],
-                'role' => $_SESSION['role']
-            ];
-        }
-        return null;
-    }
-
-    /**
-     * Require login untuk mengakses halaman
-     */
-    private function requireLogin() {
-        if (!$this->isLoggedIn()) {
-            $response = [
-                'success' => false,
-                'message' => 'Silakan login terlebih dahulu',
-                'redirect' => 'index.php'
-            ];
-
-            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-                header('Content-Type: application/json');
-                echo json_encode($response);
-                exit;
-            } else {
-                // Preserve query string saat redirect
-                $currentUrl = $_SERVER['REQUEST_URI'];
-                header('Location: index.php');
-                exit;
-            }
-        }
     }
 
     /**
@@ -80,8 +26,7 @@ class LaporanCamatAdminController {
                 echo json_encode($response);
                 exit;
             } else {
-                header('Location: index.php?controller=dashboard&action=admin');
-                exit;
+                $this->redirect('index.php?controller=dashboard&action=admin');
             }
         }
     }
@@ -141,16 +86,14 @@ class LaporanCamatAdminController {
 
         if ($id === 0) {
             $_SESSION['error'] = "ID laporan tidak valid.";
-            header('Location: index.php?controller=laporanCamatAdmin&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanCamatAdmin&action=index');
         }
 
         $laporan = $this->laporanCamatAdminModel->getLaporanCamatById($id);
 
         if (!$laporan) {
             $_SESSION['error'] = "Laporan tidak ditemukan.";
-            header('Location: index.php?controller=laporanCamatAdmin&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanCamatAdmin&action=index');
         }
 
         include 'views/laporan-admin-camat/detail.php';
@@ -166,16 +109,14 @@ class LaporanCamatAdminController {
 
         if ($id === 0) {
             $_SESSION['error'] = "ID laporan tidak valid.";
-            header('Location: index.php?controller=laporanCamatAdmin&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanCamatAdmin&action=index');
         }
 
         $laporan = $this->laporanCamatAdminModel->getLaporanCamatById($id);
 
         if (!$laporan) {
             $_SESSION['error'] = "Laporan tidak ditemukan.";
-            header('Location: index.php?controller=laporanCamatAdmin&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanCamatAdmin&action=index');
         }
 
         // Handle form submission
@@ -203,8 +144,7 @@ class LaporanCamatAdminController {
 
             if ($result['success']) {
                 $_SESSION['success'] = $result['message'];
-                header('Location: index.php?controller=laporanCamatAdmin&action=index');
-                exit;
+                $this->redirect('index.php?controller=laporanCamatAdmin&action=index');
             } else {
                 $_SESSION['error'] = $result['message'];
             }
@@ -220,8 +160,7 @@ class LaporanCamatAdminController {
         $this->requireAdmin();
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: index.php?controller=laporanCamatAdmin&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanCamatAdmin&action=index');
         }
 
         $id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
@@ -239,8 +178,7 @@ class LaporanCamatAdminController {
                 exit;
             } else {
                 $_SESSION['error'] = "Data tidak valid.";
-                header('Location: index.php?controller=laporanCamatAdmin&action=index');
-                exit;
+                $this->redirect('index.php?controller=laporanCamatAdmin&action=index');
             }
         }
 
@@ -263,8 +201,7 @@ class LaporanCamatAdminController {
             ]);
             exit;
         } else {
-            header('Location: ' . $redirectUrl);
-            exit;
+            $this->redirect($redirectUrl);
         }
     }
 
@@ -288,8 +225,7 @@ class LaporanCamatAdminController {
                 exit;
             } else {
                 $_SESSION['error'] = "ID laporan tidak valid.";
-                header('Location: index.php?controller=laporanCamatAdmin&action=index');
-                exit;
+                $this->redirect('index.php?controller=laporanCamatAdmin&action=index');
             }
         }
 
@@ -309,8 +245,7 @@ class LaporanCamatAdminController {
             ]);
             exit;
         } else {
-            header('Location: index.php?controller=laporanCamatAdmin&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanCamatAdmin&action=index');
         }
     }
 

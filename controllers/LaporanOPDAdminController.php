@@ -2,63 +2,11 @@
 
 require_once 'models/LaporanOPDAdminModel.php';
 
-class LaporanOPDAdminController {
+class LaporanOPDAdminController extends BaseController {
     private $laporanOPDAdminModel;
 
     public function __construct() {
         $this->laporanOPDAdminModel = new LaporanOPDAdminModel();
-    }
-
-    /**
-     * Cek apakah user sudah login
-     */
-    private function isLoggedIn() {
-        return isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
-    }
-
-    /**
-     * Mendapatkan role user yang sedang login
-     */
-    private function getUserRole() {
-        return $_SESSION['role'] ?? null;
-    }
-
-    /**
-     * Mendapatkan data user yang sedang login
-     */
-    private function getCurrentUser() {
-        if ($this->isLoggedIn()) {
-            return [
-                'id_user' => $_SESSION['user_id'],
-                'username' => $_SESSION['username'],
-                'email' => $_SESSION['email'],
-                'jabatan' => $_SESSION['jabatan'],
-                'role' => $_SESSION['role']
-            ];
-        }
-        return null;
-    }
-
-    /**
-     * Require login untuk mengakses halaman
-     */
-    private function requireLogin() {
-        if (!$this->isLoggedIn()) {
-            $response = [
-                'success' => false,
-                'message' => 'Silakan login terlebih dahulu',
-                'redirect' => 'index.php'
-            ];
-
-            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-                header('Content-Type: application/json');
-                echo json_encode($response);
-                exit;
-            } else {
-                header('Location: index.php');
-                exit;
-            }
-        }
     }
 
     /**
@@ -78,8 +26,7 @@ class LaporanOPDAdminController {
                 echo json_encode($response);
                 exit;
             } else {
-                header('Location: index.php?controller=dashboard&action=admin');
-                exit;
+                $this->redirect('index.php?controller=dashboard&action=admin');
             }
         }
     }
@@ -131,16 +78,14 @@ class LaporanOPDAdminController {
 
         if ($id === 0) {
             $_SESSION['error'] = "ID laporan tidak valid.";
-            header('Location: index.php?controller=laporanOPDAdmin&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanOPDAdmin&action=index');
         }
 
         $laporan = $this->laporanOPDAdminModel->getLaporanOPDById($id);
 
         if (!$laporan) {
             $_SESSION['error'] = "Laporan tidak ditemukan.";
-            header('Location: index.php?controller=laporanOPDAdmin&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanOPDAdmin&action=index');
         }
 
         include 'views/laporan-admin-opd/detail.php';
@@ -156,16 +101,14 @@ class LaporanOPDAdminController {
 
         if ($id === 0) {
             $_SESSION['error'] = "ID laporan tidak valid.";
-            header('Location: index.php?controller=laporanOPDAdmin&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanOPDAdmin&action=index');
         }
 
         $laporan = $this->laporanOPDAdminModel->getLaporanOPDById($id);
 
         if (!$laporan) {
             $_SESSION['error'] = "Laporan tidak ditemukan.";
-            header('Location: index.php?controller=laporanOPDAdmin&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanOPDAdmin&action=index');
         }
 
         // Handle form submission
@@ -193,8 +136,7 @@ class LaporanOPDAdminController {
 
             if ($result['success']) {
                 $_SESSION['success'] = $result['message'];
-                header('Location: index.php?controller=laporanOPDAdmin&action=index');
-                exit;
+                $this->redirect('index.php?controller=laporanOPDAdmin&action=index');
             } else {
                 $_SESSION['error'] = $result['message'];
             }
@@ -210,8 +152,7 @@ class LaporanOPDAdminController {
         $this->requireAdmin();
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: index.php?controller=laporanOPDAdmin&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanOPDAdmin&action=index');
         }
 
         $id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
@@ -229,8 +170,7 @@ class LaporanOPDAdminController {
                 exit;
             } else {
                 $_SESSION['error'] = "Data tidak valid.";
-                header('Location: index.php?controller=laporanOPDAdmin&action=index');
-                exit;
+                $this->redirect('index.php?controller=laporanOPDAdmin&action=index');
             }
         }
 
@@ -253,8 +193,7 @@ class LaporanOPDAdminController {
             ]);
             exit;
         } else {
-            header('Location: ' . $redirectUrl);
-            exit;
+            $this->redirect($redirectUrl);
         }
     }
 
@@ -278,8 +217,7 @@ class LaporanOPDAdminController {
                 exit;
             } else {
                 $_SESSION['error'] = "ID laporan tidak valid.";
-                header('Location: index.php?controller=laporanOPDAdmin&action=index');
-                exit;
+                $this->redirect('index.php?controller=laporanOPDAdmin&action=index');
             }
         }
 
@@ -299,8 +237,7 @@ class LaporanOPDAdminController {
             ]);
             exit;
         } else {
-            header('Location: index.php?controller=laporanOPDAdmin&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanOPDAdmin&action=index');
         }
     }
 

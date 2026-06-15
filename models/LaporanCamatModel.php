@@ -1,13 +1,8 @@
 <?php
 require_once __DIR__ . '/../config/koneksi.php';
+require_once __DIR__ . '/BaseModel.php';
 
-class LaporanCamatModel {
-    private $db;
-
-    public function __construct() {
-        $this->db = getKoneksi();
-    }
-
+class LaporanCamatModel extends BaseModel {
     /**
      * Get all laporan camat for a specific user
      */

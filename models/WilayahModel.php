@@ -1,14 +1,9 @@
 <?php
 
 require_once __DIR__ . '/../config/koneksi.php';
+require_once __DIR__ . '/BaseModel.php';
 
-class WilayahModel {
-    public $db;
-
-    public function __construct() {
-        $this->db = getKoneksi();
-    }
-
+class WilayahModel extends BaseModel {
     /**
      * ==================== KECAMATAN ====================
      */

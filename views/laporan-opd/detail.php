@@ -1,8 +1,8 @@
 <?php
 $title = 'Detail Laporan OPD - ';
-include 'views/template/header.php';
+include 'views/layouts/simple-header.php';
 ?>
-<?php include 'views/template/navbar.php'; ?>
+<?php include 'views/layouts/simple-navbar.php'; ?>
 
 <div class="fullscreen-container">
     <div class="fullscreen-content">
@@ -1193,4 +1193,4 @@ include 'views/template/header.php';
 </div>
 </div>
 
-<?php include 'views/template/footer.php'; ?>
+<?php include 'views/layouts/simple-footer.php'; ?>

@@ -1,8 +1,8 @@
 <?php 
 $title = 'Dashboard Camat - Silap Gawat';
-include 'views/template/header.php'; 
+include 'views/layouts/simple-header.php'; 
 ?>
-<?php include 'views/template/navbar.php'; ?>
+<?php include 'views/layouts/simple-navbar.php'; ?>
 
 <div class="fullscreen-container">
     <div class="fullscreen-content">
@@ -97,4 +97,4 @@ include 'views/template/header.php';
 }
 </style>
 
-<?php include 'views/template/footer.php'; ?>
+<?php include 'views/layouts/simple-footer.php'; ?>

@@ -4,7 +4,7 @@ require_once 'models/AuthModel.php';
 require_once 'models/LaporanOPDModel.php';
 require_once 'models/OPDModel.php';
 
-class LaporanOPDController {
+class LaporanOPDController extends BaseController {
     private $authModel;
     private $laporanOPDModel;
     private $opdModel;
@@ -13,53 +13,6 @@ class LaporanOPDController {
         $this->authModel = new AuthModel();
         $this->laporanOPDModel = new LaporanOPDModel();
         $this->opdModel = new OPDModel();
-    }
-
-    /**
-     * Cek apakah user sudah login
-     */
-    private function isLoggedIn() {
-        return isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
-    }
-
-    /**
-     * Mendapatkan role user yang sedang login
-     */
-    private function getUserRole() {
-        return $_SESSION['role'] ?? null;
-    }
-
-    /**
-     * Mendapatkan ID user yang sedang login
-     */
-    private function getCurrentUserId() {
-        return $_SESSION['user_id'] ?? null;
-    }
-
-    /**
-     * Mendapatkan data user yang sedang login
-     */
-    private function getCurrentUser() {
-        if ($this->isLoggedIn()) {
-            return [
-                'id_user' => $_SESSION['user_id'],
-                'username' => $_SESSION['username'],
-                'email' => $_SESSION['email'],
-                'jabatan' => $_SESSION['jabatan'],
-                'role' => $_SESSION['role']
-            ];
-        }
-        return null;
-    }
-
-    /**
-     * Require login untuk mengakses halaman
-     */
-    private function requireLogin() {
-        if (!$this->isLoggedIn()) {
-            header('Location: index.php?controller=auth&action=index');
-            exit;
-        }
     }
 
     /**
@@ -132,8 +85,7 @@ class LaporanOPDController {
 
         if (!$laporan || $laporan['id_user'] != $userId) {
             $_SESSION['error'] = 'Laporan tidak ditemukan';
-            header('Location: index.php?controller=laporanOPD&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanOPD&action=index');
         }
 
         // Load OPD list untuk dropdown tujuan
@@ -162,15 +114,13 @@ class LaporanOPDController {
         if (!$laporan) {
             error_log("DEBUG: Laporan tidak ditemukan untuk ID: $id");
             $_SESSION['error'] = 'Laporan tidak ditemukan';
-            header('Location: index.php?controller=laporanOPD&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanOPD&action=index');
         }
 
         if ($laporan['id_user'] != $userId) {
             error_log("DEBUG: User tidak memiliki akses. Laporan user ID: {$laporan['id_user']}, Current user ID: $userId");
             $_SESSION['error'] = 'Anda tidak memiliki akses ke laporan ini';
-            header('Location: index.php?controller=laporanOPD&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanOPD&action=index');
         }
 
         require_once 'views/laporan-opd/detail.php';
@@ -183,8 +133,7 @@ class LaporanOPDController {
         $this->requireOPDRole();
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: index.php?controller=laporanOPD&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanOPD&action=index');
         }
 
         $currentUser = $this->getCurrentUser();
@@ -196,8 +145,7 @@ class LaporanOPDController {
         if (!empty($errors)) {
             $_SESSION['errors'] = $errors;
             $_SESSION['old_input'] = $_POST;
-            header('Location: index.php?controller=laporanOPD&action=create');
-            exit;
+            $this->redirect('index.php?controller=laporanOPD&action=create');
         }
 
         // Handle file upload
@@ -207,8 +155,7 @@ class LaporanOPDController {
             if (!$filePath) {
                 $_SESSION['errors'] = ['File upload gagal. Pastikan file bertipe PDF, DOC, DOCX, XLS, XLSX, JPG, JPEG, PNG, atau GIF dan ukuran maksimal 5MB'];
                 $_SESSION['old_input'] = $_POST;
-                header('Location: index.php?controller=laporanOPD&action=create');
-                exit;
+                $this->redirect('index.php?controller=laporanOPD&action=create');
             }
         }
 
@@ -242,8 +189,7 @@ class LaporanOPDController {
         $this->requireOPDRole();
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: index.php?controller=laporanOPD&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanOPD&action=index');
         }
 
         $id = $_POST['id'] ?? 0;
@@ -253,8 +199,7 @@ class LaporanOPDController {
         $laporan = $this->laporanOPDModel->getLaporanById($id);
         if (!$laporan || $laporan['id_user'] != $userId) {
             $_SESSION['error'] = 'Laporan tidak ditemukan';
-            header('Location: index.php?controller=laporanOPD&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanOPD&action=index');
         }
 
         // Validasi input
@@ -315,8 +260,7 @@ class LaporanOPDController {
         $this->requireOPDRole();
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: index.php?controller=laporanOPD&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanOPD&action=index');
         }
 
         $id = $_POST['id'] ?? 0;
@@ -326,8 +270,7 @@ class LaporanOPDController {
         $laporan = $this->laporanOPDModel->getLaporanById($id);
         if (!$laporan || $laporan['id_user'] != $userId) {
             $_SESSION['error'] = 'Laporan tidak ditemukan';
-            header('Location: index.php?controller=laporanOPD&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanOPD&action=index');
         }
 
         // Delete file if exists
@@ -342,8 +285,7 @@ class LaporanOPDController {
             $_SESSION['error'] = 'Gagal menghapus laporan';
         }
 
-        header('Location: index.php?controller=laporanOPD&action=index');
-        exit;
+        $this->redirect('index.php?controller=laporanOPD&action=index');
     }
 
     /**
@@ -410,8 +352,7 @@ class LaporanOPDController {
 
         if (!$laporan || $laporan['id_user'] != $userId || empty($laporan['upload_file'])) {
             $_SESSION['error'] = 'File tidak ditemukan';
-            header('Location: index.php?controller=laporanOPD&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanOPD&action=index');
         }
 
         $filePath = $laporan['upload_file'];
@@ -419,8 +360,7 @@ class LaporanOPDController {
 
         if (!file_exists($filePath)) {
             $_SESSION['error'] = 'File tidak ditemukan di server';
-            header('Location: index.php?controller=laporanOPD&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanOPD&action=index');
         }
 
         // Set headers untuk download

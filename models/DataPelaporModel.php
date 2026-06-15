@@ -1,14 +1,9 @@
 <?php
 
 require_once __DIR__ . '/../config/koneksi.php';
+require_once __DIR__ . '/BaseModel.php';
 
-class DataPelaporModel {
-    private $db;
-
-    public function __construct() {
-        $this->db = getKoneksi();
-    }
-
+class DataPelaporModel extends BaseModel {
     /**
      * Get all data pelapor with pagination and filtering
      */

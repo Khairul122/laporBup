@@ -3,116 +3,13 @@
 require_once 'models/AuthModel.php';
 require_once 'models/DashboardModel.php';
 
-class DashboardController {
+class DashboardController extends BaseController {
     private $authModel;
     private $dashboardModel;
 
     public function __construct() {
         $this->authModel = new AuthModel();
         $this->dashboardModel = new DashboardModel();
-    }
-
-    /**
-     * Cek apakah user sudah login
-     */
-    private function isLoggedIn() {
-        return isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
-    }
-
-    /**
-     * Mendapatkan role user yang sedang login
-     */
-    private function getUserRole() {
-        return $_SESSION['role'] ?? null;
-    }
-
-    /**
-     * Mendapatkan data user yang sedang login
-     */
-    private function getCurrentUser() {
-        if ($this->isLoggedIn()) {
-            return [
-                'id_user' => $_SESSION['user_id'],
-                'username' => $_SESSION['username'],
-                'email' => $_SESSION['email'],
-                'jabatan' => $_SESSION['jabatan'],
-                'role' => $_SESSION['role']
-            ];
-        }
-        return null;
-    }
-
-    /**
-     * Require login untuk mengakses halaman
-     */
-    private function requireLogin() {
-        if (!$this->isLoggedIn()) {
-            $response = [
-                'success' => false,
-                'message' => 'Silakan login terlebih dahulu',
-                'redirect' => 'index.php'
-            ];
-
-            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-                header('Content-Type: application/json');
-                echo json_encode($response);
-                exit;
-            } else {
-                header('Location: index.php');
-                exit;
-            }
-        }
-    }
-
-    /**
-     * Require role tertentu untuk mengakses halaman
-     */
-    private function requireRole($requiredRole) {
-        $this->requireLogin();
-
-        if ($_SESSION['role'] !== $requiredRole) {
-            $response = [
-                'success' => false,
-                'message' => 'Anda tidak memiliki akses ke halaman ini'
-            ];
-
-            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-                header('Content-Type: application/json');
-                echo json_encode($response);
-                exit;
-            } else {
-                // Redirect ke dashboard user
-                $this->redirectToDashboard();
-                exit;
-            }
-        }
-    }
-
-    /**
-     * Redirect ke dashboard sesuai role
-     */
-    private function redirectToDashboard() {
-        $dashboardUrl = $this->getDashboardUrl();
-        header("Location: $dashboardUrl");
-        exit;
-    }
-
-    /**
-     * Mendapatkan URL dashboard sesuai role
-     */
-    private function getDashboardUrl() {
-        $role = $_SESSION['role'] ?? '';
-
-        switch ($role) {
-            case 'admin':
-                return 'index.php?controller=dashboard&action=admin';
-            case 'camat':
-                return 'index.php?controller=dashboard&action=camat';
-            case 'opd':
-                return 'index.php?controller=dashboard&action=opd';
-            default:
-                return 'index.php';
-        }
     }
 
     /**
@@ -184,8 +81,7 @@ class DashboardController {
                 break;
             default:
                 // Redirect ke login jika role tidak valid
-                header('Location: index.php');
-                exit;
+                $this->redirect('index.php');
         }
     }
 
@@ -249,8 +145,7 @@ class DashboardController {
             }
         } catch (Exception $e) {
             $_SESSION['error'] = 'Error export: ' . $e->getMessage();
-            header('Location: index.php?page=dashboard&role=admin');
-            exit;
+            $this->redirect(route('dashboard', 'admin'));
         }
     }
 

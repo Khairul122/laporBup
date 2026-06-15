@@ -1,8 +1,9 @@
 <?php
 
 require_once __DIR__ . '/../config/koneksi.php';
+require_once __DIR__ . '/BaseModel.php';
 
-class WAGatewayModel {
+class WAGatewayModel extends BaseModel {
     private $conn;
     private $table = "wagateway";
 

@@ -1,14 +1,9 @@
 <?php
 
 require_once __DIR__ . '/../config/koneksi.php';
+require_once __DIR__ . '/BaseModel.php';
 
-class LaporanModel {
-    private $db;
-
-    public function __construct() {
-        $this->db = getKoneksi();
-    }
-
+class LaporanModel extends BaseModel {
     /**
      * Get laporan OPD with pagination and filtering
      */

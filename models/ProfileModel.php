@@ -1,13 +1,8 @@
 <?php
 require_once __DIR__ . '/../config/koneksi.php';
+require_once __DIR__ . '/BaseModel.php';
 
-class ProfileModel {
-    public $db;
-
-    public function __construct() {
-        $this->db = getKoneksi();
-    }
-
+class ProfileModel extends BaseModel {
     /**
      * Get all profiles with pagination
      */

@@ -1,14 +1,9 @@
 <?php
 
 require_once __DIR__ . '/../config/koneksi.php';
+require_once __DIR__ . '/BaseModel.php';
 
-class DashboardModel {
-    private $db;
-
-    public function __construct() {
-        $this->db = getKoneksi();
-    }
-
+class DashboardModel extends BaseModel {
     /**
      * Get total laporan berdasarkan status (semua laporan)
      */

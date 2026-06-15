@@ -1,8 +1,8 @@
 <?php
 $title = isset($laporan) ? 'Edit Laporan Camat - ' : 'Buat Laporan Camat Baru - ';
-include 'views/template/header.php';
+include 'views/layouts/simple-header.php';
 ?>
-<?php include 'views/template/navbar.php'; ?>
+<?php include 'views/layouts/simple-navbar.php'; ?>
 
 <script>
 // Load desa berdasarkan kecamatan yang dipilih
@@ -335,7 +335,7 @@ document.addEventListener('change', function(e) {
     </div>
 </div>
 
-<?php include 'views/template/footer.php'; ?>
+<?php include 'views/layouts/simple-footer.php'; ?>
 
 <!-- Delete Confirmation Modal -->
 <div id="deleteModal" class="modal">
@@ -1178,6 +1178,6 @@ select.form-control {
     </div>
 </div>
 
-<?php include 'template/script.php'; ?>
+<?php include 'views/layouts/admin-script.php'; ?>
 </body>
 </html>

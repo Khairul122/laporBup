@@ -1,8 +1,8 @@
 <?php
 $title = $title ?? 'Daftar Laporan OPD - ';
-include 'views/template/header.php';
+include 'views/layouts/simple-header.php';
 ?>
-<?php include 'views/template/navbar.php'; ?>
+<?php include 'views/layouts/simple-navbar.php'; ?>
 
 <div class="fullscreen-container">
     <div class="fullscreen-content">
@@ -821,4 +821,4 @@ function showNotification(message, type) {
 }
 </style>
 
-<?php include 'views/template/footer.php'; ?>
+<?php include 'views/layouts/simple-footer.php'; ?>

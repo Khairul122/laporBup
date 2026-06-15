@@ -3,18 +3,11 @@
 require_once 'models/LaporanModel.php';
 require_once __DIR__ . '/../vendor/tecnickcom/tcpdf/tcpdf.php';
 
-class LaporanOPDCetakController {
+class LaporanOPDCetakController extends BaseController {
     private $laporanModel;
 
     public function __construct() {
         $this->laporanModel = new LaporanModel();
-    }
-
-    /**
-     * Cek apakah user sudah login
-     */
-    private function isLoggedIn() {
-        return isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
     }
 
     /**
@@ -35,28 +28,6 @@ class LaporanOPDCetakController {
                 exit;
             } else {
                 header('Location: index.php?controller=dashboard&action=' . $_SESSION['role']);
-                exit;
-            }
-        }
-    }
-
-    /**
-     * Require login untuk mengakses halaman
-     */
-    private function requireLogin() {
-        if (!$this->isLoggedIn()) {
-            $response = [
-                'success' => false,
-                'message' => 'Silakan login terlebih dahulu',
-                'redirect' => 'index.php'
-            ];
-
-            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-                header('Content-Type: application/json');
-                echo json_encode($response);
-                exit;
-            } else {
-                header('Location: index.php');
                 exit;
             }
         }

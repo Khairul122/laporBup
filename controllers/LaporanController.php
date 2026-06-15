@@ -8,8 +8,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 error_reporting(0);
 ini_set('display_errors', 0);
 
-class LaporanController
-{
+class LaporanController extends BaseController {
     private $laporanModel;
 
     public function __construct()
@@ -17,62 +16,6 @@ class LaporanController
         $this->laporanModel = new LaporanModel();
         // Create TTD table if not exists
         $this->laporanModel->createTTDTable();
-    }
-
-    /**
-     * Cek apakah user sudah login
-     */
-    private function isLoggedIn()
-    {
-        return isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
-    }
-
-    /**
-     * Mendapatkan role user yang sedang login
-     */
-    private function getUserRole()
-    {
-        return $_SESSION['role'] ?? null;
-    }
-
-    /**
-     * Mendapatkan data user yang sedang login
-     */
-    private function getCurrentUser()
-    {
-        if ($this->isLoggedIn()) {
-            return [
-                'id_user' => $_SESSION['user_id'],
-                'username' => $_SESSION['username'],
-                'email' => $_SESSION['email'],
-                'jabatan' => $_SESSION['jabatan'],
-                'role' => $_SESSION['role']
-            ];
-        }
-        return null;
-    }
-
-    /**
-     * Require login untuk mengakses halaman
-     */
-    private function requireLogin()
-    {
-        if (!$this->isLoggedIn()) {
-            $response = [
-                'success' => false,
-                'message' => 'Silakan login terlebih dahulu',
-                'redirect' => 'index.php'
-            ];
-
-            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-                header('Content-Type: application/json');
-                echo json_encode($response);
-                exit;
-            } else {
-                header('Location: index.php');
-                exit;
-            }
-        }
     }
 
     /**
@@ -273,7 +216,6 @@ class LaporanController
         // Email dan Website
         $pdf->SetY($y_text + 22);
         $pdf->Cell(0, 5, 'E-mail : diskominfo@M.madina.go.id    Website : www.diskominfo.madina.go.id', 0, 1, 'C', 0, '', 0, false, 'T', 'M');
-
 
         // Tambahkan garis horizontal di bawah kop
         $pdf->SetLineWidth(1);
@@ -748,7 +690,6 @@ class LaporanController
         }
     }
 
-
     /**
      * Halaman tanda tangan laporan
      */
@@ -772,8 +713,7 @@ class LaporanController
 
             if (!$laporan) {
                 $_SESSION['error'] = 'Laporan tidak ditemukan';
-                header('Location: index.php?controller=laporan&action=index');
-                exit;
+                $this->redirect('index.php?controller=laporan&action=index');
             }
         }
 
@@ -833,8 +773,7 @@ class LaporanController
 
         if (!$laporan) {
             $_SESSION['error'] = 'Laporan tidak ditemukan';
-            header('Location: index.php?controller=laporan&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporan&action=index');
         }
 
         // Get signature data

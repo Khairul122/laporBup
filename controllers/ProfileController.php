@@ -3,20 +3,13 @@
 require_once 'models/ProfileModel.php';
 require_once 'models/AuthModel.php';
 
-class ProfileController {
+class ProfileController extends BaseController {
     private $profileModel;
     private $authModel;
 
     public function __construct() {
         $this->profileModel = new ProfileModel();
         $this->authModel = new AuthModel();
-    }
-
-    /**
-     * Check if user is logged in
-     */
-    private function isLoggedIn() {
-        return isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
     }
 
     /**
@@ -32,14 +25,12 @@ class ProfileController {
     private function requireAdminLogin() {
         if (!$this->isLoggedIn()) {
             $_SESSION['error'] = 'Silakan login terlebih dahulu';
-            header('Location: index.php');
-            exit;
+            $this->redirect('index.php');
         }
 
         if (!$this->isAdmin()) {
             $_SESSION['error'] = 'Akses ditolak. Halaman ini hanya untuk admin.';
-            header('Location: index.php');
-            exit;
+            $this->redirect('index.php');
         }
     }
 
@@ -83,8 +74,7 @@ class ProfileController {
         $this->requireAdminLogin();
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: index.php?controller=profile&action=create');
-            exit;
+            $this->redirect('index.php?controller=profile&action=create');
         }
 
         // Validate input
@@ -94,22 +84,19 @@ class ProfileController {
         // Validation
         if (empty($nama_aplikasi) || empty($role)) {
             $_SESSION['error'] = 'Semua field wajib diisi';
-            header('Location: index.php?controller=profile&action=create');
-            exit;
+            $this->redirect('index.php?controller=profile&action=create');
         }
 
         // Validate role
         if (!in_array($role, ['camat', 'opd'])) {
             $_SESSION['error'] = 'Role tidak valid. Pilih antara camat atau opd.';
-            header('Location: index.php?controller=profile&action=create');
-            exit;
+            $this->redirect('index.php?controller=profile&action=create');
         }
 
         // Check if nama_aplikasi already exists
         if ($this->profileModel->checkNamaAplikasiExists($nama_aplikasi)) {
             $_SESSION['error'] = 'Nama aplikasi sudah digunakan. Silakan pilih nama lain.';
-            header('Location: index.php?controller=profile&action=create');
-            exit;
+            $this->redirect('index.php?controller=profile&action=create');
         }
 
         // Handle logo upload
@@ -118,8 +105,7 @@ class ProfileController {
             $upload_result = $this->handleLogoUpload($_FILES['logo']);
             if (!$upload_result['success']) {
                 $_SESSION['error'] = $upload_result['message'];
-                header('Location: index.php?controller=profile&action=create');
-                exit;
+                $this->redirect('index.php?controller=profile&action=create');
             }
             $logo = $upload_result['file_path'];
         }
@@ -154,16 +140,14 @@ class ProfileController {
 
         if (!$id) {
             $_SESSION['error'] = 'ID profile tidak ditemukan';
-            header('Location: index.php?controller=profile&action=index');
-            exit;
+            $this->redirect('index.php?controller=profile&action=index');
         }
 
         $profile = $this->profileModel->getProfileById($id);
 
         if (!$profile) {
             $_SESSION['error'] = 'Profile tidak ditemukan';
-            header('Location: index.php?controller=profile&action=index');
-            exit;
+            $this->redirect('index.php?controller=profile&action=index');
         }
 
         require_once 'views/profile/form.php';
@@ -180,8 +164,7 @@ class ProfileController {
 
         if (!$id) {
             $_SESSION['error'] = 'ID profile tidak ditemukan';
-            header('Location: index.php?controller=profile&action=index');
-            exit;
+            $this->redirect('index.php?controller=profile&action=index');
         }
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -265,8 +248,7 @@ class ProfileController {
 
         if (!$id) {
             $_SESSION['error'] = 'ID profile tidak ditemukan';
-            header('Location: index.php?controller=profile&action=index');
-            exit;
+            $this->redirect('index.php?controller=profile&action=index');
         }
 
         // Handle AJAX request
@@ -286,8 +268,7 @@ class ProfileController {
                 $_SESSION['error'] = $result['message'];
             }
 
-            header('Location: index.php?controller=profile&action=index');
-            exit;
+            $this->redirect('index.php?controller=profile&action=index');
         }
     }
 
@@ -372,8 +353,7 @@ class ProfileController {
             exit;
         } else {
             // For non-AJAX request, redirect to index
-            header('Location: index.php?controller=profile&action=index');
-            exit;
+            $this->redirect('index.php?controller=profile&action=index');
         }
     }
 }

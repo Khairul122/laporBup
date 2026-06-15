@@ -34,7 +34,7 @@
     <ul class="navbar-nav ms-auto">
       <li class="nav-item dropdown d-none d-lg-block user-dropdown">
         <a class="nav-link" id="UserDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-          <img class="img-md rounded-circle" src="<?php echo file_exists('uploads/' . $foto_profile) ? 'uploads/' . $foto_profile : 'uploads/user.png'; ?>" style="width: 35px;" alt="Profile image" />
+          <img class="img-md rounded-circle" src="<?php echo asset(file_exists('uploads/' . $foto_profile) ? 'uploads/' . $foto_profile : 'uploads/user.png'); ?>" style="width: 35px;" alt="Profile image" />
         </a>
         <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
           <div class="dropdown-header text-center">
@@ -43,7 +43,7 @@
             <p class="mb-0 text-muted text-small">Role: <span class="text-primary text-capitalize"><?= $role ?></span></p>
           </div>
         
-          <a class="dropdown-item" href="index.php?controller=Auth&action=logout">
+          <a class="dropdown-item" href="<?= route('Auth', 'logout') ?>">
             <i class="dropdown-item-icon mdi mdi-power text-primary me-2"></i>
             Sign Out
           </a>

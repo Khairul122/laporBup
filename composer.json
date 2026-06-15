@@ -2,5 +2,12 @@
     "require": {
         "tecnickcom/tcpdf": "^6.10",
         "phpoffice/phpspreadsheet": "^5.2"
+    },
+    "autoload": {
+        "classmap": [
+            "core/",
+            "controllers/",
+            "models/"
+        ]
     }
 }

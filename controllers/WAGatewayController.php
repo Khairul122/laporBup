@@ -2,40 +2,11 @@
 
 require_once 'models/WAGatewayModel.php';
 
-class WAGatewayController {
+class WAGatewayController extends BaseController {
     private $model;
 
     public function __construct() {
         $this->model = new WAGatewayModel();
-    }
-
-    /**
-     * Cek apakah user sudah login
-     */
-    private function isLoggedIn() {
-        return isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
-    }
-
-    /**
-     * Require login untuk mengakses halaman
-     */
-    private function requireLogin() {
-        if (!$this->isLoggedIn()) {
-            $response = [
-                'success' => false,
-                'message' => 'Silakan login terlebih dahulu',
-                'redirect' => 'index.php'
-            ];
-
-            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-                header('Content-Type: application/json');
-                echo json_encode($response);
-                exit;
-            } else {
-                header('Location: index.php');
-                exit;
-            }
-        }
     }
 
     /**
@@ -55,8 +26,7 @@ class WAGatewayController {
                 echo json_encode($response);
                 exit;
             } else {
-                header('Location: index.php?controller=dashboard&action=admin');
-                exit;
+                $this->redirect('index.php?controller=dashboard&action=admin');
             }
         }
     }
@@ -85,8 +55,7 @@ class WAGatewayController {
             $message = $this->model->getMessageById($id);
             if (!$message) {
                 $_SESSION['error'] = 'Pesan tidak ditemukan';
-                header('Location: index.php?controller=waGateway');
-                exit;
+                $this->redirect('index.php?controller=waGateway');
             }
         }
 
@@ -261,8 +230,7 @@ class WAGatewayController {
             exit;
         } catch (Exception $e) {
             $_SESSION['error'] = 'Error export: ' . $e->getMessage();
-            header('Location: index.php?controller=waGateway');
-            exit;
+            $this->redirect('index.php?controller=waGateway');
         }
     }
 

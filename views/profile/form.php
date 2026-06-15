@@ -1,14 +1,14 @@
 <?php
 $title = isset($profile) ? 'Edit Profile - ' : 'Tambah Profile Baru - ';
-include 'template/header.php';
+include 'views/layouts/admin-header.php';
 ?>
 
 <body class="with-welcome-text">
   <div class="container-scroller">
-    <?php include 'template/navbar.php'; ?>
+    <?php include 'views/layouts/admin-navbar.php'; ?>
     <div class="container-fluid page-body-wrapper">
-      <?php include 'template/setting_panel.php'; ?>
-      <?php include 'template/sidebar.php'; ?>
+      <?php include 'views/layouts/admin-setting-panel.php'; ?>
+      <?php include 'views/layouts/admin-sidebar.php'; ?>
       <div class="main-panel">
         <div class="content-wrapper">
           <div class="row">
@@ -211,7 +211,7 @@ include 'template/header.php';
       </div>
     </div>
   </div>
-  <?php include 'template/script.php'; ?>
+  <?php include 'views/layouts/admin-script.php'; ?>
 
   <script>
   // Define global functions

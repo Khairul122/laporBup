@@ -5,26 +5,24 @@ session_start();
 // Memuat koneksi database
 require_once 'config/koneksi.php';
 
+// Base controller (auth guard, render, redirect helper)
+require_once 'core/BaseController.php';
+
 // Menentukan controller dan action default
 $controller = isset($_GET['controller']) ? $_GET['controller'] : 'auth';
 $action = isset($_GET['action']) ? $_GET['action'] : 'index';
 
-// Handle special controller cases
-$controllerMap = [
-    'laporanOPDAdmin' => 'LaporanOPDAdminController',
-    'laporanCamatAdmin' => 'LaporanCamatAdminController',
-    'auth' => 'AuthController',
-    'dashboard' => 'DashboardController'
-];
+// Extension point untuk alias controller khusus (camelCase -> ClassName)
+// di luar konvensi default ucfirst($controller) . 'Controller'
+$controllerMap = [];
 
 // Menentukan file controller dan class
 if (isset($controllerMap[$controller])) {
     $controllerClass = $controllerMap[$controller];
-    $controllerFile = 'controllers/' . $controllerClass . '.php';
 } else {
     $controllerClass = ucfirst($controller) . 'Controller';
-    $controllerFile = 'controllers/' . $controllerClass . '.php';
 }
+$controllerFile = 'controllers/' . $controllerClass . '.php';
 
 // Memeriksa apakah file controller ada
 if (file_exists($controllerFile)) {
@@ -55,14 +53,20 @@ if (file_exists($controllerFile)) {
             if (method_exists($controllerInstance, 'index')) {
                 $controllerInstance->index();
             } else {
-                echo "Action '$action' not found in controller '$controllerClass'";
+                http_response_code(404);
+                $message = "Aksi '$action' tidak ditemukan pada controller '$controllerClass'";
+                require 'views/errors/404.php';
             }
         }
     } else {
-        echo "Controller class '$controllerClass' not found";
+        http_response_code(404);
+        $message = "Controller class '$controllerClass' tidak ditemukan";
+        require 'views/errors/404.php';
     }
 } else {
     // Jika controller tidak ditemukan, tampilkan halaman 404
-    echo "Controller file '$controllerFile' not found";
+    http_response_code(404);
+    $message = "Halaman '$controller' tidak ditemukan";
+    require 'views/errors/404.php';
 }
 ?>

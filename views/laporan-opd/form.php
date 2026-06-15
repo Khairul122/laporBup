@@ -1,8 +1,8 @@
 <?php
 $title = isset($laporan) ? 'Edit Laporan OPD - ' : 'Buat Laporan OPD Baru - ';
-include 'views/template/header.php';
+include 'views/layouts/simple-header.php';
 ?>
-<?php include 'views/template/navbar.php'; ?>
+<?php include 'views/layouts/simple-navbar.php'; ?>
 
 <div class="fullscreen-container">
     <div class="fullscreen-content">
@@ -1132,4 +1132,4 @@ document.head.appendChild(style);
     </div>
 </div>
 
-<?php include 'views/template/footer.php'; ?>
+<?php include 'views/layouts/simple-footer.php'; ?>

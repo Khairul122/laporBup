@@ -3,7 +3,7 @@ require_once 'models/LaporanCamatModel.php';
 require_once 'models/AuthModel.php';
 require_once 'models/WilayahModel.php';
 
-class LaporanCamatController {
+class LaporanCamatController extends BaseController {
     private $laporanCamatModel;
     private $authModel;
     private $wilayahModel;
@@ -12,35 +12,6 @@ class LaporanCamatController {
         $this->laporanCamatModel = new LaporanCamatModel();
         $this->authModel = new AuthModel();
         $this->wilayahModel = new WilayahModel();
-    }
-
-    /**
-     * Check if user is logged in
-     */
-    private function isLoggedIn() {
-        return isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
-    }
-
-    /**
-     * Require login for accessing pages
-     */
-    private function requireLogin() {
-        if (!$this->isLoggedIn()) {
-            $response = [
-                'success' => false,
-                'message' => 'Silakan login terlebih dahulu',
-                'redirect' => 'index.php'
-            ];
-
-            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-                header('Content-Type: application/json');
-                echo json_encode($response);
-                exit;
-            } else {
-                header('Location: index.php');
-                exit;
-            }
-        }
     }
 
     /**
@@ -99,8 +70,7 @@ class LaporanCamatController {
         // Only camat can create laporan camat
         if ($_SESSION['role'] !== 'camat') {
             $_SESSION['error'] = 'Hanya camat yang dapat membuat laporan camat';
-            header('Location: index.php?controller=laporanCamat&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanCamat&action=index');
         }
         
         // Load kecamatan and desa data for the form
@@ -120,13 +90,11 @@ class LaporanCamatController {
         
         if ($_SESSION['role'] !== 'camat') {
             $_SESSION['error'] = 'Hanya camat yang dapat membuat laporan camat';
-            header('Location: index.php?controller=laporanCamat&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanCamat&action=index');
         }
         
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: index.php?controller=laporanCamat&action=create');
-            exit;
+            $this->redirect('index.php?controller=laporanCamat&action=create');
         }
         
         // Validate input
@@ -141,8 +109,7 @@ class LaporanCamatController {
         if (empty($nama_pelapor) || empty($id_desa) || empty($id_kecamatan) || 
             empty($waktu_kejadian) || empty($tujuan) || empty($uraian_laporan)) {
             $_SESSION['error'] = 'Semua field wajib diisi';
-            header('Location: index.php?controller=laporanCamat&action=create');
-            exit;
+            $this->redirect('index.php?controller=laporanCamat&action=create');
         }
         
         // Get nama_desa and nama_kecamatan from ID
@@ -151,8 +118,7 @@ class LaporanCamatController {
         
         if (!$desa || !$kecamatan) {
             $_SESSION['error'] = 'Data desa atau kecamatan tidak valid';
-            header('Location: index.php?controller=laporanCamat&action=create');
-            exit;
+            $this->redirect('index.php?controller=laporanCamat&action=create');
         }
         
         $nama_desa = $desa['nama_desa'];
@@ -161,16 +127,14 @@ class LaporanCamatController {
         // Validate waktu kejadian format
         if (!strtotime($waktu_kejadian)) {
             $_SESSION['error'] = 'Format waktu kejadian tidak valid';
-            header('Location: index.php?controller=laporanCamat&action=create');
-            exit;
+            $this->redirect('index.php?controller=laporanCamat&action=create');
         }
         
         // Validate tujuan
         $valid_tujuuan = ['bupati', 'wakil bupati', 'sekda', 'opd'];
         if (!in_array($tujuan, $valid_tujuuan)) {
             $_SESSION['error'] = 'Tujuan laporan tidak valid';
-            header('Location: index.php?controller=laporanCamat&action=create');
-            exit;
+            $this->redirect('index.php?controller=laporanCamat&action=create');
         }
         
         // Handle file upload if exists
@@ -190,8 +154,7 @@ class LaporanCamatController {
             $allowed_types = $this->getAllowedFileTypes();
             if (!in_array($file_type, $allowed_types)) {
                 $_SESSION['error'] = 'Format file tidak diizinkan';
-                header('Location: index.php?controller=laporanCamat&action=create');
-                exit;
+                $this->redirect('index.php?controller=laporanCamat&action=create');
             }
             
             // Validate file size (max 100MB for videos, 10MB for other files)
@@ -203,8 +166,7 @@ class LaporanCamatController {
             if ($file_size > $max_file_size) {
                 $max_size_mb = $max_file_size / 1000000;
                 $_SESSION['error'] = "Ukuran file terlalu besar (maksimal {$max_size_mb}MB)";
-                header('Location: index.php?controller=laporanCamat&action=create');
-                exit;
+                $this->redirect('index.php?controller=laporanCamat&action=create');
             }
             
             // Generate unique filename with correct extension
@@ -213,8 +175,7 @@ class LaporanCamatController {
             
             if (!move_uploaded_file($file_tmp, $upload_file)) {
                 $_SESSION['error'] = 'Gagal mengunggah file';
-                header('Location: index.php?controller=laporanCamat&action=create');
-                exit;
+                $this->redirect('index.php?controller=laporanCamat&action=create');
             }
         }
         
@@ -253,23 +214,20 @@ class LaporanCamatController {
         
         if (!$id) {
             $_SESSION['error'] = 'ID laporan tidak ditemukan';
-            header('Location: index.php?controller=laporanCamat&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanCamat&action=index');
         }
         
         $laporan = $this->laporanCamatModel->getById($id);
         
         if (!$laporan) {
             $_SESSION['error'] = 'Laporan tidak ditemukan';
-            header('Location: index.php?controller=laporanCamat&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanCamat&action=index');
         }
         
         // Check permission
         if (!$this->hasPermission($laporan['id_user'])) {
             $_SESSION['error'] = 'Anda tidak memiliki akses ke laporan ini';
-            header('Location: index.php?controller=laporanCamat&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanCamat&action=index');
         }
         
         // Only allow edit if status is 'baru'
@@ -322,8 +280,7 @@ class LaporanCamatController {
         
         if (!$id) {
             $_SESSION['error'] = 'ID laporan tidak ditemukan';
-            header('Location: index.php?controller=laporanCamat&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanCamat&action=index');
         }
         
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -335,15 +292,13 @@ class LaporanCamatController {
         
         if (!$laporan) {
             $_SESSION['error'] = 'Laporan tidak ditemukan';
-            header('Location: index.php?controller=laporanCamat&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanCamat&action=index');
         }
         
         // Check permission
         if (!$this->hasPermission($laporan['id_user'])) {
             $_SESSION['error'] = 'Anda tidak memiliki akses ke laporan ini';
-            header('Location: index.php?controller=laporanCamat&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanCamat&action=index');
         }
         
         // Only allow edit if status is 'baru'
@@ -540,23 +495,20 @@ class LaporanCamatController {
         
         if (!$id) {
             $_SESSION['error'] = 'ID laporan tidak ditemukan';
-            header('Location: index.php?controller=laporanCamat&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanCamat&action=index');
         }
         
         $laporan = $this->laporanCamatModel->getById($id);
         
         if (!$laporan) {
             $_SESSION['error'] = 'Laporan tidak ditemukan';
-            header('Location: index.php?controller=laporanCamat&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanCamat&action=index');
         }
         
         // Check permission
         if (!$this->hasPermission($laporan['id_user'])) {
             $_SESSION['error'] = 'Anda tidak memiliki akses ke laporan ini';
-            header('Location: index.php?controller=laporanCamat&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanCamat&action=index');
         }
         
         require_once 'views/laporan-camat/detail.php';
@@ -573,8 +525,7 @@ class LaporanCamatController {
         
         if (!$id) {
             $_SESSION['error'] = 'ID laporan tidak ditemukan';
-            header('Location: index.php?controller=laporanCamat&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanCamat&action=index');
         }
         
         if ($_SESSION['role'] !== 'admin') {
@@ -671,23 +622,20 @@ class LaporanCamatController {
 
         if (!$id) {
             $_SESSION['error'] = 'ID laporan tidak ditemukan';
-            header('Location: index.php?controller=laporanCamat&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanCamat&action=index');
         }
 
         $laporan = $this->laporanCamatModel->getById($id);
 
         if (!$laporan) {
             $_SESSION['error'] = 'Laporan tidak ditemukan';
-            header('Location: index.php?controller=laporanCamat&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanCamat&action=index');
         }
 
         // Check permission
         if (!$this->hasPermission($laporan['id_user'])) {
             $_SESSION['error'] = 'Anda tidak memiliki akses ke file ini';
-            header('Location: index.php?controller=laporanCamat&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanCamat&action=index');
         }
 
         // Check if file exists
@@ -731,8 +679,7 @@ class LaporanCamatController {
         // Only camat can export
         if ($_SESSION['role'] !== 'camat') {
             $_SESSION['error'] = 'Hanya camat yang dapat mengekspor data';
-            header('Location: index.php?controller=laporanCamat&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanCamat&action=index');
         }
 
         // Get filter parameters
@@ -761,8 +708,7 @@ class LaporanCamatController {
 
             if (empty($laporans)) {
                 $_SESSION['error'] = 'Tidak ada data untuk diekspor';
-                header('Location: index.php?controller=laporanCamat&action=index');
-                exit;
+                $this->redirect('index.php?controller=laporanCamat&action=index');
             }
 
             // Generate HTML Excel output
@@ -836,8 +782,7 @@ class LaporanCamatController {
             error_log("Stack trace: " . $e->getTraceAsString());
 
             $_SESSION['error'] = 'Terjadi kesalahan saat mengekspor data. Silakan coba lagi atau hubungi administrator.';
-            header('Location: index.php?controller=laporanCamat&action=index');
-            exit;
+            $this->redirect('index.php?controller=laporanCamat&action=index');
         }
     }
 }

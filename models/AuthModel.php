@@ -1,14 +1,9 @@
 <?php
 
 require_once __DIR__ . '/../config/koneksi.php';
+require_once __DIR__ . '/BaseModel.php';
 
-class AuthModel {
-    private $db;
-
-    public function __construct() { 
-        $this->db = getKoneksi();
-    }
-
+class AuthModel extends BaseModel {
     /**
      * Login user
      * @param string $username

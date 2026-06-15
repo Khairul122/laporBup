@@ -1,28 +1,28 @@
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
   <ul class="nav">
     <li class="nav-item">
-      <a class="nav-link" href="index.php?controller=Dashboard&action=admin">
+      <a class="nav-link" href="<?= route('Dashboard', 'admin') ?>">
         <i class="mdi mdi-view-dashboard menu-icon"></i>
         <span class="menu-title">Dashboard</span>
       </a>
     </li>
 
     <li class="nav-item">
-      <a class="nav-link" href="index.php?controller=dataPelapor&action=index">
+      <a class="nav-link" href="<?= route('dataPelapor', 'index') ?>">
         <i class="mdi mdi-account-multiple menu-icon"></i>
         <span class="menu-title">Data Pelapor</span>
       </a>
     </li>
 
     <li class="nav-item">
-      <a class="nav-link" href="index.php?controller=laporanOPDAdmin&action=index">
+      <a class="nav-link" href="<?= route('laporanOPDAdmin', 'index') ?>">
         <i class="mdi mdi-file-document menu-icon"></i>
         <span class="menu-title">Laporan OPD</span>
       </a>
     </li>
 
     <li class="nav-item">
-      <a class="nav-link" href="index.php?controller=laporanCamatAdmin&action=index">
+      <a class="nav-link" href="<?= route('laporanCamatAdmin', 'index') ?>">
         <i class="mdi mdi-map-marker menu-icon"></i>
         <span class="menu-title">Laporan Camat</span>
       </a>
@@ -41,7 +41,7 @@
           <!-- Menu Kecamatan -->
           <li class="nav-item">
             <a class="nav-link <?php echo (isset($_GET['controller']) && $_GET['controller'] == 'kecamatan' && isset($_GET['action']) && $_GET['action'] == 'index-kecamatan') ? 'active' : ''; ?>"
-              href="index.php?controller=kecamatan&action=index-kecamatan">
+              href="<?= route('kecamatan', 'index-kecamatan') ?>">
               <i class="fa-solid fa-map-location-dot menu-icon"></i>
               Kecamatan
             </a>
@@ -50,7 +50,7 @@
           <!-- Menu Desa -->
           <li class="nav-item">
             <a class="nav-link <?php echo (isset($_GET['controller']) && $_GET['controller'] == 'desa' && isset($_GET['action']) && $_GET['action'] == 'index-desa') ? 'active' : ''; ?>"
-              href="index.php?controller=desa&action=index-desa">
+              href="<?= route('desa', 'index-desa') ?>">
               <i class="fa-solid fa-house-chimney menu-icon"></i>
               Desa
             </a>
@@ -59,7 +59,7 @@
           <!-- Menu OPD -->
           <li class="nav-item">
             <a class="nav-link <?php echo (isset($_GET['controller']) && $_GET['controller'] == 'opd' && isset($_GET['action']) && $_GET['action'] == 'index') ? 'active' : ''; ?>"
-              href="index.php?controller=opd&action=index">
+              href="<?= route('opd', 'index') ?>">
               <i class="fa-solid fa-building menu-icon"></i>
               OPD
             </a>
@@ -68,7 +68,7 @@
           <!-- Menu Profile -->
           <li class="nav-item">
             <a class="nav-link <?php echo (isset($_GET['controller']) && $_GET['controller'] == 'profile' && isset($_GET['action']) && $_GET['action'] == 'index') ? 'active' : ''; ?>"
-              href="index.php?controller=profile&action=index">
+              href="<?= route('profile', 'index') ?>">
               <i class="fa-solid fa-user-gear menu-icon"></i>
               Profile
             </a>
@@ -80,14 +80,14 @@
     </li>
 
     <li class="nav-item">
-      <a class="nav-link" href="index.php?controller=laporan&action=index">
+      <a class="nav-link" href="<?= route('laporan', 'index') ?>">
         <i class="mdi mdi-printer menu-icon"></i>
         <span class="menu-title">Cetak Laporan</span>
       </a>
     </li>
 
     <li class="nav-item">
-      <a class="nav-link" href="index.php?controller=waGateway&action=index">
+      <a class="nav-link" href="<?= route('waGateway', 'index') ?>">
         <i class="mdi mdi-whatsapp menu-icon"></i>
         <span class="menu-title">Kirim Pesan</span>
       </a>

@@ -2,63 +2,11 @@
 
 require_once 'models/DataPelaporModel.php';
 
-class DataPelaporController {
+class DataPelaporController extends BaseController {
     private $dataPelaporModel;
 
     public function __construct() {
         $this->dataPelaporModel = new DataPelaporModel();
-    }
-
-    /**
-     * Cek apakah user sudah login
-     */
-    private function isLoggedIn() {
-        return isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
-    }
-
-    /**
-     * Mendapatkan role user yang sedang login
-     */
-    private function getUserRole() {
-        return $_SESSION['role'] ?? null;
-    }
-
-    /**
-     * Mendapatkan data user yang sedang login
-     */
-    private function getCurrentUser() {
-        if ($this->isLoggedIn()) {
-            return [
-                'id_user' => $_SESSION['user_id'],
-                'username' => $_SESSION['username'],
-                'email' => $_SESSION['email'],
-                'jabatan' => $_SESSION['jabatan'],
-                'role' => $_SESSION['role']
-            ];
-        }
-        return null;
-    }
-
-    /**
-     * Require login untuk mengakses halaman
-     */
-    private function requireLogin() {
-        if (!$this->isLoggedIn()) {
-            $response = [
-                'success' => false,
-                'message' => 'Silakan login terlebih dahulu',
-                'redirect' => 'index.php'
-            ];
-
-            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-                header('Content-Type: application/json');
-                echo json_encode($response);
-                exit;
-            } else {
-                header('Location: index.php');
-                exit;
-            }
-        }
     }
 
     /**
@@ -78,8 +26,7 @@ class DataPelaporController {
                 echo json_encode($response);
                 exit;
             } else {
-                header('Location: index.php?controller=dashboard&action=admin');
-                exit;
+                $this->redirect('index.php?controller=dashboard&action=admin');
             }
         }
     }
@@ -119,8 +66,7 @@ class DataPelaporController {
             $dataPelapor = $this->dataPelaporModel->getDataPelaporById($id);
             if (!$dataPelapor) {
                 $_SESSION['error'] = 'Data pelapor tidak ditemukan';
-                header('Location: index.php?controller=dataPelapor');
-                exit;
+                $this->redirect('index.php?controller=dataPelapor');
             }
         }
 
@@ -394,8 +340,7 @@ class DataPelaporController {
             exit;
         } catch (Exception $e) {
             $_SESSION['error'] = 'Error export: ' . $e->getMessage();
-            header('Location: index.php?controller=dataPelapor');
-            exit;
+            $this->redirect('index.php?controller=dataPelapor');
         }
     }
 }

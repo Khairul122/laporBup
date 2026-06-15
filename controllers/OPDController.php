@@ -2,42 +2,13 @@
 require_once 'models/OPDModel.php';
 require_once 'models/AuthModel.php';
 
-class OPDController {
+class OPDController extends BaseController {
     private $opdModel;
     private $authModel;
 
     public function __construct() {
         $this->opdModel = new OPDModel();
         $this->authModel = new AuthModel();
-    }
-
-    /**
-     * Check if user is logged in
-     */
-    private function isLoggedIn() {
-        return isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
-    }
-
-    /**
-     * Require login for accessing pages
-     */
-    private function requireLogin() {
-        if (!$this->isLoggedIn()) {
-            $response = [
-                'success' => false,
-                'message' => 'Silakan login terlebih dahulu',
-                'redirect' => 'index.php'
-            ];
-
-            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-                header('Content-Type: application/json');
-                echo json_encode($response);
-                exit;
-            } else {
-                header('Location: index.php');
-                exit;
-            }
-        }
     }
 
     /**
@@ -98,8 +69,7 @@ class OPDController {
         $this->requireAdmin();
         
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: index.php?controller=opd&action=create');
-            exit;
+            $this->redirect('index.php?controller=opd&action=create');
         }
         
         // Validate input
@@ -108,15 +78,13 @@ class OPDController {
         // Validation
         if (empty($nama_opd)) {
             $_SESSION['error'] = 'Nama OPD wajib diisi';
-            header('Location: index.php?controller=opd&action=create');
-            exit;
+            $this->redirect('index.php?controller=opd&action=create');
         }
         
         // Check if nama opd already exists
         if ($this->opdModel->checkNamaOPDExists($nama_opd)) {
             $_SESSION['error'] = 'Nama OPD sudah ada';
-            header('Location: index.php?controller=opd&action=create');
-            exit;
+            $this->redirect('index.php?controller=opd&action=create');
         }
         
         // Prepare data for insertion
@@ -147,16 +115,14 @@ class OPDController {
         
         if (!$id) {
             $_SESSION['error'] = 'ID OPD tidak ditemukan';
-            header('Location: index.php?controller=opd&action=index');
-            exit;
+            $this->redirect('index.php?controller=opd&action=index');
         }
         
         $opd = $this->opdModel->getOPDById($id);
         
         if (!$opd) {
             $_SESSION['error'] = 'OPD tidak ditemukan';
-            header('Location: index.php?controller=opd&action=index');
-            exit;
+            $this->redirect('index.php?controller=opd&action=index');
         }
         
         require_once 'views/opd/form.php';
@@ -173,8 +139,7 @@ class OPDController {
         
         if (!$id) {
             $_SESSION['error'] = 'ID OPD tidak ditemukan';
-            header('Location: index.php?controller=opd&action=index');
-            exit;
+            $this->redirect('index.php?controller=opd&action=index');
         }
         
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -186,8 +151,7 @@ class OPDController {
         
         if (!$opd) {
             $_SESSION['error'] = 'OPD tidak ditemukan';
-            header('Location: index.php?controller=opd&action=index');
-            exit;
+            $this->redirect('index.php?controller=opd&action=index');
         }
         
         // Validate input
@@ -281,8 +245,7 @@ class OPDController {
             exit;
         } else {
             // For non-AJAX request, redirect to index
-            header('Location: index.php?controller=opd&action=index');
-            exit;
+            $this->redirect('index.php?controller=opd&action=index');
         }
     }
 }

@@ -2,63 +2,11 @@
 
 require_once 'models/WilayahModel.php';
 
-class DesaController {
+class DesaController extends BaseController {
     private $wilayahModel;
 
     public function __construct() {
         $this->wilayahModel = new WilayahModel();
-    }
-
-    /**
-     * Cek apakah user sudah login
-     */
-    private function isLoggedIn() {
-        return isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
-    }
-
-    /**
-     * Mendapatkan role user yang sedang login
-     */
-    private function getUserRole() {
-        return $_SESSION['role'] ?? null;
-    }
-
-    /**
-     * Mendapatkan data user yang sedang login
-     */
-    private function getCurrentUser() {
-        if ($this->isLoggedIn()) {
-            return [
-                'id_user' => $_SESSION['user_id'],
-                'username' => $_SESSION['username'],
-                'email' => $_SESSION['email'],
-                'jabatan' => $_SESSION['jabatan'],
-                'role' => $_SESSION['role']
-            ];
-        }
-        return null;
-    }
-
-    /**
-     * Require login untuk mengakses halaman
-     */
-    private function requireLogin() {
-        if (!$this->isLoggedIn()) {
-            $response = [
-                'success' => false,
-                'message' => 'Silakan login terlebih dahulu',
-                'redirect' => 'index.php'
-            ];
-
-            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-                header('Content-Type: application/json');
-                echo json_encode($response);
-                exit;
-            } else {
-                header('Location: index.php');
-                exit;
-            }
-        }
     }
 
     /**
@@ -121,8 +69,7 @@ class DesaController {
             $desa = $this->wilayahModel->getDesaById($id_desa);
             if (!$desa) {
                 $_SESSION['error'] = 'Desa tidak ditemukan';
-                header('Location: ../views/wilayah/index-desa.php');
-                exit;
+                $this->redirect('../views/wilayah/index-desa.php');
             }
         }
 
@@ -179,8 +126,7 @@ class DesaController {
                 exit;
             } else {
                 $_SESSION[$response['success'] ? 'success' : 'error'] = $response['message'];
-                header('Location: ../views/wilayah/index-desa.php');
-                exit;
+                $this->redirect('../views/wilayah/index-desa.php');
             }
         }
     }
@@ -211,8 +157,7 @@ class DesaController {
             exit;
         } else {
             $_SESSION[$response['success'] ? 'success' : 'error'] = $response['message'];
-            header('Location: ../views/wilayah/index-desa.php');
-            exit;
+            $this->redirect('../views/wilayah/index-desa.php');
         }
     }
 
@@ -269,8 +214,7 @@ class DesaController {
             exit;
         } else {
             // For non-AJAX request, redirect to index
-            header('Location: index.php?controller=desa&action=index');
-            exit;
+            $this->redirect('index.php?controller=desa&action=index');
         }
     }
 }

@@ -1,16 +1,16 @@
-<?php include('template/header.php'); ?>
+<?php include('views/layouts/admin-header.php'); ?>
 
 <body class="with-welcome-text">
   <div class="container-scroller">
     <!-- Navbar -->
-    <?php include 'template/navbar.php'; ?>
+    <?php include 'views/layouts/admin-navbar.php'; ?>
 
     <div class="container-fluid page-body-wrapper">
       <!-- Settings Panel -->
-      <?php include 'template/setting_panel.php'; ?>
+      <?php include 'views/layouts/admin-setting-panel.php'; ?>
 
       <!-- Sidebar -->
-      <?php include 'template/sidebar.php'; ?>
+      <?php include 'views/layouts/admin-sidebar.php'; ?>
 
       <!-- Main Panel -->
       <div class="main-panel">
@@ -454,7 +454,7 @@
     </div>
   </div>
 
-  <?php include 'template/script.php'; ?>
+  <?php include 'views/layouts/admin-script.php'; ?>
 
   <style>
     .avatar-sm {

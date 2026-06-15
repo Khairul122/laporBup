@@ -9,7 +9,17 @@ define('DB_NAME', 'helpdesk');
 // Konfigurasi Aplikasi
 define('APP_NAME', 'Sistem ');
 define('APP_VERSION', '1.0.0');
-define('BASE_URL', 'http://localhost/helpdesk');
+
+// Deteksi otomatis base path/URL agar aplikasi tetap bekerja
+// di folder/subdirektori apapun tanpa perlu konfigurasi manual
+define('BASE_PATH', rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '')), '/'));
+define('BASE_URL', (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . BASE_PATH);
+
+// Helper global (asset, url, route)
+require_once __DIR__ . '/../core/helpers.php';
+
+// Autoload class (core, controllers, models) via Composer classmap
+require_once __DIR__ . '/../vendor/autoload.php';
 
 // Konfigurasi Session
 define('SESSION_NAME', '_session');
