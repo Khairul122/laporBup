@@ -779,7 +779,6 @@
     <!-- FOOTER -->
     <footer class="footer-section" role="contentinfo">
         <span class="footer-text">&copy; <?= date('Y') ?> Pemerintah Kabupaten Mandailing Natal. Hak Cipta Dilindungi.</span>
-        <span class="footer-version">v2.1 Premium Edition</span>
     </footer>
 
 </body>

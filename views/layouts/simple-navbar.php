@@ -14,7 +14,7 @@ $profile_logo = $profile ? $profile['logo'] : null;
 <header class="header">
     <div class="logo">
         <?php if ($profile_logo && file_exists($profile_logo)): ?>
-            <img src="<?php echo $profile_logo; ?>" alt="Logo" class="app-logo">
+            <img src="<?php echo asset($profile_logo); ?>" alt="Logo" class="app-logo">
         <?php else: ?>
             <i class="fas fa-landmark"></i>
         <?php endif; ?>
