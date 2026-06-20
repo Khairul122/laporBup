@@ -35,6 +35,7 @@
                         action="<?php echo isset($opd) ? route('opd', 'update', ['id' => $opd['id_opd']]) : route('opd', 'store'); ?>">
                     
                     <?php if (isset($opd)): ?>
+                        <input type="hidden" name="_method" value="PUT">
                         <input type="hidden" name="id" value="<?php echo $opd['id_opd']; ?>">
                     <?php endif; ?>
 
@@ -201,7 +202,8 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-          <form method="POST" action="<?= route('opd', 'delete') ?>" style="display: inline;">
+          <form method="POST" action="<?= route('opd', 'delete', ['id' => $opd['id_opd']]) ?>" style="display: inline;">
+            <input type="hidden" name="_method" value="DELETE">
             <input type="hidden" name="id" value="<?php echo $opd['id_opd']; ?>">
             <button type="submit" class="btn btn-danger">Hapus</button>
           </form>

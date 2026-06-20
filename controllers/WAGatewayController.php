@@ -22,10 +22,10 @@ class WAGatewayController extends BaseController {
         require_once 'views/wagateway/index.php';
     }
 
-    public function form() {
+    public function form($id = null) {
         $this->requireRole('admin');
 
-        $id = $_GET['id'] ?? null;
+        $id = $id ?? $_GET['id'] ?? null;
         $message = null;
 
         if ($id) {
@@ -41,12 +41,12 @@ class WAGatewayController extends BaseController {
         require_once 'views/wagateway/form.php';
     }
 
-    public function sendMessage() {
+    public function sendMessage($id = null) {
         $this->requireRole('admin');
 
         $no_tujuan = $_POST['no_tujuan'] ?? '';
         $pesan = $_POST['pesan'] ?? '';
-        $id = $_POST['id'] ?? null;
+        $id = $id ?? $_POST['id'] ?? null;
 
         if (empty($no_tujuan) || empty($pesan)) {
             $this->json(['success' => false, 'message' => 'Nomor tujuan dan pesan tidak boleh kosong']);
@@ -81,10 +81,10 @@ class WAGatewayController extends BaseController {
         }
     }
 
-    public function delete() {
+    public function delete($id = null) {
         $this->requireRole('admin');
 
-        $id = $_POST['id'] ?? '';
+        $id = $id ?? $_POST['id'] ?? '';
         if (empty($id)) {
             $this->json(['success' => false, 'message' => 'ID pesan tidak valid']);
         }

@@ -141,7 +141,7 @@ include 'views/layouts/admin-header.php';
                             </td>
                             <td>
                               <div class="btn-group" role="group">
-                                <a href="<?= route('profile', 'edit') ?>?id=<?php echo $profile['id_profile']; ?>"
+                                <a href="<?= route('profile', 'edit', ['id' => $profile['id_profile']]) ?>"
                                    class="btn btn-sm btn-outline-primary"
                                    title="Edit Profile">
                                   <i class="fas fa-edit"></i>
@@ -247,6 +247,7 @@ include 'views/layouts/admin-header.php';
             <i class="fas fa-times me-2"></i> Batal
           </button>
           <form id="deleteForm" method="POST" style="display: inline;">
+            <input type="hidden" name="_method" value="DELETE">
             <input type="hidden" name="id" id="deleteId">
             <button type="submit" class="btn btn-danger">
               <i class="fas fa-trash me-2"></i> Hapus
@@ -330,7 +331,7 @@ include 'views/layouts/admin-header.php';
     function confirmDelete(id, name) {
       document.getElementById('deleteId').value = id;
       document.getElementById('deleteProfileName').textContent = name;
-      document.getElementById('deleteForm').action = '<?= route('profile', 'delete') ?>';
+      document.getElementById('deleteForm').action = '<?= route('profile', 'delete') ?>/' + id;
 
       const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
       modal.show();

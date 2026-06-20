@@ -243,12 +243,12 @@
                               </td>
                               <td class="text-center">
                                 <div class="btn-group btn-group-sm">
-                                  <a href="<?= route('laporanOPDAdmin', 'detail') ?>?id=<?php echo $laporan['id_laporan_opd'] ?? ''; ?>"
+                                  <a href="<?= route('laporanOPDAdmin', 'detail', ['id' => $laporan['id_laporan_opd'] ?? '']) ?>"
                                      class="btn btn-outline-info" title="Detail">
                                     <i class="mdi mdi-eye"></i>
                                   </a>
 
-                                  <a href="<?= route('laporanOPDAdmin', 'edit') ?>?id=<?php echo $laporan['id_laporan_opd'] ?? ''; ?>"
+                                  <a href="<?= route('laporanOPDAdmin', 'edit', ['id' => $laporan['id_laporan_opd'] ?? '']) ?>"
                                      class="btn btn-outline-warning" title="Edit">
                                     <i class="mdi mdi-pencil"></i>
                                   </a>
@@ -263,9 +263,10 @@
                                     <i class="mdi mdi-flag"></i>
                                   </button>
 
-                                  <form method="POST" action="<?= route('laporanOPDAdmin', 'delete') ?>?id=<?php echo $laporan['id_laporan_opd'] ?? ''; ?>"
+                                  <form method="POST" action="<?= route('laporanOPDAdmin', 'delete', ['id' => $laporan['id_laporan_opd'] ?? '']) ?>"
                                         onsubmit="return confirm('Apakah Anda yakin ingin menghapus laporan ini?');"
                                         style="display: inline;">
+                                    <input type="hidden" name="_method" value="DELETE">
                                     <button type="submit" class="btn btn-outline-danger" title="Hapus">
                                       <i class="mdi mdi-delete"></i>
                                     </button>
@@ -375,7 +376,8 @@
           <h5 class="modal-title">Ubah Status Laporan</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
-        <form method="POST" action="<?= route('laporanOPDAdmin', 'updateStatus') ?>">
+        <form method="POST" action="<?= route('laporanOPDAdmin', 'updateStatus') ?>" id="statusForm">
+          <input type="hidden" name="_method" value="PATCH">
           <div class="modal-body">
             <input type="hidden" name="id" id="modalLaporanId">
             <input type="hidden" name="redirect_url" value="<?php echo $_SERVER['REQUEST_URI']; ?>">
@@ -535,12 +537,12 @@
 
     
     function viewDetail(id) {
-      window.location.href = `<?= route('laporanOPDAdmin', 'detail') ?>?id=${id}`;
+      window.location.href = `<?= route('laporanOPDAdmin', 'detail') ?>/${id}`;
     }
 
     
     function editLaporan(id) {
-      window.location.href = `<?= route('laporanOPDAdmin', 'edit') ?>?id=${id}`;
+      window.location.href = `<?= route('laporanOPDAdmin', 'edit') ?>/${id}/edit`;
     }
 
     

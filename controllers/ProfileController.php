@@ -153,7 +153,7 @@ class ProfileController extends BaseController {
             $this->redirect(route('profile', 'index'));
         }
 
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        if (!in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT'], true)) {
             $this->redirect(route('profile', 'edit', ['id' => $id]));
             exit;
         }

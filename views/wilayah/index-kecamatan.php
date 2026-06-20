@@ -87,7 +87,7 @@
                               <td><?php echo htmlspecialchars($kecamatan['nama_kecamatan']); ?></td>
                               <td class="text-center">
                                 <div class="btn-group" role="group">
-                                  <a href="<?= route('kecamatan', 'form') ?>?id=<?php echo $kecamatan['id_kecamatan']; ?>"
+                                  <a href="<?= route('kecamatan', 'form', ['id' => $kecamatan['id_kecamatan']]) ?>"
                                      class="btn btn-sm btn-warning"
                                      title="Edit">
                                     <i class="mdi mdi-pencil"></i>
@@ -200,7 +200,7 @@
     }
 
     function deleteKecamatan(id) {
-      fetch(`<?= route('kecamatan', 'getStats') ?>?id=${id}`)
+      fetch(`<?= route('kecamatan', 'getStats') ?>/${id}/stats`)
       .then(response => response.json())
       .then(data => {
         if (data.success) {
@@ -210,13 +210,13 @@
           }
 
           if (confirm(confirmMessage)) {
-            fetch('<?= route('kecamatan', 'delete') ?>', {
+            fetch('<?= route('kecamatan', 'delete') ?>/' + id, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'X-Requested-With': 'XMLHttpRequest'
               },
-              body: 'id=' + encodeURIComponent(id)
+              body: '_method=DELETE&id=' + encodeURIComponent(id)
             })
             .then(response => response.json())
             .then(data => {

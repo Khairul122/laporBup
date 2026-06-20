@@ -73,7 +73,7 @@ class LaporanModel extends BaseModel {
 
         if (!empty($search)) {
             $search = escapeString($search);
-            $whereClause .= "WHERE (lc.nama_kecamatan LIKE '%$search%' OR lc.nama_kegiatan LIKE '%$search%')";
+            $whereClause .= "WHERE (lc.nama_kecamatan LIKE '%$search%' OR lc.nama_pelapor LIKE '%$search%' OR lc.uraian_laporan LIKE '%$search%')";
         }
 
         if (!empty($status)) {

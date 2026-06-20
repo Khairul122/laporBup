@@ -43,6 +43,7 @@ include 'views/layouts/admin-header.php';
                         novalidate>
 
                     <?php if (isset($profile)): ?>
+                      <input type="hidden" name="_method" value="PUT">
                       <input type="hidden" name="id" value="<?php echo $profile['id_profile']; ?>">
                     <?php endif; ?>
 

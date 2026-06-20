@@ -49,10 +49,10 @@ class KecamatanController extends BaseController {
     }
 
     
-    public function form() {
+    public function form($id_kecamatan = null) {
         $this->requireAdmin();
 
-        $id_kecamatan = $_GET['id'] ?? null;
+        $id_kecamatan = $id_kecamatan ?? $_GET['id'] ?? null;
         $kecamatan = null;
 
         if ($id_kecamatan) {
@@ -67,11 +67,11 @@ class KecamatanController extends BaseController {
     }
 
     
-    public function save() {
+    public function save($id_kecamatan = null) {
         $this->requireAdmin();
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $id_kecamatan = $_POST['id_kecamatan'] ?? null;
+        if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT'], true)) {
+            $id_kecamatan = $id_kecamatan ?? $_POST['id_kecamatan'] ?? null;
             $data = [
                 'nama_kecamatan' => trim($_POST['nama_kecamatan'] ?? '')
             ];
@@ -114,10 +114,10 @@ class KecamatanController extends BaseController {
     }
 
     
-    public function delete() {
+    public function delete($id_kecamatan = null) {
         $this->requireAdmin();
 
-        $id_kecamatan = $_POST['id'] ?? null;
+        $id_kecamatan = $id_kecamatan ?? $_POST['id'] ?? null;
         if ($id_kecamatan) {
             $result = $this->wilayahModel->deleteKecamatan($id_kecamatan);
             $response = [
@@ -142,10 +142,10 @@ class KecamatanController extends BaseController {
     }
 
     
-    public function getStats() {
+    public function getStats($id_kecamatan = null) {
         $this->requireAdmin();
 
-        $id_kecamatan = $_GET['id'] ?? null;
+        $id_kecamatan = $id_kecamatan ?? $_GET['id'] ?? null;
 
         if (!$id_kecamatan) {
             header('Content-Type: application/json');

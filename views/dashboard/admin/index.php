@@ -155,7 +155,7 @@
                           <table class="table table-hover">
                             <thead>
                               <tr>
-                                <th class="border-top-0">ID</th>
+                                <th class="border-top-0">No. Laporan</th>
                                 <th class="border-top-0">Judul/Informasi</th>
                                 <th class="border-top-0">Lokasi/OPD</th>
                                 <th class="border-top-0">Status</th>

@@ -57,7 +57,10 @@
                   </h5>
                 </div>
                 <div class="card-body">
-                  <form id="kecamatanForm" method="POST" action="<?= route('kecamatan', 'save') ?>">
+                  <form id="kecamatanForm" method="POST" action="<?= $kecamatan ? route('kecamatan', 'save', ['id' => $kecamatan['id_kecamatan']]) : route('kecamatan', 'save') ?>">
+                    <?php if ($kecamatan): ?>
+                      <input type="hidden" name="_method" value="PUT">
+                    <?php endif; ?>
                     <input type="hidden" name="id_kecamatan" value="<?php echo $kecamatan ? $kecamatan['id_kecamatan'] : ''; ?>">
 
                     <div class="row mb-3">

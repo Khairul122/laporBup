@@ -96,10 +96,11 @@ document.addEventListener('change', function(e) {
     
     <div class="form-container">
         <form id="laporanForm" method="POST" enctype="multipart/form-data"
-              action="<?php echo isset($laporan) ? route('laporanCamat', 'update') : route('laporanCamat', 'store'); ?>"
+              action="<?php echo isset($laporan) ? route('laporanCamat', 'update', ['id' => $laporan['id_laporan_camat']]) : route('laporanCamat', 'store'); ?>"
               novalidate>
 
             <?php if (isset($laporan)): ?>
+                <input type="hidden" name="_method" value="PUT">
                 <input type="hidden" name="id" value="<?php echo $laporan['id_laporan_camat']; ?>">
             <?php endif; ?>
             
@@ -294,7 +295,7 @@ document.addEventListener('change', function(e) {
                         <?php if (isset($laporan) && !empty($laporan['upload_file'])): ?>
                             <div class="current-file">
                                 <strong>File saat ini:</strong>
-                                <a href="<?= route('laporanCamat', 'download') ?>?id=<?php echo $laporan['id_laporan_camat']; ?>"
+                                <a href="<?= route('laporanCamat', 'download', ['id' => $laporan['id_laporan_camat']]) ?>"
                                    target="_blank"
                                    class="file-link">
                                     <i class="fas fa-download"></i>
@@ -347,7 +348,8 @@ document.addEventListener('change', function(e) {
             <p class="text-danger">Tindakan ini tidak dapat dibatalkan.</p>
         </div>
         <div class="modal-footer">
-            <form id="deleteForm" method="POST" action="<?= route('laporanCamat', 'delete') ?>" style="display: inline;">
+            <form id="deleteForm" method="POST" action="<?= route('laporanCamat', 'delete', ['id' => $laporan['id_laporan_camat'] ?? '']) ?>" style="display: inline;">
+                <input type="hidden" name="_method" value="DELETE">
                 <input type="hidden" name="id" id="deleteId">
                 <button type="submit" class="btn btn-danger">Hapus</button>
             </form>

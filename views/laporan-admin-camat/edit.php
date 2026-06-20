@@ -245,7 +245,7 @@
                               <i class="mdi mdi-content-save me-2"></i>Simpan Perubahan
                             </button>
 
-                            <a href="<?= route('laporanCamatAdmin', 'detail') ?>?id=<?php echo $laporan['id_laporan_camat']; ?>"
+                            <a href="<?= route('laporanCamatAdmin', 'detail', ['id' => $laporan['id_laporan_camat']]) ?>"
                                class="btn btn-outline-secondary">
                               <i class="mdi mdi-eye me-2"></i>Lihat Detail
                             </a>

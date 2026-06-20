@@ -188,13 +188,14 @@
                       </div>
                       <div class="card-body">
                         <div class="d-grid gap-2">
-                          <a href="<?= route('laporanCamatAdmin', 'edit') ?>?id=<?php echo $laporan['id_laporan_camat']; ?>"
+                          <a href="<?= route('laporanCamatAdmin', 'edit', ['id' => $laporan['id_laporan_camat']]) ?>"
                              class="btn btn-primary">
                             <i class="mdi mdi-pencil me-2"></i>Edit Laporan
                           </a>
 
-                          <form method="POST" action="<?= route('laporanCamatAdmin', 'delete') ?>?id=<?php echo $laporan['id_laporan_camat']; ?>"
+                          <form method="POST" action="<?= route('laporanCamatAdmin', 'delete', ['id' => $laporan['id_laporan_camat']]) ?>"
                                 onsubmit="return confirm('Apakah Anda yakin ingin menghapus laporan ini?');">
+                            <input type="hidden" name="_method" value="DELETE">
                             <button type="submit" class="btn btn-outline-danger w-100">
                               <i class="mdi mdi-delete me-2"></i>Hapus Laporan
                             </button>
@@ -277,7 +278,7 @@
       
       if (e.key === 'e' && !e.ctrlKey && !e.metaKey && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
         e.preventDefault();
-        window.location.href = `<?= route('laporanCamatAdmin', 'edit') ?>?id=<?php echo $laporan['id_laporan_camat'] ?? 0; ?>`;
+        window.location.href = `<?= route('laporanCamatAdmin', 'edit', ['id' => $laporan['id_laporan_camat'] ?? 0]) ?>`;
       }
 
       

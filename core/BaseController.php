@@ -66,7 +66,11 @@ class BaseController {
     }
 
     protected function redirect($path) {
-        header('Location: ' . url($path));
+        if (preg_match('#^https?://#i', $path) || strpos($path, BASE_PATH . '/') === 0 || $path === BASE_PATH || strpos($path, '/') === 0) {
+            header('Location: ' . $path);
+        } else {
+            header('Location: ' . url($path));
+        }
         exit;
     }
 

@@ -30,30 +30,74 @@ class DataPelaporController extends BaseController {
         require_once 'views/data-pelapor/index.php';
     }
 
-    public function form() {
+    public function create() {
         $this->requireRole('admin');
 
         $user = $this->getCurrentUser();
-        $id = $_GET['id'] ?? null;
         $dataPelapor = null;
 
-        if ($id) {
-            $dataPelapor = $this->dataPelaporModel->getDataPelaporById($id);
-            if (!$dataPelapor) {
-                $_SESSION['error'] = 'Data pelapor tidak ditemukan';
-                $this->redirect(route('dataPelapor', 'index'));
-            }
+        require_once 'views/data-pelapor/form.php';
+    }
+
+    public function edit($id = null) {
+        $this->requireRole('admin');
+
+        $user = $this->getCurrentUser();
+        $id = $id ?? 0;
+
+        $dataPelapor = $this->dataPelaporModel->getDataPelaporById($id);
+        if (!$dataPelapor) {
+            $_SESSION['error'] = 'Data pelapor tidak ditemukan';
+            $this->redirect(route('dataPelapor', 'index'));
         }
 
         require_once 'views/data-pelapor/form.php';
     }
 
-    public function save() {
+    public function store() {
         $this->requireRole('admin');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             try {
-                $id = !empty($_POST['id']) ? (int)$_POST['id'] : null;
+                $errors = $this->validatePelaporInput($_POST, null);
+
+                if (!empty($errors)) {
+                    $this->json([
+                        'success' => false,
+                        'message' => implode('<br>', $errors)
+                    ]);
+                }
+
+                $data = [
+                    'username' => trim($_POST['username'] ?? ''),
+                    'email' => trim($_POST['email'] ?? ''),
+                    'jabatan' => trim($_POST['jabatan'] ?? ''),
+                    'role' => $_POST['role'] ?? '',
+                    'no_telp' => trim($_POST['no_telp'] ?? '')
+                ];
+
+                if (!empty($_POST['password'])) {
+                    $data['password'] = $_POST['password'];
+                }
+
+                $response = $this->dataPelaporModel->createDataPelapor($data);
+                $this->json($response);
+
+            } catch (Exception $e) {
+                $this->json([
+                    'success' => false,
+                    'message' => 'Error: ' . $e->getMessage()
+                ]);
+            }
+        }
+    }
+
+    public function update($id = null) {
+        $this->requireRole('admin');
+
+        if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT'], true)) {
+            try {
+                $id = $id ?? $_POST['id'] ?? null;
                 $errors = $this->validatePelaporInput($_POST, $id);
 
                 if (!empty($errors)) {
@@ -75,12 +119,7 @@ class DataPelaporController extends BaseController {
                     $data['password'] = $_POST['password'];
                 }
 
-                if ($id) {
-                    $response = $this->dataPelaporModel->updateDataPelapor($id, $data);
-                } else {
-                    $response = $this->dataPelaporModel->createDataPelapor($data);
-                }
-
+                $response = $this->dataPelaporModel->updateDataPelapor($id, $data);
                 $this->json($response);
 
             } catch (Exception $e) {
@@ -148,12 +187,12 @@ class DataPelaporController extends BaseController {
         return $errors;
     }
 
-    public function delete() {
+    public function delete($id = null) {
         $this->requireRole('admin');
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'DELETE'], true)) {
             try {
-                $id = $_POST['id'] ?? null;
+                $id = $id ?? $_POST['id'] ?? null;
 
                 if (!$id) {
                     $this->json([

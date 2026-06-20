@@ -141,7 +141,7 @@ include 'views/layouts/simple-header.php';
                                 </div>
                             </div>
                             <div class="file-actions">
-                                <a href="<?= route('laporanCamat', 'download') ?>?id=<?php echo $laporan['id_laporan_camat']; ?>"
+                                <a href="<?= route('laporanCamat', 'download', ['id' => $laporan['id_laporan_camat']]) ?>"
                                     class="btn btn-primary btn-sm"
                                     target="_blank">
                                     <i class="fas fa-download"></i>
@@ -170,13 +170,14 @@ include 'views/layouts/simple-header.php';
 
                     
                     <?php if ($_SESSION['role'] === 'camat' && $laporan['status_laporan'] === 'baru' && $laporan['id_user'] == $_SESSION['user_id']): ?>
-                        <a href="<?= route('laporanCamat', 'edit') ?>?id=<?php echo $laporan['id_laporan_camat']; ?>" class="btn btn-warning">
+                        <a href="<?= route('laporanCamat', 'edit', ['id' => $laporan['id_laporan_camat']]) ?>" class="btn btn-warning">
                             <i class="fas fa-edit"></i> Edit
                         </a>
                     <?php endif; ?>
 
                     <?php if ($_SESSION['role'] === 'admin'): ?>
-                        <form method="POST" action="<?= route('laporanCamat', 'updateStatus') ?>?id=<?php echo $laporan['id_laporan_camat']; ?>" style="display: inline;">
+                        <form method="POST" action="<?= route('laporanCamat', 'updateStatus', ['id' => $laporan['id_laporan_camat']]) ?>" style="display: inline;">
+                            <input type="hidden" name="_method" value="PATCH">
                             <select name="status" class="form-select d-inline w-auto me-2" required>
                                 <option value="">Ubah Status</option>
                                 <option value="baru" <?php echo $laporan['status_laporan'] === 'baru' ? 'selected' : ''; ?>>Baru</option>
@@ -206,7 +207,8 @@ include 'views/layouts/simple-header.php';
                 <p class="text-danger">Tindakan ini tidak dapat dibatalkan.</p>
             </div>
             <div class="modal-footer">
-                <form id="deleteForm" method="POST" action="<?= route('laporanCamat', 'delete') ?>" style="display: inline;">
+                <form id="deleteForm" method="POST" action="<?= route('laporanCamat', 'delete', ['id' => $laporan['id_laporan_camat']]) ?>" style="display: inline;">
+                    <input type="hidden" name="_method" value="DELETE">
                     <input type="hidden" name="id" id="deleteId">
                     <button type="submit" class="btn btn-danger">Hapus</button>
                 </form>
@@ -947,7 +949,7 @@ include 'views/layouts/simple-header.php';
 
             
             previewFrame.src = filePath;
-            downloadBtn.href = '<?= route('laporanCamat', 'download') ?>?id=<?php echo $laporan['id_laporan_camat']; ?>';
+            downloadBtn.href = '<?= route('laporanCamat', 'download', ['id' => $laporan['id_laporan_camat']]) ?>';
 
             
             previewModal.style.display = 'block';

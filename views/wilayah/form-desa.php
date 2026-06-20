@@ -28,7 +28,10 @@
                   </h5>
                 </div>
                 <div class="card-body">
-                  <form id="desaForm" method="POST" action="<?= route('desa', 'save') ?>">
+                  <form id="desaForm" method="POST" action="<?= $desa ? route('desa', 'save', ['id' => $desa['id_desa']]) : route('desa', 'save') ?>">
+                    <?php if ($desa): ?>
+                      <input type="hidden" name="_method" value="PUT">
+                    <?php endif; ?>
                     <input type="hidden" name="id_desa" value="<?php echo $desa ? $desa['id_desa'] : ''; ?>">
 
                     <div class="row mb-3">

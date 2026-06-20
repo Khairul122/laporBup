@@ -129,7 +129,7 @@
                                   <td><?php echo htmlspecialchars($kecamatan['nama_kecamatan'] ?? ''); ?></td>
                                   <td class="text-center">
                                     <div class="btn-group" role="group">
-                                      <a href="<?= route('wilayah', 'formKecamatan') ?>?id=<?php echo $kecamatan['id_kecamatan'] ?? ''; ?>"
+                                      <a href="<?= route('wilayah', 'formKecamatan', ['id' => $kecamatan['id_kecamatan'] ?? '']) ?>"
                                          class="btn btn-sm btn-warning"
                                          title="Edit">
                                         <i class="mdi mdi-pencil"></i>
@@ -244,7 +244,7 @@
                                   <td><?php echo htmlspecialchars($desa['nama_kecamatan']); ?></td>
                                   <td class="text-center">
                                     <div class="btn-group" role="group">
-                                      <a href="<?= route('wilayah', 'formDesa') ?>?id=<?php echo $desa['id_desa'] ?? ''; ?>"
+                                      <a href="<?= route('wilayah', 'formDesa', ['id' => $desa['id_desa'] ?? '']) ?>"
                                          class="btn btn-sm btn-warning"
                                          title="Edit">
                                         <i class="mdi mdi-pencil"></i>
@@ -309,7 +309,7 @@
     
     function deleteKecamatan(id) {
       
-      fetch(`<?= route('wilayah', 'getKecamatanStats') ?>?id=${id}`, {
+      fetch(`<?= route('wilayah', 'getKecamatanStats') ?>/${id}/stats`, {
         method: 'GET',
         headers: {
           'X-Requested-With': 'XMLHttpRequest'

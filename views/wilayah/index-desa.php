@@ -104,7 +104,7 @@
                               <td><?php echo htmlspecialchars($desa['nama_kecamatan']); ?></td>
                               <td class="text-center">
                                 <div class="btn-group" role="group">
-                                  <a href="<?= route('desa', 'form') ?>?id=<?php echo $desa['id_desa']; ?>"
+                                  <a href="<?= route('desa', 'form', ['id' => $desa['id_desa']]) ?>"
                                      class="btn btn-sm btn-warning"
                                      title="Edit">
                                     <i class="mdi mdi-pencil"></i>
@@ -225,13 +225,13 @@
     
     function deleteDesa(id) {
       if (confirm('Apakah Anda yakin ingin menghapus desa ini?')) {
-        fetch('<?= route('desa', 'delete') ?>', {
+        fetch('<?= route('desa', 'delete') ?>/' + id, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
             'X-Requested-With': 'XMLHttpRequest'
           },
-          body: 'id=' + encodeURIComponent(id)
+          body: '_method=DELETE&id=' + encodeURIComponent(id)
         })
         .then(response => response.json())
         .then(data => {

@@ -73,10 +73,10 @@ class LaporanCamatAdminController extends BaseController {
     }
 
     
-    public function detail() {
+    public function detail($id = null) {
         $this->requireAdmin();
 
-        $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+        $id = $id !== null ? (int) $id : (isset($_GET['id']) ? (int) $_GET['id'] : 0);
 
         if ($id === 0) {
             $_SESSION['error'] = "ID laporan tidak valid.";
@@ -94,10 +94,10 @@ class LaporanCamatAdminController extends BaseController {
     }
 
     
-    public function edit() {
+    public function edit($id = null) {
         $this->requireAdmin();
 
-        $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+        $id = $id !== null ? (int) $id : (isset($_GET['id']) ? (int) $_GET['id'] : 0);
 
         if ($id === 0) {
             $_SESSION['error'] = "ID laporan tidak valid.";
@@ -146,14 +146,14 @@ class LaporanCamatAdminController extends BaseController {
     }
 
     
-    public function updateStatus() {
+    public function updateStatus($id = null) {
         $this->requireAdmin();
 
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        if (!in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PATCH'], true)) {
             $this->redirect(route('laporanCamatAdmin', 'index'));
         }
 
-        $id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
+        $id = $id !== null ? (int) $id : (isset($_POST['id']) ? (int) $_POST['id'] : 0);
         $status = $_POST['status'] ?? '';
 
         if ($id === 0 || !in_array($status, ['baru', 'diproses', 'selesai'])) {
@@ -196,10 +196,10 @@ class LaporanCamatAdminController extends BaseController {
     }
 
     
-    public function delete() {
+    public function delete($id = null) {
         $this->requireAdmin();
 
-        $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+        $id = $id !== null ? (int) $id : (isset($_GET['id']) ? (int) $_GET['id'] : 0);
 
         if ($id === 0) {
             $response = [

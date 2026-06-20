@@ -76,7 +76,7 @@
                             <td><?php echo htmlspecialchars($opd['nama_opd']); ?></td>
                             <td>
                               <div class="btn-group btn-group-sm">
-                                <a href="<?= route('opd', 'edit') ?>?id=<?php echo $opd['id_opd']; ?>" 
+                                <a href="<?= route('opd', 'edit', ['id' => $opd['id_opd']]) ?>" 
                                    class="btn btn-outline-primary" title="Edit">
                                   <i class="fas fa-edit"></i>
                                 </a>
@@ -260,11 +260,15 @@
         modal.hide();
 
         
-        fetch('<?= route('opd', 'delete') ?>?id=' + deleteId, {
+        fetch('<?= route('opd', 'delete') ?>/' + deleteId, {
           method: 'POST',
           headers: {
             'X-Requested-With': 'XMLHttpRequest'
-          }
+          },
+          body: new URLSearchParams({
+            _method: 'DELETE',
+            id: deleteId
+          })
         })
         .then(response => response.json())
         .then(data => {

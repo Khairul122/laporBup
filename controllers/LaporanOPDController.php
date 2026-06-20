@@ -50,10 +50,10 @@ class LaporanOPDController extends BaseController {
         require_once 'views/laporan-opd/form.php';
     }
 
-    public function edit() {
+    public function edit($id = null) {
         $this->requireRole('opd');
 
-        $id = $_GET['id'] ?? 0;
+        $id = $id ?? $_GET['id'] ?? 0;
         $userId = $this->getCurrentUserId();
 
         $laporan = $this->laporanOPDModel->getLaporanById($id);
@@ -69,10 +69,10 @@ class LaporanOPDController extends BaseController {
         require_once 'views/laporan-opd/form.php';
     }
 
-    public function detail() {
+    public function detail($id = null) {
         $this->requireRole('opd');
 
-        $id = $_GET['id'] ?? 0;
+        $id = $id ?? $_GET['id'] ?? 0;
         $userId = $this->getCurrentUserId();
 
         error_log("DEBUG: Detail laporan - ID: $id, User ID: $userId");
@@ -144,14 +144,14 @@ class LaporanOPDController extends BaseController {
         }
     }
 
-    public function update() {
+    public function update($id = null) {
         $this->requireRole('opd');
 
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        if (!in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT'], true)) {
             $this->redirect(route('laporanOPD', 'index'));
         }
 
-        $id = $_POST['id'] ?? 0;
+        $id = $id ?? $_POST['id'] ?? 0;
         $userId = $this->getCurrentUserId();
 
         $laporan = $this->laporanOPDModel->getLaporanById($id);
@@ -203,14 +203,14 @@ class LaporanOPDController extends BaseController {
         }
     }
 
-    public function delete() {
+    public function delete($id = null) {
         $this->requireRole('opd');
 
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        if (!in_array($_SERVER['REQUEST_METHOD'], ['POST', 'DELETE'], true)) {
             $this->redirect(route('laporanOPD', 'index'));
         }
 
-        $id = $_POST['id'] ?? 0;
+        $id = $id ?? $_POST['id'] ?? 0;
         $userId = $this->getCurrentUserId();
 
         $laporan = $this->laporanOPDModel->getLaporanById($id);
@@ -275,10 +275,10 @@ class LaporanOPDController extends BaseController {
         return $errors;
     }
 
-    public function download() {
+    public function download($id = null) {
         $this->requireRole('opd');
 
-        $id = $_GET['id'] ?? 0;
+        $id = $id ?? $_GET['id'] ?? 0;
         $userId = $this->getCurrentUserId();
 
         $laporan = $this->laporanOPDModel->getLaporanById($id);

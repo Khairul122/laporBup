@@ -225,7 +225,62 @@
                           </table>
                         </div>
 
-                        <div id="paginationWrapper"></div>
+                        <div id="paginationWrapper">
+                          <?php if ($result['total_pages'] > 1): ?>
+                            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 mt-4">
+                              <div class="text-muted small text-center text-md-start">
+                                Menampilkan <?php echo $rangeStart; ?>-<?php echo $rangeEnd; ?> dari <?php echo number_format($result['total']); ?> data
+                              </div>
+                              <nav>
+                                <ul class="pagination pagination-sm flex-wrap justify-content-center mb-0">
+                                  <?php if ($result['page'] > 1): ?>
+                                    <li class="page-item">
+                                      <a class="page-link" href="<?php echo route('dataPelapor', 'index'); ?>?page=<?php echo $result['page'] - 1; ?>&limit=<?php echo $limit; ?>&search=<?php echo urlencode($search); ?>&role=<?php echo $role; ?>">
+                                        <i class="fas fa-chevron-left"></i>
+                                      </a>
+                                    </li>
+                                  <?php endif; ?>
+
+                                  <?php
+                                  $startPage = max(1, $result['page'] - 2);
+                                  $endPage = min($result['total_pages'], $result['page'] + 2);
+
+                                  if ($startPage > 1): ?>
+                                    <li class="page-item">
+                                      <a class="page-link" href="<?php echo route('dataPelapor', 'index'); ?>?page=1&limit=<?php echo $limit; ?>&search=<?php echo urlencode($search); ?>&role=<?php echo $role; ?>">1</a>
+                                    </li>
+                                    <?php if ($startPage > 2): ?>
+                                      <li class="page-item disabled"><span class="page-link">...</span></li>
+                                    <?php endif; ?>
+                                  <?php endif; ?>
+
+                                  <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
+                                    <li class="page-item <?php echo $i === $result['page'] ? 'active' : ''; ?>">
+                                      <a class="page-link" href="<?php echo route('dataPelapor', 'index'); ?>?page=<?php echo $i; ?>&limit=<?php echo $limit; ?>&search=<?php echo urlencode($search); ?>&role=<?php echo $role; ?>"><?php echo $i; ?></a>
+                                    </li>
+                                  <?php endfor; ?>
+
+                                  <?php if ($endPage < $result['total_pages']): ?>
+                                    <?php if ($endPage < $result['total_pages'] - 1): ?>
+                                      <li class="page-item disabled"><span class="page-link">...</span></li>
+                                    <?php endif; ?>
+                                    <li class="page-item">
+                                      <a class="page-link" href="<?php echo route('dataPelapor', 'index'); ?>?page=<?php echo $result['total_pages']; ?>&limit=<?php echo $limit; ?>&search=<?php echo urlencode($search); ?>&role=<?php echo $role; ?>"><?php echo $result['total_pages']; ?></a>
+                                    </li>
+                                  <?php endif; ?>
+
+                                  <?php if ($result['page'] < $result['total_pages']): ?>
+                                    <li class="page-item">
+                                      <a class="page-link" href="<?php echo route('dataPelapor', 'index'); ?>?page=<?php echo $result['page'] + 1; ?>&limit=<?php echo $limit; ?>&search=<?php echo urlencode($search); ?>&role=<?php echo $role; ?>">
+                                        <i class="fas fa-chevron-right"></i>
+                                      </a>
+                                    </li>
+                                  <?php endif; ?>
+                                </ul>
+                              </nav>
+                            </div>
+                          <?php endif; ?>
+                        </div>
                       <?php else: ?>
                         <div class="text-center py-5">
                           <i class="fas fa-users text-muted" style="font-size: 3rem;"></i>
@@ -265,7 +320,51 @@ function formatDateIndo($date) {
 
   <?php include 'views/layouts/admin-script.php'; ?>
 
-  <script></script>
+  <script>
+    function editPelapor(id) {
+      const template = '<?php echo route("dataPelapor", "edit", ["id" => "ID_PLACEHOLDER"]); ?>';
+      window.location.href = template.replace('ID_PLACEHOLDER', id);
+    }
+
+    function deletePelapor(id, username) {
+      if (confirm('Apakah Anda yakin ingin menghapus pelapor "' + username + '"?')) {
+        const template = '<?php echo route("dataPelapor", "delete", ["id" => "ID_PLACEHOLDER"]); ?>';
+        fetch(template.replace('ID_PLACEHOLDER', id), {
+          method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(result => {
+          if (result.success) {
+            location.reload();
+          } else {
+            alert(result.message);
+          }
+        })
+        .catch(error => {
+          alert('Error: ' + error.message);
+        });
+      }
+    }
+
+    function resetFilter() {
+      window.location.href = '<?php echo route("dataPelapor", "index"); ?>';
+    }
+
+    function changeLimit() {
+      const limit = document.getElementById('limitSelect').value;
+      const search = document.getElementById('searchInput').value;
+      const role = document.getElementById('roleFilter').value;
+      window.location.href = '<?php echo route("dataPelapor", "index"); ?>?page=1&limit=' + limit + '&search=' + encodeURIComponent(search) + '&role=' + role;
+    }
+
+    document.getElementById('searchForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const limit = document.getElementById('limitSelect').value;
+      const search = document.getElementById('searchInput').value;
+      const role = document.getElementById('roleFilter').value;
+      window.location.href = '<?php echo route("dataPelapor", "index"); ?>?page=1&limit=' + limit + '&search=' + encodeURIComponent(search) + '&role=' + role;
+    });
+  </script>
 
   <style>
     .form-control.is-invalid {

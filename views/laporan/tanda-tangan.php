@@ -22,13 +22,13 @@ include 'views/layouts/admin-header.php';
                   <p class="text-muted mb-0">
                     <?php
                     if ($laporan) {
-                      if ($_GET['type'] === 'opd') {
+                      if ($type === 'opd') {
                         echo 'Laporan OPD: ' . htmlspecialchars($laporan['nama_kegiatan']);
                       } else {
                         echo 'Laporan Camat: ' . htmlspecialchars($laporan['nama_pelapor']);
                       }
                     } else {
-                      if ($_GET['type'] === 'opd') {
+                      if ($type === 'opd') {
                         echo 'Pengaturan Tanda Tangan Global untuk Laporan OPD';
                       } else {
                         echo 'Pengaturan Tanda Tangan Global untuk Laporan Camat';
@@ -38,7 +38,7 @@ include 'views/layouts/admin-header.php';
                   </p>
                 </div>
                 <div>
-                  <a href="<?= route('laporan', 'index') ?>?tab=<?php echo htmlspecialchars($_GET['type']); ?>" class="btn btn-secondary me-2">
+                  <a href="<?= route('laporan', 'index') ?>?tab=<?php echo htmlspecialchars($type); ?>" class="btn btn-secondary me-2">
                     <i class="fas fa-arrow-left"></i> Kembali
                   </a>
                 </div>
@@ -58,8 +58,8 @@ include 'views/layouts/admin-header.php';
                 </div>
                 <div class="card-body">
                   <form id="signatureForm" enctype="multipart/form-data">
-                    <input type="hidden" name="id" value="<?php echo htmlspecialchars($_GET['id']); ?>">
-                    <input type="hidden" name="type" value="<?php echo htmlspecialchars($_GET['type']); ?>">
+                    <input type="hidden" name="id" value="<?php echo htmlspecialchars($id); ?>">
+                    <input type="hidden" name="type" value="<?php echo htmlspecialchars($type); ?>">
 
                     <div class="row">
                       <div class="col-12">
@@ -255,9 +255,7 @@ include 'views/layouts/admin-header.php';
       });
 
       generatePDFBtn.addEventListener('click', function() {
-        const id = <?php echo json_encode($_GET['id']); ?>;
-        const type = <?php echo json_encode($_GET['type']); ?>;
-        window.open(`<?= route('laporan', 'generatePDFWithSignature') ?>?id=${id}&type=${type}`, '_blank');
+        window.open(<?= json_encode(route('laporan', 'generatePDFWithSignature', ['type' => $type, 'id' => $id])) ?>, '_blank');
       });
 
       function showToast(message, type = 'success') {

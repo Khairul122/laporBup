@@ -247,7 +247,13 @@
         params.append(key, value);
       }
 
-      fetch('<?= route('dataPelapor', 'save') ?>', {
+      const isEdit = <?php echo $dataPelapor ? 'true' : 'false'; ?>;
+      const url = isEdit ? '<?php echo route("dataPelapor", "update", ["id" => $dataPelapor["id_user"] ?? 0]); ?>' : '<?php echo route("dataPelapor", "store"); ?>';
+      if (isEdit) {
+        params.append('_method', 'PUT');
+      }
+
+      fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

@@ -25,10 +25,11 @@ include 'views/layouts/simple-header.php';
     
     <div class="form-container">
         <form id="laporanForm" method="POST" enctype="multipart/form-data"
-              action="<?php echo isset($laporan) ? route('laporanOPD', 'update') : route('laporanOPD', 'store'); ?>"
+              action="<?php echo isset($laporan) ? route('laporanOPD', 'update', ['id' => $laporan['id_laporan_opd']]) : route('laporanOPD', 'store'); ?>"
               novalidate>
 
             <?php if (isset($laporan)): ?>
+                <input type="hidden" name="_method" value="PUT">
                 <input type="hidden" name="id" value="<?php echo $laporan['id_laporan_opd']; ?>">
             <?php endif; ?>
 
@@ -173,7 +174,7 @@ include 'views/layouts/simple-header.php';
                         <?php if (isset($laporan) && !empty($laporan['upload_file'])): ?>
                             <div class="current-file">
                                 <strong>File saat ini:</strong>
-                                <a href="<?= route('laporanOPD', 'download') ?>?id=<?php echo $laporan['id_laporan_opd']; ?>"
+                                <a href="<?= route('laporanOPD', 'download', ['id' => $laporan['id_laporan_opd']]) ?>"
                                    target="_blank"
                                    class="file-link">
                                     <i class="fas fa-download"></i>
@@ -220,7 +221,8 @@ include 'views/layouts/simple-header.php';
             <p class="text-danger">Tindakan ini tidak dapat dibatalkan.</p>
         </div>
         <div class="modal-footer">
-            <form id="deleteForm" method="POST" action="<?= route('laporanOPD', 'delete') ?>" style="display: inline;">
+            <form id="deleteForm" method="POST" action="<?= route('laporanOPD', 'delete', ['id' => $laporan['id_laporan_opd'] ?? '']) ?>" style="display: inline;">
+                <input type="hidden" name="_method" value="DELETE">
                 <input type="hidden" name="id" id="deleteId">
                 <button type="submit" class="btn btn-danger">Hapus</button>
             </form>

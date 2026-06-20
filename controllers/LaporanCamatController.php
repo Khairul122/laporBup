@@ -238,7 +238,7 @@ class LaporanCamatController extends BaseController {
             $this->redirect(route('laporanCamat', 'index'));
         }
         
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        if (!in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT'], true)) {
             $this->redirect(route('laporanCamat', 'edit', ['id' => $id]));
         }
         
@@ -360,7 +360,7 @@ class LaporanCamatController extends BaseController {
     public function delete($id = null) {
         $this->requireLogin();
         
-        $id = $id ?? $_GET['id'] ?? 0;
+        $id = $id ?? $_POST['id'] ?? $_GET['id'] ?? 0;
         
         if (!$id) {
             $this->json(['success' => false, 'message' => 'ID laporan tidak ditemukan']);
@@ -396,7 +396,7 @@ class LaporanCamatController extends BaseController {
     public function detail($id = null) {
         $this->requireLogin();
         
-        $id = $id ?? $_GET['id'] ?? 0;
+        $id = $id ?? $_POST['id'] ?? $_GET['id'] ?? 0;
         
         if (!$id) {
             $_SESSION['error'] = 'ID laporan tidak ditemukan';
@@ -433,7 +433,7 @@ class LaporanCamatController extends BaseController {
             $this->redirect(route('laporanCamat', 'detail', ['id' => $id]));
         }
         
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        if (!in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PATCH'], true)) {
             $this->redirect(route('laporanCamat', 'detail', ['id' => $id]));
         }
         

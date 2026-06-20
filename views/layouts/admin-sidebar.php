@@ -34,11 +34,11 @@
         <span class="menu-title">Pengaturan</span>
         <i class="menu-arrow"></i>
       </a>
-      <div class="collapse <?php echo (strpos($_SERVER['REQUEST_URI'], 'kecamatan') !== false || strpos($_SERVER['REQUEST_URI'], 'desa') !== false || strpos($_SERVER['REQUEST_URI'], 'opd') !== false || strpos($_SERVER['REQUEST_URI'], 'profile') !== false) ? 'show' : ''; ?>" id="wilayah-menu">
+      <div class="collapse <?php echo (route_starts_with('kecamatan') || route_starts_with('desa') || route_starts_with('opd') || route_starts_with('profiles')) ? 'show' : ''; ?>" id="wilayah-menu">
         <ul class="nav flex-column sub-menu">
 
           <li class="nav-item">
-            <a class="nav-link <?php echo (isset($_GET['controller']) && $_GET['controller'] == 'kecamatan' && isset($_GET['action']) && $_GET['action'] == 'index') ? 'active' : ''; ?>"
+            <a class="nav-link <?php echo route_starts_with('kecamatan') ? 'active' : ''; ?>"
               href="<?= route('kecamatan', 'index') ?>">
               <i class="fa-solid fa-map-location-dot menu-icon"></i>
               Kecamatan
@@ -46,7 +46,7 @@
           </li>
 
           <li class="nav-item">
-            <a class="nav-link <?php echo (isset($_GET['controller']) && $_GET['controller'] == 'desa' && isset($_GET['action']) && $_GET['action'] == 'index') ? 'active' : ''; ?>"
+            <a class="nav-link <?php echo route_starts_with('desa') ? 'active' : ''; ?>"
               href="<?= route('desa', 'index') ?>">
               <i class="fa-solid fa-house-chimney menu-icon"></i>
               Desa
@@ -54,7 +54,7 @@
           </li>
 
           <li class="nav-item">
-            <a class="nav-link <?php echo (isset($_GET['controller']) && $_GET['controller'] == 'opd' && isset($_GET['action']) && $_GET['action'] == 'index') ? 'active' : ''; ?>"
+            <a class="nav-link <?php echo route_starts_with('opd') ? 'active' : ''; ?>"
               href="<?= route('opd', 'index') ?>">
               <i class="fa-solid fa-building menu-icon"></i>
               OPD
@@ -63,7 +63,7 @@
 
           
           <li class="nav-item">
-            <a class="nav-link <?php echo (isset($_GET['controller']) && $_GET['controller'] == 'profile' && isset($_GET['action']) && $_GET['action'] == 'index') ? 'active' : ''; ?>"
+            <a class="nav-link <?php echo route_starts_with('profiles') ? 'active' : ''; ?>"
               href="<?= route('profile', 'index') ?>">
               <i class="fa-solid fa-user-gear menu-icon"></i>
               Profile

@@ -96,7 +96,7 @@ class OPDController extends BaseController {
             $this->redirect(route('opd', 'index'));
         }
         
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        if (!in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT'], true)) {
             $this->redirect(route('opd', 'edit', ['id' => $id]));
         }
         

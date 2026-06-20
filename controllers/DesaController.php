@@ -51,10 +51,10 @@ class DesaController extends BaseController {
     }
 
     
-    public function form() {
+    public function form($id_desa = null) {
         $this->requireAdmin();
 
-        $id_desa = $_GET['id'] ?? null;
+        $id_desa = $id_desa ?? $_GET['id'] ?? null;
         $desa = null;
         $kecamatanOptions = $this->wilayahModel->getKecamatanOptions();
 
@@ -70,11 +70,11 @@ class DesaController extends BaseController {
     }
 
     
-    public function save() {
+    public function save($id_desa = null) {
         $this->requireAdmin();
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $id_desa = $_POST['id_desa'] ?? null;
+        if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT'], true)) {
+            $id_desa = $id_desa ?? $_POST['id_desa'] ?? null;
             $data = [
                 'id_kecamatan' => (int)($_POST['id_kecamatan'] ?? 0),
                 'nama_desa' => trim($_POST['nama_desa'] ?? '')
@@ -123,10 +123,10 @@ class DesaController extends BaseController {
     }
 
     
-    public function delete() {
+    public function delete($id_desa = null) {
         $this->requireAdmin();
 
-        $id_desa = $_POST['id'] ?? null;
+        $id_desa = $id_desa ?? $_POST['id'] ?? null;
         if ($id_desa) {
             $result = $this->wilayahModel->deleteDesa($id_desa);
             $response = [

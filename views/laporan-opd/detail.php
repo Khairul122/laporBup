@@ -127,7 +127,7 @@ include 'views/layouts/simple-header.php';
                                 </div>
                             </div>
                             <div class="file-actions">
-                                <a href="<?= route('laporanOPD', 'download') ?>?id=<?php echo $laporan['id_laporan_opd']; ?>"
+                                <a href="<?= route('laporanOPD', 'download', ['id' => $laporan['id_laporan_opd']]) ?>"
                                     class="btn btn-primary btn-sm"
                                     target="_blank">
                                     <i class="fas fa-download"></i>
@@ -171,7 +171,8 @@ include 'views/layouts/simple-header.php';
                 <p class="text-danger">Tindakan ini tidak dapat dibatalkan.</p>
             </div>
             <div class="modal-footer">
-                <form id="deleteForm" method="POST" action="<?= route('laporanOPD', 'delete') ?>" style="display: inline;">
+                <form id="deleteForm" method="POST" action="<?= route('laporanOPD', 'delete', ['id' => $laporan['id_laporan_opd']]) ?>" style="display: inline;">
+                    <input type="hidden" name="_method" value="DELETE">
                     <input type="hidden" name="id" id="deleteId">
                     <button type="submit" class="btn btn-danger">Hapus</button>
                 </form>
@@ -928,7 +929,7 @@ include 'views/layouts/simple-header.php';
 
             
             previewFrame.src = filePath;
-            downloadBtn.href = '<?= route('laporanOPD', 'download') ?>?id=<?php echo $laporan['id_laporan_opd']; ?>';
+            downloadBtn.href = '<?= route('laporanOPD', 'download', ['id' => $laporan['id_laporan_opd']]) ?>';
 
             
             previewModal.style.display = 'block';

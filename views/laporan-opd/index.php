@@ -152,14 +152,14 @@ include 'views/layouts/simple-header.php';
                             </td>
                             <td>
                                 <div class="action-buttons">
-                                    <a href="<?= route('laporanOPD', 'detail') ?>?id=<?php echo $item['id_laporan_opd']; ?>"
+                                    <a href="<?= route('laporanOPD', 'detail', ['id' => $item['id_laporan_opd']]) ?>"
                                        class="btn-action btn-view"
                                        title="Lihat Detail">
                                         <i class="fas fa-eye"></i>
                                     </a>
 
                                     <?php if ($item['status_laporan'] === 'baru'): ?>
-                                        <a href="<?= route('laporanOPD', 'edit') ?>?id=<?php echo $item['id_laporan_opd']; ?>"
+                                        <a href="<?= route('laporanOPD', 'edit', ['id' => $item['id_laporan_opd']]) ?>"
                                            class="btn-action btn-edit"
                                            title="Edit Laporan">
                                             <i class="fas fa-edit"></i>
@@ -200,6 +200,7 @@ include 'views/layouts/simple-header.php';
         </div>
         <div class="modal-footer">
             <form id="deleteForm" method="POST" style="display: inline;">
+                <input type="hidden" name="_method" value="DELETE">
                 <input type="hidden" name="id" id="deleteId">
                 <button type="submit" class="btn btn-danger">Hapus</button>
             </form>
@@ -690,7 +691,7 @@ include 'views/layouts/simple-header.php';
 
 function confirmDelete(id) {
     document.getElementById('deleteId').value = id;
-    document.getElementById('deleteForm').action = '<?= route('laporanOPD', 'delete') ?>';
+    document.getElementById('deleteForm').action = '<?= route('laporanOPD', 'delete') ?>/' + id;
     document.getElementById('deleteModal').style.display = 'block';
 }
 

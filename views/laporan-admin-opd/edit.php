@@ -52,7 +52,7 @@
                         </div>
                       </div>
                       <div class="col-md-4 text-md-end">
-                        <span class="badge bg-secondary">ID: #<?php echo $laporan['id_laporan_opd']; ?></span>
+                         <span class="badge bg-secondary">No. Laporan: #<?php echo $laporan['id_laporan_opd']; ?></span>
                       </div>
                     </div>
                   </div>
@@ -165,7 +165,7 @@
                         <div class="card-body">
                           <table class="table table-sm table-borderless">
                             <tr>
-                              <td class="text-muted" width="40%">ID Laporan</td>
+                              <td class="text-muted" width="40%">No. Laporan</td>
                               <td>#<?php echo $laporan['id_laporan_opd']; ?></td>
                             </tr>
                             <tr>
@@ -242,7 +242,7 @@
                               <i class="mdi mdi-content-save me-2"></i>Simpan Perubahan
                             </button>
 
-                            <a href="<?= route('laporanOPDAdmin', 'detail') ?>?id=<?php echo $laporan['id_laporan_opd']; ?>"
+                            <a href="<?= route('laporanOPDAdmin', 'detail', ['id' => $laporan['id_laporan_opd']]) ?>"
                                class="btn btn-outline-secondary">
                               <i class="mdi mdi-eye me-2"></i>Lihat Detail
                             </a>

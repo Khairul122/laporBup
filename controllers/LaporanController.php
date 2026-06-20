@@ -611,14 +611,10 @@ class LaporanController extends BaseController {
     }
 
     
-    public function tandaTangan()
+    public function tandaTangan($type = 'camat', $id = 0)
     {
         $this->requireAdmin();
 
-        $id = $_GET['id'] ?? 0;
-        $type = $_GET['type'] ?? 'camat'; 
-
-        
         if ($id == 0) {
             $laporan = null;
         } else {
@@ -669,12 +665,9 @@ class LaporanController extends BaseController {
     }
 
     
-    public function generatePDFWithSignature()
+    public function generatePDFWithSignature($type = 'camat', $id = 0)
     {
         $this->requireAdmin();
-
-        $id = $_GET['id'] ?? 0;
-        $type = $_GET['type'] ?? 'camat';
 
         
         if ($type === 'opd') {

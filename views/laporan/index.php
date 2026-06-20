@@ -140,8 +140,6 @@
                   <div class="card mb-4">
                     <div class="card-body">
                       <form method="GET" id="camatFilterForm">
-                        <input type="hidden" name="controller" value="laporan">
-                        <input type="hidden" name="action" value="index">
                         <input type="hidden" name="tab" value="camat">
 
                         <div class="row g-3">
@@ -240,7 +238,7 @@
                               <a href="<?= route('laporan', 'index') ?>?tab=camat" class="btn btn-outline-secondary">
                                 <i class="mdi mdi-refresh"></i> Reset
                               </a>
-                              <a href="<?= route('laporan', 'tandaTangan') ?>?id=0&type=camat" class="btn btn-outline-info">
+                              <a href="<?= route('laporan', 'tandaTangan', ['type' => 'camat', 'id' => 0]) ?>" class="btn btn-outline-info">
                                 <i class="mdi mdi-draw me-1"></i>TTD
                               </a>
                               <button type="button" class="btn btn-outline-danger" onclick="generatePDF('camat')">
@@ -432,8 +430,6 @@
                   <div class="card mb-4">
                     <div class="card-body">
                       <form method="GET" id="opdFilterForm">
-                        <input type="hidden" name="controller" value="laporan">
-                        <input type="hidden" name="action" value="index">
                         <input type="hidden" name="tab" value="opd">
 
                         <div class="row g-3">
@@ -515,7 +511,7 @@
                               <a href="<?= route('laporan', 'index') ?>?tab=opd" class="btn btn-outline-secondary">
                                 <i class="mdi mdi-refresh"></i> Reset
                               </a>
-                              <a href="<?= route('laporan', 'tandaTangan') ?>?id=0&type=opd" class="btn btn-outline-info">
+                              <a href="<?= route('laporan', 'tandaTangan', ['type' => 'opd', 'id' => 0]) ?>" class="btn btn-outline-info">
                                 <i class="mdi mdi-draw me-1"></i>TTD
                               </a>
                               <button type="button" class="btn btn-outline-danger" onclick="generatePDF('opd')">
@@ -698,11 +694,9 @@
         params.append(key, value);
       }
 
-      params.delete('controller');
-      params.delete('action');
       params.set('tab', tab);
 
-      window.open('<?= url("laporan/generatePDF") ?>?' + params.toString(), '_blank');
+      window.open('<?= route("laporan", "generatePDF") ?>?' + params.toString(), '_blank');
     }
 
     function generateExcel(tab) {
@@ -715,11 +709,9 @@
         params.append(key, value);
       }
 
-      params.delete('controller');
-      params.delete('action');
       params.set('tab', tab);
 
-      window.open('<?= url("laporan/generateExcel") ?>?' + params.toString(), '_blank');
+      window.open('<?= route("laporan", "generateExcel") ?>?' + params.toString(), '_blank');
     }
 
     document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tabButton => {
@@ -743,10 +735,8 @@
 
             const newTab = targetTab === 'opd-panel' ? 'opd' : 'camat';
             params.set('tab', newTab);
-            params.delete('controller');
-            params.delete('action');
 
-            window.location.href = '<?= url("laporan/index") ?>?' + params.toString();
+            window.location.href = '<?= route("laporan", "index") ?>?' + params.toString();
           }
         }
       });

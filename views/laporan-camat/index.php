@@ -171,14 +171,14 @@ include 'views/layouts/simple-header.php';
                             </td>
                             <td>
                                 <div class="action-buttons">
-                                    <a href="<?= route('laporanCamat', 'detail') ?>?id=<?php echo $item['id_laporan_camat']; ?>"
+                                    <a href="<?= route('laporanCamat', 'detail', ['id' => $item['id_laporan_camat']]) ?>"
                                        class="btn-action btn-view"
                                        title="Lihat Detail">
                                         <i class="fas fa-eye"></i>
                                     </a>
 
                                     <?php if ($_SESSION['role'] === 'camat' && $item['status_laporan'] === 'baru' && $item['id_user'] == $_SESSION['user_id']): ?>
-                                        <a href="<?= route('laporanCamat', 'edit') ?>?id=<?php echo $item['id_laporan_camat']; ?>"
+                                        <a href="<?= route('laporanCamat', 'edit', ['id' => $item['id_laporan_camat']]) ?>"
                                            class="btn-action btn-edit"
                                            title="Edit Laporan">
                                             <i class="fas fa-edit"></i>
@@ -219,6 +219,7 @@ include 'views/layouts/simple-header.php';
         </div>
         <div class="modal-footer">
             <form id="deleteForm" method="POST" style="display: inline;">
+                <input type="hidden" name="_method" value="DELETE">
                 <input type="hidden" name="id" id="deleteId">
                 <button type="submit" class="btn btn-danger">Hapus</button>
             </form>
@@ -709,7 +710,7 @@ include 'views/layouts/simple-header.php';
 
 function confirmDelete(id) {
     document.getElementById('deleteId').value = id;
-    document.getElementById('deleteForm').action = '<?= route('laporanCamat', 'delete') ?>';
+    document.getElementById('deleteForm').action = '<?= route('laporanCamat', 'delete') ?>/' + id;
     document.getElementById('deleteModal').style.display = 'block';
 }
 
