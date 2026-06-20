@@ -11,6 +11,13 @@
         <div class="content-wrapper">
           <div class="row">
             <div class="col-12">
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="<?= route('Dashboard', 'admin') ?>">Dashboard</a></li>
+                  <li class="breadcrumb-item"><a href="<?= route('waGateway', 'index') ?>">Kirim Pesan</a></li>
+                  <li class="breadcrumb-item active" aria-current="page"><?php echo $message ? 'Edit' : 'Tambah'; ?></li>
+                </ol>
+              </nav>
               <div class="page-header">
                 <div class="page-title">
                   <h3 class="mb-1">
@@ -121,21 +128,17 @@
 
                     
                     
-                    <div class="form-section">
-                      <div class="d-flex justify-content-between align-items-center">
-                        <a href="<?= route('waGateway', 'index') ?>" class="btn btn-secondary">
-                          <i class="fas fa-arrow-left me-2"></i> Kembali
-                        </a>
-                        <div class="d-flex gap-2">
-                          <button type="reset" class="btn btn-outline-secondary">
-                            <i class="fas fa-undo me-2"></i> Reset
-                          </button>
-                          <button type="submit" class="btn btn-success" id="submitBtn">
-                            <i class="fas fa-paper-plane me-2"></i>
-                            <span id="submitBtnText"><?php echo $message ? 'Update & Kirim' : 'Kirim Pesan'; ?></span>
-                          </button>
-                        </div>
-                      </div>
+                    <div class="form-actions">
+                      <a href="<?= route('waGateway', 'index') ?>" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i> Kembali
+                      </a>
+                      <button type="reset" class="btn btn-outline-secondary">
+                        <i class="fas fa-undo me-2"></i> Reset
+                      </button>
+                      <button type="submit" class="btn btn-success" id="submitBtn">
+                        <i class="fas fa-paper-plane me-2"></i>
+                        <span id="submitBtnText"><?php echo $message ? 'Update & Kirim' : 'Kirim Pesan'; ?></span>
+                      </button>
                     </div>
                   </form>
                 </div>
@@ -186,7 +189,7 @@
         </div>
         <div class="modal-body">
           <div class="mb-3">
-            <input type="text" class="form-control" id="contactSearch" placeholder="Cari nama atau nomor telepon..." onkeyup="searchContacts()">
+            <input type="text" class="form-control" id="contactSearch" aria-label="Cari kontak" placeholder="Cari nama atau nomor telepon..." onkeyup="searchContacts()">
           </div>
           <div class="contact-list" style="max-height: 400px; overflow-y: auto;">
             <?php foreach ($contacts as $contact): ?>
@@ -273,27 +276,27 @@
     /* General Form Styling */
     .form-section {
       padding: 1.5rem;
-      background: #f8f9fa;
-      border-radius: 0.5rem;
-      border: 1px solid #e9ecef;
+      background: var(--bg-light, #f8fafc);
+      border-radius: var(--radius-md, 8px);
+      border: 1px solid var(--border-color, #e2e8f0);
       margin-bottom: 1.5rem;
       transition: all 0.3s ease;
     }
 
     .form-section:hover {
       box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-      border-color: #dee2e6;
+      border-color: var(--primary-navy, #1e3a8a);
     }
 
     .section-title {
-      color: #495057;
+      color: var(--text-dark, #0f172a);
       font-weight: 600;
       font-size: 0.875rem;
       text-transform: uppercase;
       letter-spacing: 0.5px;
       margin-bottom: 1rem;
       padding-bottom: 0.5rem;
-      border-bottom: 2px solid #e9ecef;
+      border-bottom: 2px solid var(--border-color, #e2e8f0);
     }
 
     /* Message Editor */

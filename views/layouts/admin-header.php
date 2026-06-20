@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
   <meta charset="utf-8" />
@@ -7,17 +7,13 @@
     name="viewport"
     content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <title>Lapor Bupati</title>
-  <link rel="stylesheet" href="<?= asset('assets/vendors/feather/feather.css') ?>" />
+  <meta name="description" content="Panel administrasi Sistem Layanan Pelaporan Pemerintah Kabupaten Mandailing Natal.">
+  <meta property="og:title" content="Lapor Bupati">
+  <meta property="og:description" content="Panel administrasi Sistem Layanan Pelaporan Pemerintah Kabupaten Mandailing Natal.">
+  <meta property="og:image" content="<?= asset('assets/images/favicon.png') ?>">
   <link
     rel="stylesheet"
     href="<?= asset('assets/vendors/mdi/css/materialdesignicons.min.css') ?>" />
-  <link
-    rel="stylesheet"
-    href="<?= asset('assets/vendors/ti-icons/css/themify-icons.css') ?>" />
-  <link rel="stylesheet" href="<?= asset('assets/vendors/typicons/typicons.css') ?>" />
-  <link
-    rel="stylesheet"
-    href="<?= asset('assets/vendors/simple-line-icons/css/simple-line-icons.css') ?>" />
   <link rel="stylesheet" href="<?= asset('assets/vendors/css/vendor.bundle.base.css') ?>" />
   <link
     rel="stylesheet"
@@ -27,6 +23,7 @@
     type="text/css"
     href="<?= asset('assets/js/select.dataTables.min.css') ?>" />
   <link rel="stylesheet" href="<?= asset('assets/css/vertical-layout-light/style.css') ?>" />
+  <link rel="stylesheet" href="<?= asset('assets/css/design-tokens.css') ?>" />
   <link rel="stylesheet" href="<?= asset('assets/css/custom-modern.css') ?>" />
   <link rel="shortcut icon" href="<?= asset('assets/images/favicon.png') ?>" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />

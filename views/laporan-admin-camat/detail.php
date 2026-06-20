@@ -18,8 +18,16 @@
           <div class="row">
             <div class="col-12">
 
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="<?= route('Dashboard', 'admin') ?>">Dashboard</a></li>
+                  <li class="breadcrumb-item"><a href="<?= route('laporanCamatAdmin', 'index') ?>">Laporan Camat</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Detail</li>
+                </ol>
+              </nav>
+
               <?php if ($laporan): ?>
-                
+
                 <div class="card mb-4">
                   <div class="card-body">
                     <div class="row align-items-center">
@@ -194,7 +202,7 @@
                           </a>
 
                           <form method="POST" action="<?= route('laporanCamatAdmin', 'delete', ['id' => $laporan['id_laporan_camat']]) ?>"
-                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus laporan ini?');">
+                                onsubmit="showConfirm('Laporan ini akan dihapus secara permanen.', () => this.submit()); return false;">
                             <input type="hidden" name="_method" value="DELETE">
                             <button type="submit" class="btn btn-outline-danger w-100">
                               <i class="mdi mdi-delete me-2"></i>Hapus Laporan
@@ -231,41 +239,6 @@
 
   <?php include 'views/layouts/admin-script.php'; ?>
 
-  <style>
-    .avatar-lg {
-      width: 64px;
-      height: 64px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-    }
-
-    .badge {
-      font-weight: 500;
-    }
-
-    .card {
-      border: 1px solid #e9ecef;
-      border-radius: 0.5rem;
-    }
-
-    .table-sm td {
-      padding: 0.5rem;
-      vertical-align: top;
-    }
-
-    .breadcrumb {
-      background-color: transparent;
-      padding: 0;
-      margin-bottom: 1rem;
-    }
-
-    .breadcrumb-item + .breadcrumb-item::before {
-      content: ">";
-      color: #6c757d;
-    }
-  </style>
 
   <script>
     

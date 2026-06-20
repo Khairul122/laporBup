@@ -21,7 +21,7 @@
   <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-start">
     <div class="me-3">
       <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-bs-toggle="minimize">
-        <span class="icon-menu"></span>
+        <span class="mdi mdi-menu"></span>
       </button>
     </div>
   </div>
@@ -43,10 +43,12 @@
             <p class="mb-0 text-muted text-small">Role: <span class="text-primary text-capitalize"><?= $role ?></span></p>
           </div>
         
-          <a class="dropdown-item" href="<?= route('Auth', 'logout') ?>">
-            <i class="dropdown-item-icon mdi mdi-power text-primary me-2"></i>
-            Sign Out
-          </a>
+          <form method="POST" action="<?= route('auth', 'logout') ?>">
+            <button type="submit" class="dropdown-item">
+              <i class="dropdown-item-icon mdi mdi-power text-primary me-2"></i>
+              Sign Out
+            </button>
+          </form>
         </div>
       </li>
     </ul>

@@ -3,373 +3,528 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($appData['title']); ?></title>
+    <meta name="description" content="Masuk sebagai OPD — Sistem Layanan Pelaporan Pemerintah Kabupaten Mandailing Natal.">
+    <title><?= htmlspecialchars($appData['title']) ?> — OPD</title>
+    <link rel="shortcut icon" href="<?= asset('assets/images/favicon.png') ?>" />
 
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-          integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
-          crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-    
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..500;1,6..72,300..400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?= asset('assets/css/design-tokens.css') ?>" />
 
     <style>
         :root {
-            --primary-red: #dc3545;
-            --secondary-orange: #fd7e14;
-            --accent-red: #c82333;
-            --primary-black: #000000;
-            --primary-orange: #F59E0B;
-            --light-gray: #F5F6FA;
-            --dark-gray: #333333;
-            --card-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            --transition: all 0.3s ease;
+            --canvas:         #FAF9F6; /* Soft warm off-white */
+            --surface:        #FFFFFF;
+            --prestige-navy:   #0A1D37; /* Institutional Navy */
+            --prestige-accent: #8E6E27; /* Rich Ochre Gold for OPD */
+            --border-alpha:    rgba(10, 29, 55, 0.06);
+            --text-primary:    #1C2630;
+            --text-muted:      #656E77;
+            
+            --ease-spring:     cubic-bezier(0.32, 0.72, 0, 1);
+            --transition-premium: all 0.7s var(--ease-spring);
         }
 
-        * {
+        *, *::before, *::after {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            overflow: hidden;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--canvas);
+            color: var(--text-primary);
+            min-height: 100dvh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            overflow-x: hidden;
+            position: relative;
         }
 
-        .split-container {
-            display: flex;
-            height: 100vh;
+        /* Ambient grain overlay */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
             width: 100vw;
+            height: 100vh;
+            opacity: 0.02;
+            pointer-events: none;
+            z-index: 999;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
-        /* Left Side - Login Form */
-        .login-section {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: white;
-            padding: 40px;
-            position: relative;
-            overflow-y: auto;
-        }
-
-        .login-form-container {
+        /* ── EDITORIAL SPLIT CONFIGURATION ── */
+        .split-wrapper {
+            background: rgba(10, 29, 55, 0.02);
+            border: 1px solid rgba(10, 29, 55, 0.04);
+            padding: 8px;
+            border-radius: 32px;
+            max-width: 1000px;
             width: 100%;
-            max-width: 420px;
-            animation: fadeInLeft 1s ease;
-        }
-
-        .login-header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .login-header h2 {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--primary-red);
-            margin-bottom: 10px;
-        }
-
-        .login-header p {
-            color: #666;
-            font-size: 1rem;
-        }
-
-        .login-card {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
-            border: 1px solid rgba(0,0,0,0.05);
-            padding: 40px 30px;
-        }
-
-        /* Right Side - Branding */
-        .branding-section {
-            flex: 1;
-            background: linear-gradient(135deg, var(--primary-red), var(--secondary-orange));
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            padding: 40px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .branding-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
-            opacity: 0.3;
-        }
-
-        .branding-content {
+            box-shadow: 0 30px 70px rgba(10, 29, 55, 0.08);
             position: relative;
             z-index: 2;
-            text-align: center;
-            animation: fadeInRight 1s ease;
         }
 
-        .logo-icon {
-            width: 120px;
-            height: 120px;
-            background: rgba(255,255,255,0.15);
-            border-radius: 30px;
+        .split-core {
+            width: 100%;
+            background: var(--surface);
+            border-radius: calc(32px - 8px);
+            display: flex;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        /* ── LEFT: PRESTIGE CONTEXT PANEL (42%) ── */
+        .context-panel {
+            flex: 0 0 42%;
+            background: var(--prestige-navy);
+            color: #FFFFFF;
+            padding: 56px 48px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Ambient gradient behind */
+        .context-panel::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 85% 15%, rgba(142, 110, 39, 0.18) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .brand-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .brand-emblem-shell {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 3px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .brand-emblem-core {
+            width: 28px;
+            height: 28px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.08);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 30px;
-            color: white;
-            font-size: 60px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2);
         }
 
-        .app-name {
-            font-size: 3rem;
+        .brand-emblem-core svg {
+            width: 16px;
+            height: 16px;
+            stroke: #FFFFFF;
+            stroke-width: 1.5;
+            fill: none;
+        }
+
+        .brand-name {
+            font-size: 13px;
             font-weight: 700;
-            margin-bottom: 15px;
-            background: linear-gradient(45deg, #ffffff, var(--primary-orange));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            letter-spacing: -0.01em;
+            color: #FFFFFF;
         }
 
-        .app-description {
-            font-size: 1.2rem;
-            opacity: 0.9;
+        .context-main {
+            margin: 40px 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .role-tag-pill {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(142, 110, 39, 0.25);
+            border: 1px solid rgba(142, 110, 39, 0.35);
+            color: #F7DC6F;
+            padding: 4px 14px;
+            border-radius: 9999px;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
             margin-bottom: 20px;
+        }
+
+        .context-title {
+            font-family: 'Newsreader', Georgia, serif;
+            font-size: clamp(24px, 3vw, 32px);
+            font-weight: 400;
+            line-height: 1.15;
+            letter-spacing: -0.02em;
+            color: #FFFFFF;
+            margin-bottom: 12px;
+        }
+
+        .context-title em {
+            font-style: italic;
+            font-weight: 300;
+            color: #F7DC6F;
+        }
+
+        .context-desc {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.55);
             line-height: 1.6;
+            margin-bottom: 32px;
         }
 
-        .user-type {
-            font-size: 1.2rem;
-            font-weight: 600;
-            background: rgba(255,255,255,0.2);
-            padding: 12px 30px;
-            border-radius: 30px;
-            display: inline-block;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.3);
-        }
-
+        /* Fine feature list */
         .feature-list {
-            margin-top: 50px;
-            text-align: left;
-            max-width: 400px;
+            display: flex;
+            flex-direction: column;
         }
 
         .feature-item {
             display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-            font-size: 1.1rem;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 14px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
         }
 
-        .feature-icon {
-            width: 40px;
-            height: 40px;
-            background: rgba(255,255,255,0.15);
-            border-radius: 12px;
+        .feature-symbol-shell {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-right: 15px;
-            font-size: 18px;
+            flex-shrink: 0;
+            margin-top: 2px;
         }
 
-        .form-group {
-            margin-bottom: 25px;
+        .feature-symbol-shell svg {
+            width: 14px;
+            height: 14px;
+            stroke: #F7DC6F;
+            stroke-width: 1.5;
+            fill: none;
         }
 
-        .form-label {
-            font-weight: 500;
-            color: var(--dark-gray);
-            margin-bottom: 8px;
-            font-size: 0.9rem;
+        .feature-body {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
         }
 
-        .form-control {
-            border: 2px solid #e1e8ed;
-            border-radius: 12px;
-            padding: 12px 20px;
-            font-size: 1rem;
-            transition: var(--transition);
-            background-color: #fafbfc;
-        }
-
-        .form-control:focus {
-            border-color: var(--primary-red);
-            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
-            background-color: white;
-        }
-
-        .input-group-text {
-            background: #f8f9fa;
-            border: 2px solid #e1e8ed;
-            border-right: none;
-            border-radius: 12px 0 0 12px;
-            color: var(--dark-gray);
-        }
-
-        .input-group .form-control {
-            border-left: none;
-            border-radius: 0 12px 12px 0;
-        }
-
-        .btn-login {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, var(--primary-red), var(--secondary-orange));
-            color: white;
-            border: none;
-            border-radius: 12px;
+        .feature-title {
+            font-size: 13px;
             font-weight: 600;
-            font-size: 1.1rem;
-            transition: var(--transition);
-            margin-top: 15px;
+            color: rgba(255, 255, 255, 0.9);
         }
 
-        .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 30px rgba(220, 53, 69, 0.3);
+        .feature-desc {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.4);
+            line-height: 1.4;
         }
 
-        .btn-login:disabled {
-            opacity: 0.7;
-            transform: none;
-            cursor: not-allowed;
+        /* Retro back button link */
+        .back-nav-box {
+            position: relative;
+            z-index: 2;
         }
 
         .back-link {
-            text-align: center;
-            margin-top: 30px;
-        }
-
-        .back-link a {
-            color: #666;
-            text-decoration: none;
-            font-weight: 500;
-            transition: var(--transition);
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 12px 24px;
-            border-radius: 20px;
-            background: #f8f9fa;
-            font-size: 0.95rem;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.45);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition-premium);
         }
 
-        .back-link a:hover {
-            background: #e9ecef;
-            color: var(--primary-red);
-            transform: translateY(-2px);
+        .back-link svg {
+            width: 12px;
+            height: 12px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+            transition: var(--transition-premium);
         }
 
-        /* Animations */
-        @keyframes fadeInLeft {
-            from {
-                opacity: 0;
-                transform: translateX(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+        .back-link:hover {
+            color: #F7DC6F;
         }
 
-        @keyframes fadeInRight {
-            from {
-                opacity: 0;
-                transform: translateX(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+        .back-link:hover svg {
+            transform: translateX(-4px);
         }
 
-        .alert {
+        /* ── RIGHT: FORM PANEL (58%) ── */
+        .form-panel {
+            flex: 1;
+            padding: 56px 64px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: var(--surface);
+        }
+
+        .form-header {
+            margin-bottom: 32px;
+        }
+
+        .form-header h2 {
+            font-family: 'Newsreader', Georgia, serif;
+            font-size: 26px;
+            font-weight: 400;
+            color: var(--prestige-navy);
+            letter-spacing: -0.02em;
+            margin-bottom: 6px;
+        }
+
+        .form-header p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* Fields with double bezels */
+        .field-group {
+            margin-bottom: 20px;
+        }
+
+        .field-label {
+            display: block;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--prestige-navy);
+            margin-bottom: 8px;
+        }
+
+        .double-bezel-input {
+            background: rgba(10, 29, 55, 0.02);
+            border: 1px solid rgba(10, 29, 55, 0.03);
+            padding: 3px;
             border-radius: 12px;
+            position: relative;
+            transition: var(--transition-premium);
+        }
+
+        .field-input {
+            width: 100%;
+            height: 42px;
+            padding: 0 16px;
+            border: 1px solid rgba(10, 29, 55, 0.06);
+            border-radius: calc(12px - 3px);
+            background: #FFFFFF;
+            font-size: 13.5px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--text-primary);
+            outline: none;
+            transition: var(--transition-premium);
+        }
+
+        .field-input::placeholder {
+            color: rgba(10, 29, 55, 0.35);
+        }
+
+        /* Focus states */
+        .double-bezel-input:focus-within {
+            background: rgba(142, 110, 39, 0.06);
+            border-color: rgba(142, 110, 39, 0.15);
+        }
+
+        .field-input:focus {
+            border-color: var(--prestige-accent);
+            box-shadow: 0 0 0 3px rgba(142, 110, 39, 0.1);
+        }
+
+        .field-input.with-toggle {
+            padding-right: 48px;
+        }
+
+        /* Error state formatting */
+        .double-bezel-input.is-error {
+            background: rgba(159, 47, 45, 0.05);
+            border-color: rgba(159, 47, 45, 0.15);
+        }
+
+        .double-bezel-input.is-error .field-input {
+            border-color: #9F2F2D;
+            background: #FFFDFD;
+        }
+
+        .field-error {
+            display: none;
+            font-size: 11px;
+            color: #9F2F2D;
+            margin-top: 6px;
+            font-weight: 500;
+        }
+
+        .field-error.show {
+            display: block;
+        }
+
+        /* Password show toggle */
+        .pwd-toggle-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
             border: none;
-            padding: 15px 20px;
-            margin-bottom: 25px;
-            animation: shake 0.5s ease;
+            cursor: pointer;
+            padding: 6px;
+            color: var(--text-muted);
+            transition: var(--transition-premium);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
         }
 
-        .alert-danger {
-            background: linear-gradient(135deg, #fee, #fdd);
-            color: #c53030;
+        .pwd-toggle-btn:hover {
+            color: var(--prestige-navy);
+            transform: translateY(-50%) scale(1.05);
         }
 
-        .alert-success {
-            background: linear-gradient(135deg, #d4edda, #c3e6cb);
-            color: #155724;
+        .pwd-toggle-btn svg {
+            width: 16px;
+            height: 16px;
+            stroke-width: 1.5;
+            fill: none;
         }
 
-        .alert-warning {
-            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
-            color: #856404;
+        /* Button design */
+        .btn-submit {
+            width: 100%;
+            height: 48px;
+            background: var(--prestige-navy);
+            color: #FFFFFF;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 9999px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            cursor: pointer;
+            transition: var(--transition-premium);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 6px 6px 24px;
+            box-shadow: 0 4px 15px rgba(10, 29, 55, 0.05);
+            margin-top: 8px;
         }
 
-        /* Toast Notification Styles */
-        .toast-container {
+        .btn-icon-box {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition-premium);
+        }
+
+        .btn-icon-box svg {
+            width: 14px;
+            height: 14px;
+            stroke-width: 2;
+            fill: none;
+            transition: var(--transition-premium);
+            stroke: #FFFFFF;
+        }
+
+        .btn-submit:hover {
+            background: var(--prestige-accent);
+            box-shadow: 0 10px 25px rgba(142, 110, 39, 0.2);
+        }
+
+        .btn-submit:hover .btn-icon-box {
+            background: rgba(10, 29, 55, 0.1);
+        }
+
+        .btn-submit:hover .btn-icon-box svg {
+            transform: translate(2px, -2px);
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        /* Footer copy */
+        .form-footer {
+            margin-top: 36px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(10, 29, 55, 0.06);
+            font-size: 11px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        /* ── TOAST NOTIFICATIONS ── */
+        .toast-wrap {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 9999;
-            max-width: 400px;
+            top: 24px;
+            right: 24px;
+            z-index: var(--z-toast, 500);
+            max-width: 380px;
+            width: calc(100vw - 48px);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
 
-        .toast-notification {
-            background: white;
-            border-radius: 12px;
+        .toast {
+            background: #FFFFFF;
+            border-radius: 16px;
             padding: 16px 20px;
-            margin-bottom: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            border-left: 4px solid;
+            box-shadow: 0 20px 40px rgba(10, 29, 55, 0.08);
+            border: 1px solid rgba(10, 29, 55, 0.04);
+            border-left: 4px solid var(--prestige-navy);
             display: flex;
             align-items: flex-start;
-            gap: 12px;
-            animation: slideInRight 0.3s ease;
-            transition: all 0.3s ease;
+            gap: 14px;
             position: relative;
             overflow: hidden;
+            transition: var(--transition-premium);
         }
 
-        .toast-notification.removing {
-            animation: slideOutRight 0.3s ease;
-            opacity: 0;
-            transform: translateX(100%);
+        .toast.success {
+            border-left-color: #1E3F20;
         }
 
-        .toast-notification.success {
-            border-left-color: #28a745;
+        .toast.error {
+            border-left-color: #DC2626;
         }
 
-        .toast-notification.error {
-            border-left-color: #dc3545;
-        }
-
-        .toast-notification.warning {
-            border-left-color: #ffc107;
-        }
-
-        .toast-icon {
+        .toast-dot-wrapper {
             width: 24px;
             height: 24px;
             border-radius: 50%;
@@ -377,452 +532,391 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            font-size: 12px;
-            color: white;
         }
 
-        .toast-notification.success .toast-icon {
-            background: #28a745;
+        .toast.success .toast-dot-wrapper {
+            background: rgba(30, 63, 32, 0.1);
         }
 
-        .toast-notification.error .toast-icon {
-            background: #dc3545;
+        .toast.error .toast-dot-wrapper {
+            background: rgba(220, 38, 38, 0.1);
         }
 
-        .toast-notification.warning .toast-icon {
-            background: #ffc107;
-            color: #212529;
+        .toast-dot-wrapper svg {
+            width: 14px;
+            height: 14px;
+            stroke-width: 2.5;
+            fill: none;
         }
 
-        .toast-content {
+        .toast.success .toast-dot-wrapper svg {
+            stroke: #1E3F20;
+        }
+
+        .toast.error .toast-dot-wrapper svg {
+            stroke: #DC2626;
+        }
+
+        .toast-body {
             flex: 1;
         }
 
-        .toast-title {
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 4px;
-            font-size: 0.95rem;
+        .toast-ttl {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--prestige-navy);
+            margin-bottom: 2px;
         }
 
-        .toast-message {
-            color: #666;
-            font-size: 0.9rem;
+        .toast-msg {
+            color: var(--text-muted);
+            font-size: 12.5px;
             line-height: 1.4;
         }
 
-        .toast-close {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            background: rgba(0,0,0,0.1);
+        .toast-x {
+            background: rgba(10, 29, 55, 0.04);
             border: none;
             border-radius: 50%;
-            width: 24px;
-            height: 24px;
+            width: 22px;
+            height: 22px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            color: #666;
-            font-size: 12px;
-            transition: all 0.2s ease;
+            color: var(--text-muted);
+            font-size: 14px;
+            transition: var(--transition-premium);
+            flex-shrink: 0;
         }
 
-        .toast-close:hover {
-            background: rgba(0,0,0,0.2);
-            color: #333;
+        .toast-x:hover {
+            background: rgba(10, 29, 55, 0.08);
+            color: var(--prestige-navy);
         }
 
-        @keyframes slideInRight {
-            from {
-                transform: translateX(100%);
+        .toast.removing {
+            opacity: 0;
+            transform: translateX(100%) scale(0.9);
+        }
+
+        /* Spinner */
+        .spinner-shell {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #FFFFFF;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        .btn-submit:hover .spinner-shell {
+            border: 2px solid rgba(10, 29, 55, 0.2);
+            border-top-color: var(--prestige-navy);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ── ANIMATIONS ── */
+        @media (prefers-reduced-motion: no-preference) {
+            .split-wrapper {
                 opacity: 0;
+                transform: translateY(20px);
+                animation: premiumReveal 0.8s var(--ease-spring) forwards;
             }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
 
-        @keyframes slideOutRight {
-            from {
-                transform: translateX(0);
-                opacity: 1;
-            }
-            to {
-                transform: translateX(100%);
-                opacity: 0;
+            @keyframes premiumReveal {
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
             }
         }
 
-        /* Animations */
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
-
-        /* Loading Spinner */
-        .spinner-border-sm {
-            width: 1rem;
-            height: 1rem;
-            border-width: 0.2em;
-        }
-
-        /* Responsive */
+        /* ── RESPONSIVE ── */
         @media (max-width: 768px) {
-            .split-container {
+            body {
+                padding: 16px;
+                align-items: flex-start;
+            }
+
+            .split-wrapper {
+                border-radius: 24px;
+                padding: 6px;
+            }
+
+            .split-core {
                 flex-direction: column;
+                border-radius: calc(24px - 6px);
             }
 
-            .login-section {
-                flex: 1;
-                padding: 30px 20px;
-            }
-
-            .branding-section {
+            .context-panel {
                 flex: 0 0 auto;
-                min-height: 40vh;
-                padding: 30px 20px;
+                padding: 40px 32px;
             }
 
-            .login-header h2 {
-                font-size: 1.6rem;
+            .context-main {
+                margin: 24px 0;
             }
 
-            .app-name {
-                font-size: 2rem;
-            }
-
-            .logo-icon {
-                width: 80px;
-                height: 80px;
-                font-size: 40px;
-            }
-
-            .feature-list {
+            .feature-item:nth-child(n+3) {
                 display: none;
             }
-        }
 
-        @media (max-width: 480px) {
-            .login-section {
-                padding: 20px 15px;
+            .form-panel {
+                padding: 40px 32px;
             }
-
-            .branding-section {
-                padding: 25px 15px;
-                min-height: 35vh;
-            }
-
-            .login-form-container {
-                max-width: 100%;
-            }
-
-            .login-card {
-                padding: 30px 20px;
-            }
-
-            .login-header h2 {
-                font-size: 1.4rem;
-            }
-
-            .app-name {
-                font-size: 1.8rem;
-            }
-
-            .logo-icon {
-                width: 70px;
-                height: 70px;
-                font-size: 35px;
-            }
-
-            .app-description {
-                font-size: 1rem;
-            }
-
-            .user-type {
-                font-size: 1rem;
-                padding: 10px 20px;
-            }
-        }
-
-        /* Password visibility toggle */
-        .password-toggle {
-            cursor: pointer;
-            color: #666;
-            transition: var(--transition);
-        }
-
-        .password-toggle:hover {
-            color: var(--primary-red);
         }
     </style>
 </head>
 <body>
-    <div class="split-container">
-        
-        <div class="login-section">
-            <div class="login-form-container">
+
+<div class="split-wrapper">
+    <div class="split-core">
+
+        <!-- LEFT PANEL: CONTEXT -->
+        <aside class="context-panel">
+            <div class="brand-header">
+                <div class="brand-emblem-shell">
+                    <div class="brand-emblem-core">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 10v11M16 10v11M12 10v11"/>
+                        </svg>
+                    </div>
+                </div>
+                <span class="brand-name">LaporBup</span>
+            </div>
+
+            <div class="context-main">
+                <span class="role-tag-pill">OPD</span>
                 
-                <div class="login-header">
-                    <h2>Selamat Datang</h2>
-                    <p>Silakan masuk ke akun OPD Anda</p>
+                <h1 class="context-title">
+                    <?= htmlspecialchars($appData['name']) ?><br>
+                    <em><?= htmlspecialchars($appData['description']) ?></em>
+                </h1>
+                <p class="context-desc">Portal laporan kegiatan dan program perangkat daerah.</p>
+
+                <div class="feature-list" role="list">
+                    <div class="feature-item" role="listitem">
+                        <div class="feature-symbol-shell">
+                            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        </div>
+                        <div class="feature-body">
+                            <div class="feature-title">Laporan Dinas</div>
+                            <div class="feature-desc">Input laporan realisasi kegiatan internal perangkat dinas.</div>
+                        </div>
+                    </div>
+                    <div class="feature-item" role="listitem">
+                        <div class="feature-symbol-shell">
+                            <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                        </div>
+                        <div class="feature-body">
+                            <div class="feature-title">Monitoring Program</div>
+                            <div class="feature-desc">Kawal target progres fisik dan realisasi anggaran.</div>
+                        </div>
+                    </div>
+                    <div class="feature-item" role="listitem">
+                        <div class="feature-symbol-shell">
+                            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        </div>
+                        <div class="feature-body">
+                            <div class="feature-title">Koordinasi Lintas OPD</div>
+                            <div class="feature-desc">Pelaporan program terpadu terintegrasi antar instansi.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="back-nav-box">
+                <a href="<?= route('auth', 'index') ?>" class="back-link">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+                    Kembali ke halaman utama
+                </a>
+            </div>
+        </aside>
+
+        <!-- RIGHT PANEL: FORM -->
+        <main class="form-panel">
+            <div class="form-header">
+                <h2>Masuk OPD</h2>
+                <p>Silakan masukkan kredensial perangkat daerah Anda.</p>
+            </div>
+
+            <form id="loginForm" novalidate>
+                
+                <!-- USERNAME -->
+                <div class="field-group">
+                    <label for="username" class="field-label">Username</label>
+                    <div class="double-bezel-input" id="username-bezel">
+                        <input type="text" class="field-input" id="username" name="username"
+                               placeholder="nama pengguna" autocomplete="username" required>
+                    </div>
+                    <div class="field-error" id="username-error"></div>
                 </div>
 
-                
-                <div class="login-card">
-                    
-                    <div id="alertContainer"></div>
-
-                    
-                    <form id="loginForm">
-                        <div class="form-group">
-                            <label for="username" class="form-label">
-                                <i class="fas fa-user me-2"></i>Username
-                            </label>
-                            <div class="input-group">
-                                <span class="input-group-text">
-                                    <i class="fas fa-user"></i>
-                                </span>
-                                <input type="text" class="form-control" id="username" name="username"
-                                       placeholder="Masukkan username" required autocomplete="username">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="password" class="form-label">
-                                <i class="fas fa-lock me-2"></i>Password
-                            </label>
-                            <div class="input-group">
-                                <span class="input-group-text">
-                                    <i class="fas fa-lock"></i>
-                                </span>
-                                <input type="password" class="form-control" id="password" name="password"
-                                       placeholder="Masukkan password" required autocomplete="current-password">
-                                <span class="input-group-text password-toggle" onclick="togglePassword()">
-                                    <i class="fas fa-eye" id="passwordIcon"></i>
-                                </span>
-                            </div>
-                        </div>
-
-                        <button type="submit" class="btn btn-login" id="loginBtn">
-                            <i class="fas fa-sign-in-alt me-2"></i>
-                            <span id="loginText">Login</span>
+                <!-- PASSWORD -->
+                <div class="field-group">
+                    <label for="password" class="field-label">Password</label>
+                    <div class="double-bezel-input" id="password-bezel">
+                        <input type="password" class="field-input with-toggle" id="password" name="password"
+                               placeholder="kata sandi" autocomplete="current-password" required>
+                        <button type="button" class="pwd-toggle-btn" id="pwdToggle" aria-label="Tampilkan password" title="Tampilkan password">
+                            <svg id="eyeIcon" viewBox="0 0 24 24" stroke="currentColor">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
                         </button>
-                    </form>
-
-                    
-                   
+                    </div>
+                    <div class="field-error" id="password-error"></div>
                 </div>
-            </div>
-        </div>
 
-        
-        <div class="branding-section">
-            <div class="branding-content">
-                <div class="logo-icon">
-                    <i class="<?php echo htmlspecialchars($appData['icon']); ?>"></i>
-                </div>
-                <h1 class="app-name"><?php echo htmlspecialchars($appData['name']); ?></h1>
-                <p class="app-description"><?php echo htmlspecialchars($appData['description']); ?></p>
-                <span class="user-type">Portal OPD</span>
-            </div>
-        </div>
-    </div>
-
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script>
-        
-        function togglePassword() {
-            const passwordInput = document.getElementById('password');
-            const passwordIcon = document.getElementById('passwordIcon');
-
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                passwordIcon.classList.remove('fa-eye');
-                passwordIcon.classList.add('fa-eye-slash');
-            } else {
-                passwordInput.type = 'password';
-                passwordIcon.classList.remove('fa-eye-slash');
-                passwordIcon.classList.add('fa-eye');
-            }
-        }
-
-        
-        let toastContainer = null;
-
-        function getToastContainer() {
-            if (!toastContainer) {
-                toastContainer = document.createElement('div');
-                toastContainer.className = 'toast-container';
-                document.body.appendChild(toastContainer);
-            }
-            return toastContainer;
-        }
-
-        function showToast(title, message, type = 'success', duration = 4000) {
-            const container = getToastContainer();
-
-            const toast = document.createElement('div');
-            toast.className = `toast-notification ${type}`;
-
-            let iconClass = '';
-            switch(type) {
-                case 'success':
-                    iconClass = 'fas fa-check';
-                    break;
-                case 'error':
-                    iconClass = 'fas fa-times';
-                    break;
-                case 'warning':
-                    iconClass = 'fas fa-exclamation';
-                    break;
-                default:
-                    iconClass = 'fas fa-info';
-            }
-
-            toast.innerHTML = `
-                <div class="toast-icon">
-                    <i class="${iconClass}"></i>
-                </div>
-                <div class="toast-content">
-                    <div class="toast-title">${title}</div>
-                    <div class="toast-message">${message}</div>
-                </div>
-                <button class="toast-close" onclick="removeToast(this)">
-                    <i class="fas fa-times"></i>
+                <!-- SUBMIT -->
+                <button type="submit" class="btn-submit" id="loginBtn" aria-live="polite">
+                    <span id="loginText">Masuk</span>
+                    <span class="btn-icon-box">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M5 12h14M13 6l6 6-6 6"/>
+                        </svg>
+                    </span>
                 </button>
-            `;
 
-            container.appendChild(toast);
+            </form>
 
-            
-            setTimeout(() => {
-                removeToast(toast.querySelector('.toast-close'));
-            }, duration);
-        }
+            <div class="form-footer">
+                &copy; <?= date('Y') ?> Pemerintah Kabupaten Mandailing Natal
+            </div>
+        </main>
 
-        function removeToast(closeButton) {
-            const toast = closeButton.closest('.toast-notification');
-            if (toast && !toast.classList.contains('removing')) {
-                toast.classList.add('removing');
-                setTimeout(() => {
-                    if (toast.parentNode) {
-                        toast.parentNode.removeChild(toast);
-                    }
-                }, 300);
-            }
-        }
+    </div>
+</div>
 
+<script>
+    /* ── PASSWORD TOGGLE ── */
+    const pwdInput = document.getElementById('password');
+    const eyeIcon  = document.getElementById('eyeIcon');
+
+    document.getElementById('pwdToggle').addEventListener('click', function() {
+        const isHidden = pwdInput.type === 'password';
+        pwdInput.type  = isHidden ? 'text' : 'password';
+        this.setAttribute('aria-label', isHidden ? 'Sembunyikan password' : 'Tampilkan password');
         
-        function showAlert(message, type = 'danger') {
-            
-            let toastType = 'error';
-            let title = 'Error';
+        eyeIcon.innerHTML = isHidden
+            ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>'
+            : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+    });
 
-            if (type === 'success') {
-                toastType = 'success';
-                title = 'Berhasil';
-            } else if (type === 'warning') {
-                toastType = 'error'; 
-                title = 'Gagal';
-            }
+    /* ── TOAST NOTIFICATION SYSTEM ── */
+    let _tw = null;
 
-            
-            if (message.includes('<strong>') || message.includes('<a href')) {
-                message = message.replace(/<[^>]*>/g, '').trim();
-            }
+    function _getWrap() {
+        if (!_tw) { 
+            _tw = document.createElement('div'); 
+            _tw.className = 'toast-wrap'; 
+            document.body.appendChild(_tw); 
+        }
+        return _tw;
+    }
 
-            showToast(title, message, toastType);
+    function showToast(title, msg, type = 'success', ms = 4500) {
+        const w = _getWrap();
+        
+        let iconSvg = '';
+        if (type === 'success') {
+            iconSvg = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
+        } else {
+            iconSvg = '<svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
         }
 
-        
-        function setLoading(loading) {
-            const loginBtn = document.getElementById('loginBtn');
-            const loginText = document.getElementById('loginText');
-            const usernameInput = document.getElementById('username');
-            const passwordInput = document.getElementById('password');
+        const t = document.createElement('div');
+        t.className = `toast ${type}`;
+        t.innerHTML = `
+            <div class="toast-dot-wrapper">${iconSvg}</div>
+            <div class="toast-body">
+                <div class="toast-ttl">${title}</div>
+                <div class="toast-msg">${msg}</div>
+            </div>
+            <button class="toast-x" onclick="_rmToast(this)" aria-label="Tutup">&times;</button>`;
+        w.appendChild(t);
+        setTimeout(() => { const b = t.querySelector('.toast-x'); if(b) _rmToast(b); }, ms);
+    }
 
-            if (loading) {
-                loginBtn.disabled = true;
-                loginText.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Memproses...';
-                usernameInput.disabled = true;
-                passwordInput.disabled = true;
+    function _rmToast(btn) {
+        const t = btn.closest('.toast');
+        if (t && !t.classList.contains('removing')) {
+            t.classList.add('removing');
+            setTimeout(() => t.remove(), 700);
+        }
+    }
+
+    /* ── FIELD VALIDATION ── */
+    function setErr(id, msg) {
+        const bezel = document.getElementById(id + '-bezel');
+        const e     = document.getElementById(id + '-error');
+        if (bezel) bezel.classList.add('is-error');
+        if (e) { e.textContent = msg; e.classList.add('show'); }
+    }
+
+    function clrErr(id) {
+        const bezel = document.getElementById(id + '-bezel');
+        const e     = document.getElementById(id + '-error');
+        if (bezel) bezel.classList.remove('is-error');
+        if (e) e.classList.remove('show');
+    }
+
+    ['username', 'password'].forEach(id => {
+        document.getElementById(id).addEventListener('input', () => clrErr(id));
+    });
+
+    /* ── LOADING STATES ── */
+    function setLoad(on) {
+        const btn  = document.getElementById('loginBtn');
+        const text = document.getElementById('loginText');
+        btn.disabled = on;
+        btn.setAttribute('aria-busy', on);
+        text.innerHTML = on
+            ? '<span class="spinner-shell" role="status"></span>Memproses...'
+            : 'Masuk';
+    }
+
+    /* ── FORM SUBMISSION ── */
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const u = document.getElementById('username').value.trim();
+        const p = document.getElementById('password').value;
+        let ok = true;
+        if (!u) { setErr('username', 'Username wajib diisi.'); ok = false; }
+        if (!p) { setErr('password', 'Password wajib diisi.'); ok = false; }
+        if (!ok) return;
+
+        setLoad(true);
+        try {
+            const fd = new FormData();
+            fd.append('username', u); 
+            fd.append('password', p); 
+            fd.append('login_role', 'opd');
+            
+            const res    = await fetch('<?= route('auth', 'login') ?>', { method: 'POST', body: fd });
+            const result = await res.json();
+            if (result.success) {
+                showToast('Login Berhasil', 'Mengalihkan Anda ke portal dinas…', 'success');
+                setTimeout(() => { window.location.href = result.redirect; }, 1200);
             } else {
-                loginBtn.disabled = false;
-                loginText.innerHTML = '<i class="fas fa-sign-in-alt me-2"></i>Login';
-                usernameInput.disabled = false;
-                passwordInput.disabled = false;
+                showToast('Akses Ditolak', result.message || 'Username atau password salah.', 'error');
             }
+        } catch(err) {
+            showToast('Gangguan Jaringan', 'Gagal terhubung dengan server pelaporan.', 'error');
+        } finally {
+            setLoad(false);
         }
+    });
 
-        
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
+    document.addEventListener('DOMContentLoaded', () => document.getElementById('username').focus());
+</script>
 
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value;
-
-            
-            if (!username) {
-                showToast('Validasi Error', 'Username harus diisi', 'error');
-                return;
-            }
-
-            if (!password) {
-                showToast('Validasi Error', 'Password harus diisi', 'error');
-                return;
-            }
-
-            setLoading(true);
-
-            try {
-                const formData = new FormData();
-                formData.append('username', username);
-                formData.append('password', password);
-                formData.append('login_role', 'opd'); 
-
-                const response = await fetch('<?= route('auth', 'login') ?>', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    showToast('Login Berhasil', 'Anda berhasil masuk, mengalihkan ke dashboard...', 'success');
-                    setTimeout(() => {
-                        window.location.href = result.redirect;
-                    }, 1500);
-                } else {
-                    if (result.role_mismatch) {
-                        
-                        showToast('Login Gagal', result.message || 'Username atau password salah', 'error');
-                    } else {
-                        showToast('Login Gagal', result.message || 'Username atau password salah', 'error');
-                    }
-                }
-            } catch (error) {
-                console.error('Login error:', error);
-                showToast('Koneksi Error', 'Terjadi kesalahan. Silakan coba lagi.', 'error');
-            } finally {
-                setLoading(false);
-            }
-        });
-
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('username').focus();
-        });
-    </script>
 </body>
 </html>

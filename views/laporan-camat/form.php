@@ -276,11 +276,16 @@ document.addEventListener('change', function(e) {
                             <i class="fas fa-upload"></i>
                             Upload File (Opsional)
                         </label>
-                        <input type="file"
-                               id="upload_file"
-                               name="upload_file"
-                               class="form-control-file"
-                               accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.bmp,.webp,.svg,.mp4,.avi,.mov,.wmv,.flv,.mkv,.webm,.3gp">
+                        <div class="upload-dropzone">
+                            <i class="fas fa-cloud-upload-alt upload-dropzone__icon"></i>
+                            <div class="upload-dropzone__text">Klik atau tarik file ke sini</div>
+                            <div class="upload-dropzone__hint">Maksimal 50MB</div>
+                            <input type="file"
+                                   id="upload_file"
+                                   name="upload_file"
+                                   class="upload-dropzone__input"
+                                   accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.bmp,.webp,.svg,.mp4,.avi,.mov,.wmv,.flv,.mkv,.webm,.3gp">
+                        </div>
 
                         <div class="file-info">
                             <div class="allowed-types">
@@ -415,7 +420,7 @@ document.addEventListener('change', function(e) {
 /* Form Sections */
 .form-section {
     padding: clamp(25px, 3vw, 35px);
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid var(--border-color, #e2e8f0);
 }
 
 .form-section:last-child {
@@ -484,7 +489,7 @@ document.addEventListener('change', function(e) {
 .form-control {
     width: 100%;
     padding: clamp(10px, 1.5vw, 12px) clamp(15px, 2vw, 18px);
-    border: 1px solid #ddd;
+    border: 1px solid var(--border-color, #e2e8f0);
     border-radius: clamp(6px, 1vw, 8px);
     font-size: clamp(14px, 1.8vw, 16px);
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
@@ -509,23 +514,6 @@ textarea.form-control {
 
 select.form-control {
     cursor: pointer;
-}
-
-/* File Input */
-.form-control-file {
-    width: 100%;
-    padding: clamp(8px, 1.2vw, 10px);
-    border: 2px dashed #ddd;
-    border-radius: clamp(6px, 1vw, 8px);
-    background: #f9f9f9;
-    font-size: clamp(14px, 1.8vw, 16px);
-    cursor: pointer;
-    transition: border-color 0.3s ease, background 0.3s ease;
-}
-
-.form-control-file:hover {
-    border-color: var(--primary-blue);
-    background: #f0f8ff;
 }
 
 .file-info {
@@ -589,7 +577,7 @@ select.form-control {
 /* Form Actions */
 .form-actions {
     padding: clamp(25px, 3vw, 35px);
-    background: #f8f9fa;
+    background: var(--bg-light, #f8fafc);
     display: flex;
     gap: clamp(10px, 1.5vw, 15px);
     align-items: center;

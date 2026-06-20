@@ -28,11 +28,11 @@
                   <div class="card border-0 shadow-sm h-100">
                     <div class="card-body p-3">
                       <div class="d-flex align-items-center">
-                        <div class="icon-md bg-primary text-white rounded-circle mr-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                        <div class="stat-icon stat-icon-primary me-3">
                           <i class="fas fa-file-alt"></i>
                         </div>
                         <div class="flex-grow-1">
-                          <h3 class="mb-0 fw-bold"><?php echo number_format($data['laporan_by_status']['total_semua'] ?? 0); ?></h3>
+                          <h3 class="mb-0 fw-bold stat-number"><?php echo number_format($data['laporan_by_status']['total_semua'] ?? 0); ?></h3>
                           <p class="mb-0 text-muted small">Total Laporan</p>
                         </div>
                       </div>
@@ -43,11 +43,11 @@
                   <div class="card border-0 shadow-sm h-100">
                     <div class="card-body p-3">
                       <div class="d-flex align-items-center">
-                        <div class="icon-md bg-warning text-white rounded-circle mr-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                        <div class="stat-icon stat-icon-warning me-3">
                           <i class="fas fa-clock"></i>
                         </div>
                         <div class="flex-grow-1">
-                          <h3 class="mb-0 fw-bold"><?php echo number_format($data['laporan_by_status']['total_baru'] ?? 0); ?></h3>
+                          <h3 class="mb-0 fw-bold stat-number"><?php echo number_format($data['laporan_by_status']['total_baru'] ?? 0); ?></h3>
                           <p class="mb-0 text-muted small">Baru</p>
                         </div>
                       </div>
@@ -58,11 +58,11 @@
                   <div class="card border-0 shadow-sm h-100">
                     <div class="card-body p-3">
                       <div class="d-flex align-items-center">
-                        <div class="icon-md bg-info text-white rounded-circle mr-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                        <div class="stat-icon stat-icon-info me-3">
                           <i class="fas fa-sync-alt"></i>
                         </div>
                         <div class="flex-grow-1">
-                          <h3 class="mb-0 fw-bold"><?php echo number_format($data['laporan_by_status']['total_diproses'] ?? 0); ?></h3>
+                          <h3 class="mb-0 fw-bold stat-number"><?php echo number_format($data['laporan_by_status']['total_diproses'] ?? 0); ?></h3>
                           <p class="mb-0 text-muted small">Diproses</p>
                         </div>
                       </div>
@@ -73,11 +73,11 @@
                   <div class="card border-0 shadow-sm h-100">
                     <div class="card-body p-3">
                       <div class="d-flex align-items-center">
-                        <div class="icon-md bg-success text-white rounded-circle mr-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                        <div class="stat-icon stat-icon-success me-3">
                           <i class="fas fa-check-circle"></i>
                         </div>
                         <div class="flex-grow-1">
-                          <h3 class="mb-0 fw-bold"><?php echo number_format($data['laporan_by_status']['total_selesai'] ?? 0); ?></h3>
+                          <h3 class="mb-0 fw-bold stat-number"><?php echo number_format($data['laporan_by_status']['total_selesai'] ?? 0); ?></h3>
                           <p class="mb-0 text-muted small">Selesai</p>
                         </div>
                       </div>
@@ -92,11 +92,11 @@
                   <div class="card border-0 shadow-sm h-100">
                     <div class="card-body p-3">
                       <div class="d-flex align-items-center">
-                        <div class="icon-md bg-purple text-white rounded-circle mr-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background-color: #6f42c1 !important;">
+                        <div class="stat-icon stat-icon-purple me-3">
                           <i class="fas fa-map-marker-alt"></i>
                         </div>
                         <div class="flex-grow-1">
-                          <h3 class="mb-0 fw-bold"><?php echo number_format($data['laporan_camat_by_status']['total_semua'] ?? 0); ?></h3>
+                          <h3 class="mb-0 fw-bold stat-number"><?php echo number_format($data['laporan_camat_by_status']['total_semua'] ?? 0); ?></h3>
                           <p class="mb-0 text-muted small">Laporan Camat</p>
                         </div>
                       </div>
@@ -107,11 +107,11 @@
                   <div class="card border-0 shadow-sm h-100">
                     <div class="card-body p-3">
                       <div class="d-flex align-items-center">
-                        <div class="icon-md bg-pink text-white rounded-circle mr-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background-color: #e83e8c !important;">
+                        <div class="stat-icon stat-icon-pink me-3">
                           <i class="fas fa-building"></i>
                         </div>
                         <div class="flex-grow-1">
-                          <h3 class="mb-0 fw-bold"><?php echo number_format($data['laporan_opd_by_status']['total_semua'] ?? 0); ?></h3>
+                          <h3 class="mb-0 fw-bold stat-number"><?php echo number_format($data['laporan_opd_by_status']['total_semua'] ?? 0); ?></h3>
                           <p class="mb-0 text-muted small">Laporan OPD</p>
                         </div>
                       </div>
@@ -246,8 +246,8 @@
                   datasets: [{
                       label: 'Jumlah Laporan',
                       data: monthlyData.map(item => item.total),
-                      borderColor: '#3498db',
-                      backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                      borderColor: '#1d4ed8',
+                      backgroundColor: 'rgba(29, 78, 216, 0.1)',
                       borderWidth: 3,
                       tension: 0.4,
                       fill: true

@@ -224,7 +224,7 @@
 
     
     function deleteDesa(id) {
-      if (confirm('Apakah Anda yakin ingin menghapus desa ini?')) {
+      showConfirm('Desa ini akan dihapus secara permanen.', function() {
         fetch('<?= route('desa', 'delete') ?>/' + id, {
           method: 'POST',
           headers: {
@@ -248,7 +248,7 @@
           console.error('Error:', error);
           showNotification('Terjadi kesalahan saat menghapus data', 'error');
         });
-      }
+      });
     }
 
     

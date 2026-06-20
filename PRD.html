@@ -1,0 +1,2095 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PRD — Frontend Refactor · LaporBup</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0c0c0e;
+      --bg-1: #141416;
+      --bg-2: #1c1c20;
+      --bg-3: #242428;
+      --border: rgba(255,255,255,0.06);
+      --border-hover: rgba(255,255,255,0.12);
+      --text: #f2f2f4;
+      --text-2: #9898a8;
+      --text-3: #5e5e72;
+      --accent: #3b6bff;
+      --accent-glow: rgba(59,107,255,0.18);
+      --accent-dim: rgba(59,107,255,0.08);
+      --green: #22c55e;
+      --green-dim: rgba(34,197,94,0.1);
+      --amber: #f59e0b;
+      --amber-dim: rgba(245,158,11,0.1);
+      --red: #ef4444;
+      --red-dim: rgba(239,68,68,0.1);
+      --purple: #a855f7;
+      --purple-dim: rgba(168,85,247,0.1);
+      --radius: 10px;
+      --radius-lg: 16px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.3);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; font-size: 15px; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── LAYOUT ── */
+    .layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      min-height: 100dvh;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100dvh;
+      overflow-y: auto;
+      background: var(--bg-1);
+      border-right: 1px solid var(--border);
+      padding: 28px 20px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--bg-3) transparent;
+    }
+
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 32px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-logo .dot {
+      width: 28px; height: 28px;
+      background: var(--accent);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px;
+      font-weight: 800;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .sidebar-logo span {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+
+    .sidebar-logo small {
+      display: block;
+      font-size: 10px;
+      font-weight: 400;
+      color: var(--text-3);
+      letter-spacing: 0.3px;
+    }
+
+    .nav-group {
+      margin-bottom: 24px;
+    }
+
+    .nav-group-label {
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 0.9px;
+      text-transform: uppercase;
+      color: var(--text-3);
+      padding: 0 8px;
+      margin-bottom: 6px;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 10px;
+      border-radius: 7px;
+      color: var(--text-2);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.15s ease;
+      margin-bottom: 2px;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: var(--text);
+      background: var(--bg-2);
+    }
+
+    .nav-link.active {
+      color: var(--accent);
+      background: var(--accent-dim);
+    }
+
+    .nav-link .badge {
+      margin-left: auto;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: var(--red-dim);
+      color: var(--red);
+    }
+
+    .nav-link .badge.warn {
+      background: var(--amber-dim);
+      color: var(--amber);
+    }
+
+    /* ── MAIN ── */
+    .main {
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    /* ── HERO HEADER ── */
+    .prd-header {
+      background: var(--bg-1);
+      border-bottom: 1px solid var(--border);
+      padding: 48px 56px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .prd-header::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 280px; height: 280px;
+      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .prd-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11.5px;
+      color: var(--text-3);
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+
+    .prd-breadcrumb span { color: var(--text-2); }
+
+    .prd-header h1 {
+      font-size: 38px;
+      font-weight: 800;
+      letter-spacing: -1.2px;
+      line-height: 1.15;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+
+    .prd-header h1 .highlight {
+      background: linear-gradient(120deg, var(--accent), #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .prd-header p {
+      color: var(--text-2);
+      font-size: 15px;
+      max-width: 560px;
+      font-weight: 400;
+    }
+
+    .prd-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .meta-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 99px;
+      border: 1px solid var(--border);
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--text-2);
+      background: var(--bg-2);
+    }
+
+    .meta-pill .dot-sm {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+    }
+
+    /* ── CONTENT ── */
+    .content {
+      padding: 48px 56px;
+      max-width: 960px;
+    }
+
+    /* ── SECTION ── */
+    .section {
+      margin-bottom: 60px;
+      scroll-margin-top: 24px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .section-num {
+      width: 28px; height: 28px;
+      border-radius: 7px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(59,107,255,0.2);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.4px;
+      color: var(--text);
+    }
+
+    .section-divider {
+      height: 1px;
+      background: var(--border);
+      margin-bottom: 28px;
+    }
+
+    /* ── AUDIT TABLE ── */
+    .audit-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .audit-item {
+      display: grid;
+      grid-template-columns: 200px 1fr auto;
+      gap: 16px;
+      align-items: start;
+      padding: 16px 18px;
+      background: var(--bg-1);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      transition: border-color 0.15s;
+    }
+
+    .audit-item:hover {
+      border-color: var(--border-hover);
+    }
+
+    .audit-label {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-2);
+    }
+
+    .audit-label small {
+      display: block;
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--text-3);
+      margin-top: 2px;
+    }
+
+    .audit-desc {
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.6;
+    }
+
+    .audit-desc code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      background: var(--bg-3);
+      border: 1px solid var(--border);
+      padding: 1px 5px;
+      border-radius: 4px;
+      color: var(--accent);
+    }
+
+    .sev {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 5px;
+      white-space: nowrap;
+      letter-spacing: 0.4px;
+      flex-shrink: 0;
+    }
+
+    .sev-high { background: var(--red-dim); color: var(--red); }
+    .sev-med { background: var(--amber-dim); color: var(--amber); }
+    .sev-low { background: var(--green-dim); color: var(--green); }
+
+    /* ── PRIORITY CHECKLIST ── */
+    .priority-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .priority-item {
+      display: flex;
+      align-items: start;
+      gap: 14px;
+      padding: 18px 20px;
+      background: var(--bg-1);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      transition: all 0.15s;
+    }
+
+    .priority-item:hover {
+      border-color: var(--border-hover);
+      background: var(--bg-2);
+    }
+
+    .priority-num {
+      width: 24px; height: 24px;
+      border-radius: 6px;
+      background: var(--bg-3);
+      border: 1px solid var(--border);
+      color: var(--text-3);
+      font-size: 11px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .priority-item-body { flex: 1; }
+
+    .priority-item-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .priority-item-desc {
+      font-size: 12.5px;
+      color: var(--text-2);
+      line-height: 1.55;
+    }
+
+    .priority-files {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 8px;
+    }
+
+    .file-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      padding: 2px 7px;
+      background: var(--bg-3);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-3);
+    }
+
+    /* ── DESIGN TOKENS ── */
+    .token-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .token-card {
+      padding: 18px 20px;
+      background: var(--bg-1);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    .token-card h4 {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-3);
+      margin-bottom: 12px;
+    }
+
+    .token-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 5px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .token-row:last-child { border-bottom: none; }
+
+    .token-name {
+      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-2);
+    }
+
+    .token-val {
+      font-size: 11.5px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-3);
+    }
+
+    .color-swatch {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .swatch {
+      width: 14px; height: 14px;
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    /* ── COMPONENT SPECS ── */
+    .comp-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .comp-card {
+      padding: 18px 20px;
+      background: var(--bg-1);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    .comp-card h4 {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .comp-card .comp-path {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--text-3);
+      margin-bottom: 12px;
+    }
+
+    .comp-change {
+      font-size: 12px;
+      color: var(--text-2);
+      padding: 3px 0;
+      padding-left: 12px;
+      position: relative;
+    }
+
+    .comp-change::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-size: 11px;
+    }
+
+    /* ── CALLOUT ── */
+    .callout {
+      padding: 16px 20px;
+      border-radius: var(--radius);
+      border-left: 3px solid;
+      margin-bottom: 16px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .callout-info {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: var(--text-2);
+    }
+
+    .callout-warn {
+      background: var(--amber-dim);
+      border-color: var(--amber);
+      color: var(--text-2);
+    }
+
+    .callout-success {
+      background: var(--green-dim);
+      border-color: var(--green);
+      color: var(--text-2);
+    }
+
+    .callout strong { color: var(--text); }
+
+    /* ── BEFORE/AFTER ── */
+    .diff-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .diff-box {
+      padding: 14px 16px;
+      border-radius: var(--radius);
+      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      line-height: 1.7;
+    }
+
+    .diff-before {
+      background: var(--red-dim);
+      border: 1px solid rgba(239,68,68,0.15);
+      color: #fca5a5;
+    }
+
+    .diff-after {
+      background: var(--green-dim);
+      border: 1px solid rgba(34,197,94,0.15);
+      color: #86efac;
+    }
+
+    .diff-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .diff-before .diff-label { color: var(--red); }
+    .diff-after .diff-label { color: var(--green); }
+
+    /* ── PROGRESS TRACKER ── */
+    .progress-track {
+      display: grid;
+      gap: 6px;
+    }
+
+    .track-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--bg-1);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+    }
+
+    .track-status {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      border: 2px solid;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      font-size: 9px;
+    }
+
+    .track-status.todo { border-color: var(--text-3); }
+    .track-status.doing { border-color: var(--amber); background: var(--amber-dim); }
+    .track-status.done { border-color: var(--green); background: var(--green-dim); color: var(--green); }
+
+    .track-label { color: var(--text-2); flex: 1; }
+    .track-file {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      color: var(--text-3);
+    }
+
+    /* ── PAGE MAP ── */
+    .page-map {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .page-card {
+      padding: 16px 18px;
+      background: var(--bg-1);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      transition: border-color 0.15s;
+    }
+
+    .page-card:hover { border-color: var(--border-hover); }
+
+    .page-card h5 {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .page-card .page-role {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+    }
+
+    .role-admin { background: var(--accent-dim); color: var(--accent); }
+    .role-camat { background: var(--green-dim); color: var(--green); }
+    .role-opd { background: var(--purple-dim); color: var(--purple); }
+    .role-public { background: var(--bg-3); color: var(--text-3); }
+
+    .page-issues {
+      font-size: 11.5px;
+      color: var(--text-3);
+      line-height: 1.5;
+    }
+
+    .page-issues li {
+      list-style: none;
+      padding-left: 14px;
+      position: relative;
+      margin-bottom: 3px;
+    }
+
+    .page-issues li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: var(--text-3);
+      font-size: 10px;
+    }
+
+    /* ── STICKY PROGRESS BAR ── */
+    .sticky-bar {
+      position: fixed;
+      top: 0; left: 260px; right: 0;
+      height: 3px;
+      background: var(--bg-2);
+      z-index: 100;
+    }
+
+    .sticky-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), #818cf8);
+      width: 0%;
+      transition: width 0.1s ease;
+    }
+
+    /* ── MISC ── */
+    h2 { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; color: var(--text); margin-bottom: 10px; }
+    h3 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+    p { font-size: 13.5px; color: var(--text-2); line-height: 1.65; }
+    ul, ol { padding-left: 18px; }
+    li { font-size: 13px; color: var(--text-2); line-height: 1.7; }
+    strong { color: var(--text); font-weight: 600; }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .tag {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 5px;
+      background: var(--bg-3);
+      border: 1px solid var(--border);
+      color: var(--text-2);
+    }
+
+    .mt-4 { margin-top: 20px; }
+    .mt-6 { margin-top: 28px; }
+    .mb-4 { margin-bottom: 20px; }
+    .stack { display: flex; flex-direction: column; gap: 8px; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--bg-3); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<div class="sticky-bar"><div class="sticky-bar-fill" id="progress"></div></div>
+
+<div class="layout">
+
+  <!-- ── SIDEBAR NAV ── -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="dot">LB</div>
+      <div>
+        <span>LaporBup PRD</span>
+        <small>Frontend Refactor v2.0</small>
+      </div>
+    </div>
+
+    <nav>
+      <div class="nav-group">
+        <div class="nav-group-label">Overview</div>
+        <a href="#overview" class="nav-link active">Ringkasan Proyek</a>
+        <a href="#page-map" class="nav-link">Peta Halaman</a>
+        <a href="#stack" class="nav-link">Tech Stack</a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-label">Audit Temuan</div>
+        <a href="#audit-typography" class="nav-link">Tipografi <span class="badge">4 isu</span></a>
+        <a href="#audit-color" class="nav-link">Warna & Surface <span class="badge">6 isu</span></a>
+        <a href="#audit-layout" class="nav-link">Layout <span class="badge warn">5 isu</span></a>
+        <a href="#audit-interaction" class="nav-link">Interaksi <span class="badge">5 isu</span></a>
+        <a href="#audit-component" class="nav-link">Komponen <span class="badge warn">4 isu</span></a>
+        <a href="#audit-code" class="nav-link">Kualitas Kode <span class="badge">6 isu</span></a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-label">Spesifikasi</div>
+        <a href="#design-tokens" class="nav-link">Design Tokens</a>
+        <a href="#components" class="nav-link">Spek Komponen</a>
+        <a href="#before-after" class="nav-link">Before / After</a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-label">Rencana Eksekusi</div>
+        <a href="#priority" class="nav-link">Urutan Prioritas</a>
+        <a href="#tracker" class="nav-link">Task Tracker</a>
+        <a href="#rules" class="nav-link">Aturan Refactor</a>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- ── MAIN CONTENT ── -->
+  <main class="main" id="main">
+
+    <!-- HEADER -->
+    <div class="prd-header">
+      <div class="prd-breadcrumb">
+        LaporBup &rsaquo; <span>Frontend Refactor</span> &rsaquo; <span>PRD v1.0</span>
+      </div>
+      <h1>Frontend Refactor<br><span class="highlight">Product Requirements</span></h1>
+      <p>Dokumen teknis lengkap untuk upgrade premium frontend Sistem Layanan Pelaporan Bupati Kabupaten Mandailing Natal — dari audit temuan hingga spesifikasi eksekusi.</p>
+      <div class="prd-meta">
+        <div class="meta-pill"><div class="dot-sm" style="background:#3b6bff"></div>Tech Stack: PHP + Bootstrap 5 + Vanilla CSS</div>
+        <div class="meta-pill"><div class="dot-sm" style="background:#22c55e"></div>30 Views Teridentifikasi</div>
+        <div class="meta-pill"><div class="dot-sm" style="background:#f59e0b"></div>3 User Roles</div>
+        <div class="meta-pill"><div class="dot-sm" style="background:#a855f7"></div>2 Layout System</div>
+        <div class="meta-pill"><div class="dot-sm" style="background:#ef4444"></div>30+ Masalah Ditemukan</div>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- ══════════════════════════ 1. OVERVIEW ══════════════════════════ -->
+      <section class="section" id="overview">
+        <div class="section-header">
+          <div class="section-num">1</div>
+          <h2 class="section-title">Ringkasan Proyek</h2>
+        </div>
+        <div class="section-divider"></div>
+
+        <div class="callout callout-info">
+          <strong>Tujuan:</strong> Meningkatkan kualitas visual dan UX frontend laporBup tanpa mengganti framework yang ada. Tetap menggunakan Bootstrap 5 + Vanilla CSS + PHP templating. Perubahan harus bersifat targeted — tidak rewrite total.
+        </div>
+
+        <p>Aplikasi <strong>laporBup</strong> adalah sistem pelaporan digital untuk Pemerintah Kabupaten Mandailing Natal. Sistem ini melayani tiga jenis pengguna: <strong>Administrator</strong>, <strong>Camat</strong>, dan <strong>OPD</strong>. Frontend saat ini menggunakan dua sistem layout yang berbeda:</p>
+
+        <div class="tag-row mt-4">
+          <div class="tag">Layout A: Simple (simpel-header + simpel-footer)</div>
+          <div class="tag">Layout B: Admin Panel (sidebar + navbar + setting-panel)</div>
+        </div>
+
+        <ul class="stack mt-4">
+          <li><strong>Layout A</strong> — Digunakan oleh: Landing page, Auth login (admin/camat/opd), Dashboard camat, Dashboard OPD, Laporan camat, Laporan OPD, Data pelapor, Profil, Wilayah, Wagateway</li>
+          <li><strong>Layout B</strong> — Digunakan oleh: Dashboard admin, Laporan admin OPD, Laporan admin Camat, Cetak laporan, dan semua halaman manajemen admin</li>
+        </ul>
+
+        <div class="callout callout-warn mt-4">
+          <strong>Masalah utama yang ditemukan:</strong> Ada inkonsistensi desain antara halaman — auth login menggunakan warna ungu/biru AI gradient, landing page menggunakan hitam-biru-oranye, admin panel menggunakan template Bootstrap default. Tiga "desain" berbeda pada satu aplikasi.
+        </div>
+      </section>
+
+      <!-- ══════════════════════════ 2. PAGE MAP ══════════════════════════ -->
+      <section class="section" id="page-map">
+        <div class="section-header">
+          <div class="section-num">2</div>
+          <h2 class="section-title">Peta Halaman (30 Views)</h2>
+        </div>
+        <div class="section-divider"></div>
+
+        <div class="page-map">
+
+          <div class="page-card">
+            <h5>Landing Page</h5>
+            <span class="page-role role-public">Public</span>
+            <ul class="page-issues">
+              <li>3 kartu login identik — layout terlalu simetris</li>
+              <li>Background hitam flat tanpa tekstur</li>
+              <li>Gradient text AI-generic (#2F58CD → #F59E0B)</li>
+              <li>Tidak ada meta tags / favicon</li>
+            </ul>
+            <div class="file-tag" style="margin-top:8px;">views/landing/index.php</div>
+          </div>
+
+          <div class="page-card">
+            <h5>Login Admin</h5>
+            <span class="page-role role-admin">Admin</span>
+            <ul class="page-issues">
+              <li>Warna ungu/biru — AI gradient fingerprint</li>
+              <li>z-index: 9999 pada spinner overlay</li>
+              <li>font: Segoe UI (browser default)</li>
+              <li>window.alert() untuk validasi form</li>
+            </ul>
+            <div class="file-tag" style="margin-top:8px;">views/auth/admin.php</div>
+          </div>
+
+          <div class="page-card">
+            <h5>Login Camat & OPD</h5>
+            <span class="page-role role-camat">Camat</span>
+            <span class="page-role role-opd">OPD</span>
+            <ul class="page-issues">
+              <li>Sama dengan login admin (4 file identik)</li>
+              <li>Duplikasi kode masif</li>
+              <li>Tidak ada current active state di nav</li>
+            </ul>
+            <div class="file-tag" style="margin-top:8px;">views/auth/{camat,opd,index}.php</div>
+          </div>
+
+          <div class="page-card">
+            <h5>Dashboard Admin</h5>
+            <span class="page-role role-admin">Admin</span>
+            <ul class="page-issues">
+              <li>Kartu statistik: 4 kolom equal height — layout generic</li>
+              <li>Icon background: warna hardcoded inline style</li>
+              <li>Chart.js tanpa theming custom</li>
+              <li>Empty state: plain text saja</li>
+            </ul>
+            <div class="file-tag" style="margin-top:8px;">views/dashboard/admin/index.php</div>
+          </div>
+
+          <div class="page-card">
+            <h5>Dashboard Camat / OPD</h5>
+            <span class="page-role role-camat">Camat</span>
+            <span class="page-role role-opd">OPD</span>
+            <ul class="page-issues">
+              <li>Menggunakan simple-header (Layout A) tapi konten minimal</li>
+              <li>Tidak ada kartu statistik atau ringkasan data</li>
+              <li>Menu grid 2 kolom, sangat sederhana</li>
+            </ul>
+            <div class="file-tag" style="margin-top:8px;">views/dashboard/{camat,opd}/index.php</div>
+          </div>
+
+          <div class="page-card">
+            <h5>Laporan Admin OPD / Camat</h5>
+            <span class="page-role role-admin">Admin</span>
+            <ul class="page-issues">
+              <li>Tabel dengan border + shadow default Bootstrap</li>
+              <li>Filter form menggunakan &amp;nbsp; sebagai label</li>
+              <li>window.confirm() untuk hapus data</li>
+              <li>Avatar circle —default AI pattern</li>
+            </ul>
+            <div class="file-tag" style="margin-top:8px;">views/laporan-admin-{opd,camat}/</div>
+          </div>
+
+          <div class="page-card">
+            <h5>Laporan Camat / OPD (User)</h5>
+            <span class="page-role role-camat">Camat</span>
+            <span class="page-role role-opd">OPD</span>
+            <ul class="page-issues">
+              <li>Form sangat panjang tanpa step/progress indicator</li>
+              <li>File upload tanpa drag-and-drop feedback</li>
+              <li>Tidak ada karakter counter pada textarea</li>
+            </ul>
+            <div class="file-tag" style="margin-top:8px;">views/laporan-{camat,opd}/</div>
+          </div>
+
+          <div class="page-card">
+            <h5>Master Data (Wilayah, OPD)</h5>
+            <span class="page-role role-admin">Admin</span>
+            <ul class="page-issues">
+              <li>5 halaman wilayah tanpa konsistensi UI</li>
+              <li>Form wilayah dan OPD menggunakan layout berbeda</li>
+              <li>Tidak ada breadcrumb navigasi</li>
+            </ul>
+            <div class="file-tag" style="margin-top:8px;">views/{wilayah,opd}/</div>
+          </div>
+
+          <div class="page-card">
+            <h5>Cetak Laporan & TTD</h5>
+            <span class="page-role role-admin">Admin</span>
+            <ul class="page-issues">
+              <li>Halaman cetak belum memiliki print CSS</li>
+              <li>Tanda tangan digital tanpa preview yang baik</li>
+            </ul>
+            <div class="file-tag" style="margin-top:8px;">views/laporan/</div>
+          </div>
+
+          <div class="page-card">
+            <h5>Error 404</h5>
+            <span class="page-role role-public">All</span>
+            <ul class="page-issues">
+              <li>Sangat minimal — hanya kotak teks saja</li>
+              <li>Font: Segoe UI (browser default)</li>
+              <li>Tidak ada animasi atau ilustrasi</li>
+              <li>Tidak ada navigasi kembali yang berguna</li>
+            </ul>
+            <div class="file-tag" style="margin-top:8px;">views/errors/404.php</div>
+          </div>
+
+          <div class="page-card">
+            <h5>WA Gateway</h5>
+            <span class="page-role role-admin">Admin</span>
+            <ul class="page-issues">
+              <li>Form pengiriman WhatsApp tanpa preview pesan</li>
+              <li>Tidak ada status koneksi gateway yang jelas</li>
+            </ul>
+            <div class="file-tag" style="margin-top:8px;">views/wagateway/</div>
+          </div>
+
+          <div class="page-card">
+            <h5>Profile</h5>
+            <span class="page-role role-admin">Admin</span>
+            <ul class="page-issues">
+              <li>Upload foto profil tanpa preview sebelum simpan</li>
+              <li>Form terlalu panjang tanpa section grouping</li>
+            </ul>
+            <div class="file-tag" style="margin-top:8px;">views/profile/</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ══════════════════════════ 3. TECH STACK ══════════════════════════ -->
+      <section class="section" id="stack">
+        <div class="section-header">
+          <div class="section-num">3</div>
+          <h2 class="section-title">Tech Stack Aktif</h2>
+        </div>
+        <div class="section-divider"></div>
+
+        <div class="audit-grid">
+          <div class="audit-item">
+            <div class="audit-label">CSS Framework<small>Global</small></div>
+            <div class="audit-desc">Bootstrap 5.3.0 (CDN) — digunakan di semua halaman. Banyak komponen default Bootstrap tidak di-override sehingga terlihat generic.</div>
+            <div class="sev sev-med">AKTIF</div>
+          </div>
+          <div class="audit-item">
+            <div class="audit-label">Icon Library<small>Layout A</small></div>
+            <div class="audit-desc">Font Awesome 6.5.2 — digunakan di layout simpel dan landing. <strong>Masalah:</strong> layout admin menggunakan MDI (Material Design Icons), Feather, Themify, Typicons, Simple Line Icons — total <strong>5 icon library berbeda</strong> dimuat bersamaan.</div>
+            <div class="sev sev-high">BLOAT</div>
+          </div>
+          <div class="audit-item">
+            <div class="audit-label">Font<small>Layout A</small></div>
+            <div class="audit-desc">Poppins + Inter (Google Fonts) — cukup baik. Namun halaman auth menggunakan <code>Segoe UI</code> (browser default) dan admin panel tidak memuat font apapun (fallback system font).</div>
+            <div class="sev sev-med">INCONSISTENT</div>
+          </div>
+          <div class="audit-item">
+            <div class="audit-label">Admin Template<small>Layout B</small></div>
+            <div class="audit-desc">Template Bootstrap 4-era (vendor bundle: <code>assets/vendors/css/vendor.bundle.base.css</code>, DataTables Bootstrap 4). Masih menggunakan <code>mr-3</code> (Bootstrap 4 margin) bukan <code>me-3</code>.</div>
+            <div class="sev sev-high">LEGACY</div>
+          </div>
+          <div class="audit-item">
+            <div class="audit-label">Animation Library<small>Auth</small></div>
+            <div class="audit-desc">AOS (Animate On Scroll) — hanya digunakan di halaman login. Tidak ada alasan kuat menggunakannya untuk form sederhana. Tambah bloat.</div>
+            <div class="sev sev-low">OPTIONAL</div>
+          </div>
+          <div class="audit-item">
+            <div class="audit-label">Charts<small>Admin</small></div>
+            <div class="audit-desc">Chart.js (CDN) — digunakan di dashboard admin. Warna chart default <code>#3498db</code> tidak konsisten dengan palette utama.</div>
+            <div class="sev sev-low">KEEP</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════ 4. AUDIT TEMUAN ══════════════════════════ -->
+      <section class="section" id="audit-typography">
+        <div class="section-header">
+          <div class="section-num">4</div>
+          <h2 class="section-title">Audit: Tipografi</h2>
+        </div>
+        <div class="section-divider"></div>
+
+        <div class="audit-grid">
+          <div class="audit-item">
+            <div class="audit-label">Font Inconsistency<small>Semua halaman</small></div>
+            <div class="audit-desc">3 font berbeda digunakan tanpa sistem: Poppins (landing+simple), Segoe UI (auth), dan system default (admin panel). Harus digantikan dengan satu font: <strong>Plus Jakarta Sans</strong> atau <strong>Inter</strong> untuk seluruh aplikasi.</div>
+            <div class="sev sev-high">HIGH</div>
+          </div>
+          <div class="audit-item">
+            <div class="audit-label">Heading Presence<small>Dashboard, form</small></div>
+            <div class="audit-desc">Heading pada halaman admin menggunakan ukuran <code>h2</code>/<code>h5</code> Bootstrap default tanpa letter-spacing adjustment. Terasa datar dan tidak berkarakter. Perlu tight letter-spacing pada heading besar.</div>
+            <div class="sev sev-med">MED</div>
+          </div>
+          <div class="audit-item">
+            <div class="audit-label">Number Rendering<small>Statistik</small></div>
+            <div class="audit-desc">Angka pada kartu statistik (total laporan dll) menggunakan font yang sama dengan body text. Harus menggunakan <code>font-variant-numeric: tabular-nums</code> agar angka terlihat rapi dan aligned.</div>
+            <div class="sev sev-low">LOW</div>
+          </div>
+          <div class="audit-item">
+            <div class="audit-label">Title Case Headers<small>Semua</small></div>
+            <div class="audit-desc">Contoh: "Manajemen Laporan OPD", "Informasi Laporan", "Data Tidak Ditemukan!" — gunakan sentence case untuk lebih natural dan modern. "Data tidak ditemukan" (tanpa tanda seru untuk error state).</div>
+            <div class="sev sev-low">LOW</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="audit-color">
+        <div class="section-header">
+          <div class="section-num">5</div>
+          <h2 class="section-title">Audit: Warna & Surface</h2>
+        </div>
+        <div class="section-divider"></div>
+
+        <div class="audit-grid">
+          <div class="audit-item">
+            <div class="audit-label">AI Gradient Fingerprint<small>Auth, Landing</small></div>
+            <div class="audit-desc">Halaman login menggunakan <code>linear-gradient(135deg, #667eea 0%, #764ba2 100%)</code> — ini adalah "AI gradient" paling umum. Landing page menggunakan gradient biru-oranye yang sama generiknya. Harus diganti dengan warna yang lebih purposeful dan bernuansa pemerintahan.</div>
+            <div class="sev sev-high">HIGH</div>
+          </div>
+          <div class="audit-item">
+            <div class="audit-label">Pure Black Background<small>Landing</small></div>
+            <div class="audit-desc">Landing page menggunakan <code>#000000</code> / <code>#1a1a1a</code> sebagai background. Ganti dengan dark navy atau dark slate (<code>#0d1117</code>, <code>#0f172a</code>) yang lebih sophisticated.</div>
+            <div class="sev sev-med">MED</div>
+          </div>
+          <div class="audit-item">
+            <div class="audit-label">Multiple Accent Colors<small>Dashboard admin</small></div>
+            <div class="audit-desc">Dashboard admin menggunakan 6 warna berbeda untuk ikon statistik: bg-primary, bg-warning, bg-info, bg-success, bg-purple (<code>#6f42c1</code>), bg-pink (<code>#e83e8c</code>). Terlalu berisik. Maksimal 3 warna semantic yang konsisten.</div>
+            <div class="sev sev-high">HIGH</div>
+          </div>
+          <div class="audit-item">
+            <div class="audit-label">Generic Card Shadows<small>Semua</small></div>
+            <div class="audit-desc">Box shadow seluruh kartu menggunakan <code>rgba(0,0,0,0.08)</code>. Shadow harus ditint sesuai background — kalau background putih: shadow hangat. Gunakan <code>rgba(15,23,42,0.06)</code> bukan pure black opacity.</div>
+            <div class="sev sev-low">LOW</div>
+          </div>
+          <div class="audit-item">
+            <div class="audit-label">Flat Surfaces<small>Semua</small></div>
+            <div class="audit-desc">Semua background flat. Tidak ada tekstur, grain, atau depth. Tambahkan subtle noise overlay pada hero section dan header untuk mengurangi kesan digital yang sterile.</div>
+            <div class="sev sev-low">LOW</div>
+          </div>
+          <div class="audit-item">
+            <div class="audit-label">Inconsistent Light Mode<small>Landing dark + Admin light</small></div>
+            <div class="audit-desc">Landing page dan auth gelap/dark, tetapi begitu masuk ke dashboard langsung menjadi putih terang total. Transisi ini terasa seperti dua aplikasi berbeda. Harus ada token warna yang konsisten antar surface.</div>
+            <div class="sev sev-high">HIGH</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="audit-layout">
+        <div class="section-header">
+          <div class="section-num">6</div>
+          <h2 class="section-title">Audit: Layout & Spacing</h2>
+        </div>
+        <div class="section-divider"></div>
+
+        <div class="audit-grid">
+          <div class="audit-item">
+            <div class="audit-label">Symmetrical Landing<small>landing/index.php</small></div>
+            <div class="audit-desc">Tiga kartu login disusun dalam grid 3 kolom yang persis simetris. Tidak ada hierarki visual. Salah satu kartu (misalnya Administrator) harusnya mendapat penekanan lebih — lebih besar, lebih gelap, atau posisi terdepan.</div>
+            <div class="sev sev-med">MED</div>
+          </div>
+          <div class="audit-item">
+            <div class="audit-label">Equal Stat Cards<small>dashboard/admin</small></div>
+            <div class="audit-desc">4 kartu statistik dengan ukuran dan warna yang sama persis. Layout "4 kotak sejajar" adalah pola paling generic. Pertimbangkan membuat "Total Laporan" lebih prominent (full width atau dua kali ukuran).</div>
+            <div class="sev sev-med">MED</div>
+          </div>
+          <div class="audit-item">
+            <div class="audit-label">No Breadcrumb<small>Semua halaman detail/edit</small></div>
+            <div class="audit-desc">Halaman edit dan detail tidak memiliki breadcrumb navigasi yang jelas. User yang masuk ke edit laporan tidak tahu posisi mereka dalam hierarki navigasi.</div>
+            <div class="sev sev-high">HIGH</div>
+          </div>
+          <div class="audit-item">
+            <div class="audit-label">100vh Issues<small>simple-header.php</small></div>
+            <div class="audit-desc">Beberapa container menggunakan <code>min-height: calc(80vh - ...)</code> yang tidak optimal untuk mobile browser (iOS Safari viewport bug). Ganti dengan <code>min-height: calc(80dvh - ...)</code>.</div>
+            <div class="sev sev-low">LOW</div>
+          </div>
+          <div class="audit-item">
+            <div class="audit-label">Inline Hardcoded Styles<small>admin/index.php</small></div>
+            <div class="audit-desc">Icon wrapper di dashboard menggunakan <code>style="width: 48px; height: 48px;"</code> langsung di HTML. Juga <code>style="background-color: #6f42c1 !important;"</code> — override dengan !important adalah code smell.</div>
+            <div class="sev sev-med">MED</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="audit-interaction">
+        <div class="section-header">
+          <div class="section-num">7</div>
+          <h2 class="section-title">Audit: Interaksi & State</h2>
+        </div>
+        <div class="section-divider"></div>
+
+        <div class="audit-grid">
+          <div class="audit-item">
+            <div class="audit-label">window.alert() / confirm()<small>Edit & Form</small></div>
+            <div class="audit-desc">File <code>laporan-admin-opd/edit.php</code> menggunakan <code>alert('Uraian laporan minimal 10 karakter!')</code>, <code>alert('Draft berhasil disimpan!')</code>, dan <code>confirm()</code> untuk konfirmasi hapus. Harus diganti dengan inline error states dan custom modal konfirmasi.</div>
+            <div class="sev sev-high">HIGH</div>
+          </div>
+          <div class="audit-item">
+            <div class="audit-label">No Empty State Design<small>Tabel laporan</small></div>
+            <div class="audit-desc">Empty state pada tabel laporan hanya menampilkan teks biasa tanpa ikon besar atau ilustrasi. Sudah ada ikon MDI (<code>mdi-inbox-outline</code>) tetapi tidak ada styling yang menarik. Perlu desain empty state yang purposeful.</div>
+            <div class="sev sev-med">MED</div>
+          </div>
+          <div class="audit-item">
+            <div class="audit-label">Missing Focus Ring<small>Form inputs</small></div>
+            <div class="audit-desc">Bootstrap default outline sering di-override tanpa menyediakan alternatif yang visible. Form edit menggunakan <code>outline: none</code> pada textarea focus — tidak accessible.</div>
+            <div class="sev sev-high">HIGH</div>
+          </div>
+          <div class="audit-item">
+            <div class="audit-label">z-index: 9999<small>auth/index.php</small></div>
+            <div class="audit-desc">Spinner overlay menggunakan <code>z-index: 9999</code>. Perlu dibuat z-index scale yang konsisten (contoh: modal=100, dropdown=200, overlay=300, toast=400).</div>
+            <div class="sev sev-low">LOW</div>
+          </div>
+          <div class="audit-item">
+            <div class="audit-label">No Active Nav Indicator<small>admin-sidebar.php</small></div>
+            <div class="audit-desc">Sidebar admin menampilkan active class menggunakan fungsi PHP <code>route_starts_with()</code> tetapi hanya untuk sub-menu Pengaturan. Dashboard, Laporan OPD, Laporan Camat tidak memiliki active state yang konsisten.</div>
+            <div class="sev sev-med">MED</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="audit-component">
+        <div class="section-header">
+          <div class="section-num">8</div>
+          <h2 class="section-title">Audit: Pola Komponen</h2>
+        </div>
+        <div class="section-divider"></div>
+
+        <div class="audit-grid">
+          <div class="audit-item">
+            <div class="audit-label">Generic Card Pattern<small>Semua halaman</small></div>
+            <div class="audit-desc">Setiap konten dibungkus dalam <code>.card</code> dengan <code>border: 1px solid #e9ecef</code>. Terlalu banyak "kotak dalam kotak". Banyak kartu yang sebenarnya tidak membutuhkan border — cukup whitespace dan background subtle yang berbeda.</div>
+            <div class="sev sev-med">MED</div>
+          </div>
+          <div class="audit-item">
+            <div class="audit-label">Lucide/Feather Icons<small>admin-header.php</small></div>
+            <div class="audit-desc">Layout admin memuat <code>feather.css</code> sebagai salah satu dari 5 icon library. Feather adalah pilihan default yang paling umum digunakan AI. Rekomendasi: tetap MDI sebagai primary icon, buang Feather, Typicons, Simple Line Icons.</div>
+            <div class="sev sev-med">MED</div>
+          </div>
+          <div class="audit-item">
+            <div class="audit-label">Avatar Circle Only<small>edit.php, navbar</small></div>
+            <div class="audit-desc"><code>.rounded-circle</code> digunakan di semua avatar. Coba <code>border-radius: 10px</code> (squircle-ish) untuk avatar yang lebih modern dan tidak generic.</div>
+            <div class="sev sev-low">LOW</div>
+          </div>
+          <div class="audit-item">
+            <div class="audit-label">Missing Favicon<small>simple-header.php</small></div>
+            <div class="audit-desc">Layout A (simple-header) tidak memiliki <code>&lt;link rel="shortcut icon"&gt;</code>. Layout B (admin-header) sudah ada. Harus ada favicon yang konsisten di semua layout.</div>
+            <div class="sev sev-high">HIGH</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="audit-code">
+        <div class="section-header">
+          <div class="section-num">9</div>
+          <h2 class="section-title">Audit: Kualitas Kode CSS</h2>
+        </div>
+        <div class="section-divider"></div>
+
+        <div class="audit-grid">
+          <div class="audit-item">
+            <div class="audit-label">Inline Styles Masif<small>Dashboard admin</small></div>
+            <div class="audit-desc">Dashboard admin menggunakan banyak inline style langsung di HTML element: <code>style="width: 48px; height: 48px;"</code>, <code>style="background-color: #6f42c1 !important;"</code>. Semua perlu dipindah ke CSS class.</div>
+            <div class="sev sev-high">HIGH</div>
+          </div>
+          <div class="audit-item">
+            <div class="audit-label">CSS di dalam View File<small>Semua halaman admin</small></div>
+            <div class="audit-desc">Setiap view admin (index, edit, detail) memiliki blok <code>&lt;style&gt;</code> sendiri di bagian bawah. Ini sulit di-maintain. Styles seperti <code>.avatar-sm</code>, <code>.form-check-card</code> harus dipindah ke <code>custom-modern.css</code>.</div>
+            <div class="sev sev-high">HIGH</div>
+          </div>
+          <div class="audit-item">
+            <div class="audit-label">Missing Meta Tags<small>Landing, auth</small></div>
+            <div class="audit-desc">Halaman landing tidak memiliki <code>meta name="description"</code>, tidak ada <code>og:image</code>, tidak ada <code>og:title</code>. Halaman auth juga hanya memiliki <code>&lt;title&gt;Login - Sistem &lt;/title&gt;</code> yang tidak lengkap.</div>
+            <div class="sev sev-med">MED</div>
+          </div>
+          <div class="audit-item">
+            <div class="audit-label">Duplikasi CSS Variables<small>simple-header, landing, auth</small></div>
+            <div class="audit-desc">Setiap halaman mendefinisikan <code>:root { --primary-black: #000000; --primary-blue: #2F58CD; }</code> secara terpisah. Ini tidak konsisten — halaman auth mendefinisikan variabel berbeda (<code>--primary-color: #1e3a5f</code>). Harus ada satu sumber kebenaran.</div>
+            <div class="sev sev-high">HIGH</div>
+          </div>
+          <div class="audit-item">
+            <div class="audit-label">5 Icon Libraries Dimuat<small>admin-header.php</small></div>
+            <div class="audit-desc">MDI, Feather, Themify, Typicons, Simple Line Icons — semuanya dimuat meski hanya MDI dan sedikit Feather yang benar-benar digunakan. Ini memberatkan page load secara signifikan.</div>
+            <div class="sev sev-high">HIGH</div>
+          </div>
+          <div class="audit-item">
+            <div class="audit-label">lang="en" di admin<small>admin-header.php</small></div>
+            <div class="audit-desc">Admin header menggunakan <code>lang="en"</code> padahal konten seluruhnya Bahasa Indonesia. Halaman lain sudah benar dengan <code>lang="id"</code>.</div>
+            <div class="sev sev-low">LOW</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════ 10. DESIGN TOKENS ══════════════════════════ -->
+      <section class="section" id="design-tokens">
+        <div class="section-header">
+          <div class="section-num">10</div>
+          <h2 class="section-title">Design Tokens — Sistem Baru</h2>
+        </div>
+        <div class="section-divider"></div>
+
+        <div class="callout callout-info">
+          <strong>Pendekatan:</strong> Satu file <code>assets/css/design-tokens.css</code> yang mendefinisikan semua variabel CSS. File ini harus dimuat <em>sebelum</em> Bootstrap dan sebelum <code>custom-modern.css</code> di kedua layout.
+        </div>
+
+        <div class="token-grid mt-4">
+          <div class="token-card">
+            <h4>Palet Warna Utama</h4>
+            <div class="token-row">
+              <span class="token-name">--clr-primary</span>
+              <div class="color-swatch">
+                <div class="swatch" style="background:#1d4ed8"></div>
+                <span class="token-val">#1d4ed8</span>
+              </div>
+            </div>
+            <div class="token-row">
+              <span class="token-name">--clr-primary-dark</span>
+              <div class="color-swatch">
+                <div class="swatch" style="background:#1e3a8a"></div>
+                <span class="token-val">#1e3a8a</span>
+              </div>
+            </div>
+            <div class="token-row">
+              <span class="token-name">--clr-accent</span>
+              <div class="color-swatch">
+                <div class="swatch" style="background:#d97706"></div>
+                <span class="token-val">#d97706</span>
+              </div>
+            </div>
+            <div class="token-row">
+              <span class="token-name">--clr-success</span>
+              <div class="color-swatch">
+                <div class="swatch" style="background:#16a34a"></div>
+                <span class="token-val">#16a34a</span>
+              </div>
+            </div>
+            <div class="token-row">
+              <span class="token-name">--clr-warning</span>
+              <div class="color-swatch">
+                <div class="swatch" style="background:#ca8a04"></div>
+                <span class="token-val">#ca8a04</span>
+              </div>
+            </div>
+            <div class="token-row">
+              <span class="token-name">--clr-danger</span>
+              <div class="color-swatch">
+                <div class="swatch" style="background:#dc2626"></div>
+                <span class="token-val">#dc2626</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="token-card">
+            <h4>Surface & Background</h4>
+            <div class="token-row">
+              <span class="token-name">--surface-page</span>
+              <div class="color-swatch">
+                <div class="swatch" style="background:#f8fafc"></div>
+                <span class="token-val">#f8fafc</span>
+              </div>
+            </div>
+            <div class="token-row">
+              <span class="token-name">--surface-card</span>
+              <div class="color-swatch">
+                <div class="swatch" style="background:#ffffff"></div>
+                <span class="token-val">#ffffff</span>
+              </div>
+            </div>
+            <div class="token-row">
+              <span class="token-name">--surface-card-hover</span>
+              <div class="color-swatch">
+                <div class="swatch" style="background:#f1f5f9"></div>
+                <span class="token-val">#f1f5f9</span>
+              </div>
+            </div>
+            <div class="token-row">
+              <span class="token-name">--surface-dark</span>
+              <div class="color-swatch">
+                <div class="swatch" style="background:#0f172a"></div>
+                <span class="token-val">#0f172a</span>
+              </div>
+            </div>
+            <div class="token-row">
+              <span class="token-name">--surface-dark-2</span>
+              <div class="color-swatch">
+                <div class="swatch" style="background:#1e293b"></div>
+                <span class="token-val">#1e293b</span>
+              </div>
+            </div>
+            <div class="token-row">
+              <span class="token-name">--surface-border</span>
+              <div class="color-swatch">
+                <div class="swatch" style="background:#e2e8f0"></div>
+                <span class="token-val">#e2e8f0</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="token-card">
+            <h4>Tipografi</h4>
+            <div class="token-row">
+              <span class="token-name">--font-sans</span>
+              <span class="token-val">'Plus Jakarta Sans'</span>
+            </div>
+            <div class="token-row">
+              <span class="token-name">--font-mono</span>
+              <span class="token-val">'JetBrains Mono'</span>
+            </div>
+            <div class="token-row">
+              <span class="token-name">--text-primary</span>
+              <span class="token-val">#0f172a</span>
+            </div>
+            <div class="token-row">
+              <span class="token-name">--text-secondary</span>
+              <span class="token-val">#475569</span>
+            </div>
+            <div class="token-row">
+              <span class="token-name">--text-muted</span>
+              <span class="token-val">#94a3b8</span>
+            </div>
+            <div class="token-row">
+              <span class="token-name">--font-size-base</span>
+              <span class="token-val">15px</span>
+            </div>
+          </div>
+
+          <div class="token-card">
+            <h4>Spacing & Radius</h4>
+            <div class="token-row">
+              <span class="token-name">--radius-sm</span>
+              <span class="token-val">6px</span>
+            </div>
+            <div class="token-row">
+              <span class="token-name">--radius-md</span>
+              <span class="token-val">10px</span>
+            </div>
+            <div class="token-row">
+              <span class="token-name">--radius-lg</span>
+              <span class="token-val">16px</span>
+            </div>
+            <div class="token-row">
+              <span class="token-name">--radius-xl</span>
+              <span class="token-val">24px</span>
+            </div>
+            <div class="token-row">
+              <span class="token-name">--shadow-sm</span>
+              <span class="token-val">0 1px 3px rgba(15,23,42,.06)</span>
+            </div>
+            <div class="token-row">
+              <span class="token-name">--shadow-md</span>
+              <span class="token-val">0 4px 16px rgba(15,23,42,.08)</span>
+            </div>
+            <div class="token-row">
+              <span class="token-name">--transition</span>
+              <span class="token-val">all 0.2s ease</span>
+            </div>
+          </div>
+
+          <div class="token-card">
+            <h4>Header & Layout</h4>
+            <div class="token-row">
+              <span class="token-name">--header-height</span>
+              <span class="token-val">64px</span>
+            </div>
+            <div class="token-row">
+              <span class="token-name">--sidebar-width</span>
+              <span class="token-val">240px</span>
+            </div>
+            <div class="token-row">
+              <span class="token-name">--container-max</span>
+              <span class="token-val">1320px</span>
+            </div>
+            <div class="token-row">
+              <span class="token-name">--content-pad</span>
+              <span class="token-val">clamp(20px,3vw,32px)</span>
+            </div>
+          </div>
+
+          <div class="token-card">
+            <h4>Z-Index Scale</h4>
+            <div class="token-row">
+              <span class="token-name">--z-dropdown</span>
+              <span class="token-val">100</span>
+            </div>
+            <div class="token-row">
+              <span class="token-name">--z-sticky</span>
+              <span class="token-val">200</span>
+            </div>
+            <div class="token-row">
+              <span class="token-name">--z-fixed</span>
+              <span class="token-val">300</span>
+            </div>
+            <div class="token-row">
+              <span class="token-name">--z-modal</span>
+              <span class="token-val">400</span>
+            </div>
+            <div class="token-row">
+              <span class="token-name">--z-toast</span>
+              <span class="token-val">500</span>
+            </div>
+            <div class="token-row">
+              <span class="token-name">--z-overlay</span>
+              <span class="token-val">600</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════ 11. KOMPONEN ══════════════════════════ -->
+      <section class="section" id="components">
+        <div class="section-header">
+          <div class="section-num">11</div>
+          <h2 class="section-title">Spesifikasi Komponen</h2>
+        </div>
+        <div class="section-divider"></div>
+
+        <div class="comp-grid">
+
+          <div class="comp-card">
+            <h4>Stat Card</h4>
+            <div class="comp-path">Dashboard — digunakan di 3 role</div>
+            <div class="comp-change">Ganti 4 kolom equal → 1 hero card + 3 card kecil</div>
+            <div class="comp-change">Hapus inline style width/height → gunakan CSS class</div>
+            <div class="comp-change">Icon background: subtle tinted bg, bukan solid</div>
+            <div class="comp-change">Angka: font-size besar (2rem), font-variant tabular-nums</div>
+            <div class="comp-change">Tambahkan trend indicator (↑/↓ + persentase)</div>
+          </div>
+
+          <div class="comp-card">
+            <h4>Sidebar Nav</h4>
+            <div class="comp-path">views/layouts/admin-sidebar.php</div>
+            <div class="comp-change">Active state untuk semua nav item (bukan hanya sub-menu)</div>
+            <div class="comp-change">Tambahkan badge counter untuk laporan baru</div>
+            <div class="comp-change">Smooth collapse animation untuk sub-menu</div>
+            <div class="comp-change">Ikon harus konsisten strokenya</div>
+          </div>
+
+          <div class="comp-card">
+            <h4>Login Card (Landing)</h4>
+            <div class="comp-path">views/landing/index.php</div>
+            <div class="comp-change">Asimetris: Admin card lebih besar, posisi kiri</div>
+            <div class="comp-change">Ganti icon: bukan rounded-square → rounded-xl</div>
+            <div class="comp-change">Tambahkan background gelap bertekstur (noise overlay)</div>
+            <div class="comp-change">Hover: border illuminate (spotlight border effect)</div>
+            <div class="comp-change">Tambahkan logo Pemkab Madina di atas cards</div>
+          </div>
+
+          <div class="comp-card">
+            <h4>Data Table</h4>
+            <div class="comp-path">Semua halaman index admin</div>
+            <div class="comp-change">Header kolom: sentence case, bukan ALL CAPS</div>
+            <div class="comp-change">Row hover: subtle background shift</div>
+            <div class="comp-change">Empty state: ikon besar + teks + CTA button</div>
+            <div class="comp-change">Filter form: compact, satu baris</div>
+            <div class="comp-change">Pagination: lebih compact dengan ellipsis</div>
+          </div>
+
+          <div class="comp-card">
+            <h4>Form Fields</h4>
+            <div class="comp-path">Semua form create/edit</div>
+            <div class="comp-change">Focus ring: visible, tinted biru (bukan default)</div>
+            <div class="comp-change">Error state: inline message (hapus window.alert)</div>
+            <div class="comp-change">Textarea: karakter counter, auto-resize on focus</div>
+            <div class="comp-change">File upload: drag-and-drop zone dengan feedback visual</div>
+            <div class="comp-change">Disabled state: opacity 0.5, cursor not-allowed</div>
+          </div>
+
+          <div class="comp-card">
+            <h4>Status Badge</h4>
+            <div class="comp-path">Tabel laporan, detail</div>
+            <div class="comp-change">Baru: amber bg + teks (bukan kuning terang)</div>
+            <div class="comp-change">Diproses: biru tint (bukan info bright blue)</div>
+            <div class="comp-change">Selesai: hijau tint (bukan success green Bootstrap)</div>
+            <div class="comp-change">Bentuk: pill-rounded → square dengan radius 5px</div>
+            <div class="comp-change">Selalu sentence case (Baru, Diproses, Selesai)</div>
+          </div>
+
+          <div class="comp-card">
+            <h4>Navigation Header (Layout A)</h4>
+            <div class="comp-path">views/layouts/simple-header.php</div>
+            <div class="comp-change">Ganti pure black bg → dark slate #0f172a</div>
+            <div class="comp-change">Tambah blur/glass effect saat scroll</div>
+            <div class="comp-change">Active link indicator yang jelas</div>
+            <div class="comp-change">Logo: tambah ikon khusus / gambar Pemkab</div>
+            <div class="comp-change">User badge: avatar squircle bukan lingkaran</div>
+          </div>
+
+          <div class="comp-card">
+            <h4>Confirmation Dialog</h4>
+            <div class="comp-path">Hapus/ubah status laporan</div>
+            <div class="comp-change">Ganti window.confirm → custom modal Bootstrap</div>
+            <div class="comp-change">Modal dengan ikon peringatan yang jelas</div>
+            <div class="comp-change">Teks: "Laporan ini akan dihapus secara permanen." (aktif, tanpa "Apakah Anda yakin?")</div>
+            <div class="comp-change">Tombol: "Hapus" (merah) | "Batal" (sekunder)</div>
+          </div>
+
+          <div class="comp-card">
+            <h4>Toast Notification</h4>
+            <div class="comp-path">Semua halaman admin (success/error session)</div>
+            <div class="comp-change">Posisi: top-right (bukan bottom-right)</div>
+            <div class="comp-change">Auto-dismiss: 4 detik dengan progress bar tipis</div>
+            <div class="comp-change">Warna: tinted (bukan solid bg-success/bg-danger)</div>
+            <div class="comp-change">Ikon: checkmark (sukses) / X merah (error)</div>
+          </div>
+
+          <div class="comp-card">
+            <h4>Error 404 Page</h4>
+            <div class="comp-path">views/errors/404.php</div>
+            <div class="comp-change">Redesign penuh: dark background bernuansa</div>
+            <div class="comp-change">Angka "404" besar sebagai display type</div>
+            <div class="comp-change">Ilustrasi atau ikon SVG yang relevan</div>
+            <div class="comp-change">Pesan: "Halaman ini tidak ada." (bukan "Halaman tidak ditemukan")</div>
+            <div class="comp-change">Link: Kembali ke dashboard sesuai role</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ══════════════════════════ 12. BEFORE/AFTER ══════════════════════════ -->
+      <section class="section" id="before-after">
+        <div class="section-header">
+          <div class="section-num">12</div>
+          <h2 class="section-title">Before / After — CSS Kritis</h2>
+        </div>
+        <div class="section-divider"></div>
+
+        <h3 class="mb-4">1. Background Landing Page</h3>
+        <div class="diff-pair">
+          <div class="diff-box diff-before">
+            <span class="diff-label">SEBELUM</span>
+background: linear-gradient(
+  135deg,
+  #000000,
+  #1a1a1a
+);
+/* Pure black — terasa murah */
+          </div>
+          <div class="diff-box diff-after">
+            <span class="diff-label">SESUDAH</span>
+background: #0f172a;
+background-image:
+  radial-gradient(ellipse at 20% 0%,
+    rgba(29,78,216,.15) 0%,
+    transparent 60%),
+  url("noise.svg");
+/* Dark slate bertekstur */
+          </div>
+        </div>
+
+        <h3 class="mb-4 mt-6">2. Warna Auth Login</h3>
+        <div class="diff-pair">
+          <div class="diff-box diff-before">
+            <span class="diff-label">SEBELUM</span>
+background: linear-gradient(
+  135deg,
+  #667eea 0%,
+  #764ba2 100%
+);
+/* Purple AI gradient — generic */
+          </div>
+          <div class="diff-box diff-after">
+            <span class="diff-label">SESUDAH</span>
+/* Sama dengan landing — unified */
+background: #0f172a;
+/* Left panel: solid blue tinted */
+.left-panel {
+  background: #1e3a8a;
+  background-image:
+    radial-gradient(circle at top right,
+    rgba(29,78,216,.3), transparent);
+}
+          </div>
+        </div>
+
+        <h3 class="mb-4 mt-6">3. Stat Card Icon</h3>
+        <div class="diff-pair">
+          <div class="diff-box diff-before">
+            <span class="diff-label">SEBELUM</span>
+&lt;div style="width:48px;height:48px;
+  background-color:#6f42c1 !important;"&gt;
+  &lt;i class="fas fa-map-marker-alt"&gt;
+  &lt;/i&gt;
+&lt;/div&gt;
+/* Inline style + !important */
+          </div>
+          <div class="diff-box diff-after">
+            <span class="diff-label">SESUDAH</span>
+&lt;div class="stat-icon stat-icon--camat"&gt;
+  &lt;i class="mdi mdi-map-marker"&gt;&lt;/i&gt;
+&lt;/div&gt;
+
+/* Di CSS: */
+.stat-icon--camat {
+  background: rgba(109,40,217,.1);
+  color: #7c3aed;
+}
+/* Semantic, maintainable */
+          </div>
+        </div>
+
+        <h3 class="mb-4 mt-6">4. CSS Variables — Terpusat</h3>
+        <div class="diff-pair">
+          <div class="diff-box diff-before">
+            <span class="diff-label">SEBELUM — 3 file berbeda</span>
+/* simple-header.php */
+:root { --primary-blue: #2F58CD; }
+
+/* auth/index.php */
+:root { --primary-color: #1e3a5f;
+        --secondary-color: #3498db; }
+
+/* landing/index.php */
+:root { --primary-blue: #2F58CD;
+        --primary-orange: #F59E0B; }
+          </div>
+          <div class="diff-box diff-after">
+            <span class="diff-label">SESUDAH — 1 file</span>
+/* design-tokens.css — dimuat pertama */
+:root {
+  --clr-primary: #1d4ed8;
+  --clr-primary-dark: #1e3a8a;
+  --clr-accent: #d97706;
+  --surface-dark: #0f172a;
+  --text-primary: #0f172a;
+  /* ... semua token di sini */
+}
+          </div>
+        </div>
+
+        <h3 class="mb-4 mt-6">5. Validasi Form</h3>
+        <div class="diff-pair">
+          <div class="diff-box diff-before">
+            <span class="diff-label">SEBELUM</span>
+if (uraian.length &lt; 10) {
+  e.preventDefault();
+  alert('Uraian laporan minimal
+    10 karakter!');
+  return false;
+}
+/* window.alert — blocking, ugly */
+          </div>
+          <div class="diff-box diff-after">
+            <span class="diff-label">SESUDAH</span>
+if (uraian.length &lt; 10) {
+  e.preventDefault();
+  showFieldError(
+    'uraian_laporan',
+    'Uraian minimal 10 karakter.'
+  );
+  return false;
+}
+/* Inline error di bawah field */
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════ 13. PRIORITAS ══════════════════════════ -->
+      <section class="section" id="priority">
+        <div class="section-header">
+          <div class="section-num">13</div>
+          <h2 class="section-title">Urutan Prioritas Eksekusi</h2>
+        </div>
+        <div class="section-divider"></div>
+
+        <div class="callout callout-success">
+          <strong>Pendekatan bertahap:</strong> Ikuti urutan ini — setiap langkah memberikan impact visual terbesar dengan risiko terkecil. Jangan loncat ke langkah 5 sebelum langkah 1 selesai.
+        </div>
+
+        <div class="priority-list mt-4">
+
+          <div class="priority-item">
+            <div class="priority-num">1</div>
+            <div class="priority-item-body">
+              <div class="priority-item-title">Buat <code>design-tokens.css</code> dan konsolidasi CSS variables</div>
+              <div class="priority-item-desc">Satu file berisi semua CSS custom properties. Hapus semua definisi <code>:root</code> duplikat dari setiap view. Ini adalah fondasi semua perubahan berikutnya. Tanpa ini, setiap perbaikan akan berantakan.</div>
+              <div class="priority-files">
+                <span class="file-tag">assets/css/design-tokens.css [NEW]</span>
+                <span class="file-tag">views/layouts/simple-header.php</span>
+                <span class="file-tag">views/layouts/admin-header.php</span>
+                <span class="file-tag">views/landing/index.php</span>
+                <span class="file-tag">views/auth/*.php</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="priority-item">
+            <div class="priority-num">2</div>
+            <div class="priority-item-body">
+              <div class="priority-item-title">Font swap — Plus Jakarta Sans di semua halaman</div>
+              <div class="priority-item-desc">Dampak visual terbesar dengan perubahan terkecil. Ganti semua font menjadi Plus Jakarta Sans (atau Inter jika Plus Jakarta Sans terlalu berat). Perlu diuji di semua halaman — beberapa font size mungkin perlu sedikit penyesuaian.</div>
+              <div class="priority-files">
+                <span class="file-tag">views/layouts/simple-header.php</span>
+                <span class="file-tag">views/layouts/admin-header.php</span>
+                <span class="file-tag">views/landing/index.php</span>
+                <span class="file-tag">views/auth/index.php</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="priority-item">
+            <div class="priority-num">3</div>
+            <div class="priority-item-body">
+              <div class="priority-item-title">Perbaiki palet warna — hapus AI gradient & multi-accent</div>
+              <div class="priority-item-desc">Ganti gradient auth ungu-biru → dark slate unified. Ganti warna stat card icon → semantic class dengan tinted background. Pastikan satu accent color dominan di semua halaman.</div>
+              <div class="priority-files">
+                <span class="file-tag">views/auth/index.php</span>
+                <span class="file-tag">views/landing/index.php</span>
+                <span class="file-tag">views/dashboard/admin/index.php</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="priority-item">
+            <div class="priority-num">4</div>
+            <div class="priority-item-body">
+              <div class="priority-item-title">Tambah hover & active states pada semua elemen interaktif</div>
+              <div class="priority-item-desc">Button, nav link, tabel row, kartu — semua harus memiliki hover state yang terasa. Tambahkan juga active state (scale 0.98 saat diklik). Ini membuat interface terasa "hidup".</div>
+              <div class="priority-files">
+                <span class="file-tag">assets/css/custom-modern.css</span>
+                <span class="file-tag">views/layouts/admin-sidebar.php</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="priority-item">
+            <div class="priority-num">5</div>
+            <div class="priority-item-body">
+              <div class="priority-item-title">Refactor layout halaman landing dan auth</div>
+              <div class="priority-item-desc">Landing: asimetris, tambah detail visual, perbaiki card hierarchy. Auth: unifikasi tampilan, ganti warna, perbaiki split-panel layout. Tambahkan favicon di simple-header.</div>
+              <div class="priority-files">
+                <span class="file-tag">views/landing/index.php</span>
+                <span class="file-tag">views/auth/index.php</span>
+                <span class="file-tag">views/auth/admin.php</span>
+                <span class="file-tag">views/auth/camat.php</span>
+                <span class="file-tag">views/auth/opd.php</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="priority-item">
+            <div class="priority-num">6</div>
+            <div class="priority-item-body">
+              <div class="priority-item-title">Pindahkan semua inline CSS ke custom-modern.css</div>
+              <div class="priority-item-desc">Semua blok <code>&lt;style&gt;</code> per-file dipindahkan ke file CSS terpusat. Ganti semua inline style. Hapus 5 icon library menjadi 2 (MDI + FA). Ini meningkatkan maintainability secara signifikan.</div>
+              <div class="priority-files">
+                <span class="file-tag">assets/css/custom-modern.css</span>
+                <span class="file-tag">views/laporan-admin-opd/*.php</span>
+                <span class="file-tag">views/laporan-admin-camat/*.php</span>
+                <span class="file-tag">views/dashboard/admin/index.php</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="priority-item">
+            <div class="priority-num">7</div>
+            <div class="priority-item-body">
+              <div class="priority-item-title">Ganti window.alert/confirm dengan inline states dan custom modal</div>
+              <div class="priority-item-desc">Buat fungsi JavaScript terpusat untuk inline field errors, custom confirmation modal, dan toast notifications. Hapus semua penggunaan <code>alert()</code> dan <code>confirm()</code>.</div>
+              <div class="priority-files">
+                <span class="file-tag">assets/js/ui-helpers.js [NEW]</span>
+                <span class="file-tag">views/laporan-admin-opd/edit.php</span>
+                <span class="file-tag">views/laporan-admin-camat/edit.php</span>
+                <span class="file-tag">views/laporan-admin-opd/index.php</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="priority-item">
+            <div class="priority-num">8</div>
+            <div class="priority-item-body">
+              <div class="priority-item-title">Redesign komponen detail: stat cards, empty states, breadcrumb</div>
+              <div class="priority-item-desc">Polish komponen utama: perbaiki stat card hierarchy, tambahkan empty state yang bermakna, tambahkan breadcrumb di semua halaman detail/edit, perbaiki typography scale.</div>
+              <div class="priority-files">
+                <span class="file-tag">views/dashboard/admin/index.php</span>
+                <span class="file-tag">views/laporan-admin-opd/index.php</span>
+                <span class="file-tag">views/laporan-admin-camat/index.php</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="priority-item">
+            <div class="priority-num">9</div>
+            <div class="priority-item-body">
+              <div class="priority-item-title">Redesign Error 404 dan tambahkan meta tags</div>
+              <div class="priority-item-desc">Buat halaman 404 yang branded dan berguna. Tambahkan meta description, og:image placeholder, dan title yang benar di semua halaman.</div>
+              <div class="priority-files">
+                <span class="file-tag">views/errors/404.php</span>
+                <span class="file-tag">views/layouts/simple-header.php</span>
+                <span class="file-tag">views/layouts/admin-header.php</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ══════════════════════════ 14. TRACKER ══════════════════════════ -->
+      <section class="section" id="tracker">
+        <div class="section-header">
+          <div class="section-num">14</div>
+          <h2 class="section-title">Task Tracker</h2>
+        </div>
+        <div class="section-divider"></div>
+
+        <div class="progress-track">
+
+          <div class="track-item">
+            <div class="track-status todo"></div>
+            <span class="track-label">Buat <strong>design-tokens.css</strong> dengan semua CSS variables</span>
+            <span class="track-file">assets/css/design-tokens.css</span>
+          </div>
+
+          <div class="track-item">
+            <div class="track-status todo"></div>
+            <span class="track-label">Import design-tokens.css di admin-header dan simple-header</span>
+            <span class="track-file">views/layouts/*.php</span>
+          </div>
+
+          <div class="track-item">
+            <div class="track-status todo"></div>
+            <span class="track-label">Hapus :root duplikat dari semua view file</span>
+            <span class="track-file">views/**/*.php</span>
+          </div>
+
+          <div class="track-item">
+            <div class="track-status todo"></div>
+            <span class="track-label">Ganti Google Fonts ke Plus Jakarta Sans di semua layout</span>
+            <span class="track-file">views/layouts/*.php</span>
+          </div>
+
+          <div class="track-item">
+            <div class="track-status todo"></div>
+            <span class="track-label">Hapus icon library tidak terpakai (Feather, Typicons, Simple Line, Themify)</span>
+            <span class="track-file">views/layouts/admin-header.php</span>
+          </div>
+
+          <div class="track-item">
+            <div class="track-status todo"></div>
+            <span class="track-label">Ganti warna gradient auth → dark slate unified</span>
+            <span class="track-file">views/auth/index.php</span>
+          </div>
+
+          <div class="track-item">
+            <div class="track-status todo"></div>
+            <span class="track-label">Ganti warna background landing page → dark slate bertekstur</span>
+            <span class="track-file">views/landing/index.php</span>
+          </div>
+
+          <div class="track-item">
+            <div class="track-status todo"></div>
+            <span class="track-label">Refactor stat card dashboard admin → semantic CSS class (hapus inline style)</span>
+            <span class="track-file">views/dashboard/admin/index.php</span>
+          </div>
+
+          <div class="track-item">
+            <div class="track-status todo"></div>
+            <span class="track-label">Tambahkan favicon di simple-header.php</span>
+            <span class="track-file">views/layouts/simple-header.php</span>
+          </div>
+
+          <div class="track-item">
+            <div class="track-status todo"></div>
+            <span class="track-label">Buat <strong>ui-helpers.js</strong> dengan fungsi showFieldError(), showConfirm(), showToast()</span>
+            <span class="track-file">assets/js/ui-helpers.js</span>
+          </div>
+
+          <div class="track-item">
+            <div class="track-status todo"></div>
+            <span class="track-label">Ganti semua window.alert() → showFieldError()</span>
+            <span class="track-file">views/laporan-admin-opd/edit.php</span>
+          </div>
+
+          <div class="track-item">
+            <div class="track-status todo"></div>
+            <span class="track-label">Ganti semua window.confirm() hapus data → custom modal</span>
+            <span class="track-file">views/laporan-admin-opd/index.php</span>
+          </div>
+
+          <div class="track-item">
+            <div class="track-status todo"></div>
+            <span class="track-label">Pindahkan semua inline &lt;style&gt; per-file ke custom-modern.css</span>
+            <span class="track-file">assets/css/custom-modern.css</span>
+          </div>
+
+          <div class="track-item">
+            <div class="track-status todo"></div>
+            <span class="track-label">Tambahkan active nav indicator di semua item sidebar</span>
+            <span class="track-file">views/layouts/admin-sidebar.php</span>
+          </div>
+
+          <div class="track-item">
+            <div class="track-status todo"></div>
+            <span class="track-label">Tambahkan breadcrumb di halaman detail dan edit</span>
+            <span class="track-file">views/laporan-admin-opd/{detail,edit}.php</span>
+          </div>
+
+          <div class="track-item">
+            <div class="track-status todo"></div>
+            <span class="track-label">Tambahkan focus ring visible di semua form input</span>
+            <span class="track-file">assets/css/custom-modern.css</span>
+          </div>
+
+          <div class="track-item">
+            <div class="track-status todo"></div>
+            <span class="track-label">Redesign empty state tabel → ikon besar + CTA</span>
+            <span class="track-file">views/laporan-admin-opd/index.php</span>
+          </div>
+
+          <div class="track-item">
+            <div class="track-status todo"></div>
+            <span class="track-label">Redesign halaman 404</span>
+            <span class="track-file">views/errors/404.php</span>
+          </div>
+
+          <div class="track-item">
+            <div class="track-status todo"></div>
+            <span class="track-label">Tambahkan meta description + og tags di semua halaman</span>
+            <span class="track-file">views/layouts/*.php</span>
+          </div>
+
+          <div class="track-item">
+            <div class="track-status todo"></div>
+            <span class="track-label">Ganti min-height:100vh → min-height:100dvh di semua container</span>
+            <span class="track-file">assets/css/custom-modern.css</span>
+          </div>
+
+          <div class="track-item">
+            <div class="track-status todo"></div>
+            <span class="track-label">Fix lang="en" di admin-header.php → lang="id"</span>
+            <span class="track-file">views/layouts/admin-header.php</span>
+          </div>
+
+          <div class="track-item">
+            <div class="track-status todo"></div>
+            <span class="track-label">Tambahkan tabular-nums pada angka statistik</span>
+            <span class="track-file">assets/css/custom-modern.css</span>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ══════════════════════════ 15. ATURAN ══════════════════════════ -->
+      <section class="section" id="rules">
+        <div class="section-header">
+          <div class="section-num">15</div>
+          <h2 class="section-title">Aturan Refactor</h2>
+        </div>
+        <div class="section-divider"></div>
+
+        <div class="callout callout-warn">
+          <strong>Penting:</strong> Semua perubahan harus backward-compatible. Fungsionalitas PHP (routing, session, query) tidak boleh disentuh. Hanya HTML structure, CSS, dan JavaScript UI yang berubah.
+        </div>
+
+        <div class="audit-grid mt-4">
+          <div class="audit-item">
+            <div class="audit-label">✅ BOLEH</div>
+            <div class="audit-desc">
+              Mengubah class CSS di HTML element<br>
+              Menambah/menghapus CSS di file CSS<br>
+              Mengubah struktur HTML (div wrapper)<br>
+              Menambah/menghapus JS yang bersifat UI<br>
+              Mengganti font, warna, spacing<br>
+              Menambah file CSS/JS baru
+            </div>
+            <div class="sev sev-low">AMAN</div>
+          </div>
+          <div class="audit-item">
+            <div class="audit-label">❌ DILARANG</div>
+            <div class="audit-desc">
+              Mengubah nama PHP variable yang dikirim dari controller<br>
+              Mengubah URL route (<code>route()</code> helper)<br>
+              Menghapus form <code>name</code> attribute<br>
+              Mengubah value <code>type="hidden"</code> pada form<br>
+              Mengganti framework (Bootstrap → lainnya)<br>
+              Mengubah logic PHP apapun di view file
+            </div>
+            <div class="sev sev-high">RISIKO</div>
+          </div>
+          <div class="audit-item">
+            <div class="audit-label">⚡ PRINSIP UTAMA</div>
+            <div class="audit-desc">
+              <strong>Targeted, bukan rewrite.</strong> Setiap perubahan harus bisa dikembalikan (reversible). Test setelah setiap langkah — pastikan form masih bisa submit, tabel masih tampil data, filter masih bekerja.
+            </div>
+            <div class="sev sev-med">WAJIB</div>
+          </div>
+          <div class="audit-item">
+            <div class="audit-label">📦 FILE BARU</div>
+            <div class="audit-desc">
+              <strong>assets/css/design-tokens.css</strong> — CSS variables global<br>
+              <strong>assets/js/ui-helpers.js</strong> — Fungsi UI terpusat (toast, modal, field error)<br>
+              Load keduanya di admin-header.php dan simple-header.php
+            </div>
+            <div class="sev sev-low">BUAT</div>
+          </div>
+        </div>
+
+        <div class="callout callout-info mt-4">
+          <strong>Catatan vendor bundle:</strong> File <code>assets/vendors/css/vendor.bundle.base.css</code> adalah template Bootstrap 4-era yang tidak bisa dihapus begitu saja karena admin panel bergantung padanya. Untuk sementara, override selektif menggunakan <code>custom-modern.css</code> yang dimuat setelahnya. Migrasi penuh vendor bundle ke Bootstrap 5 native adalah fase berikutnya (v3.0).
+        </div>
+      </section>
+
+      <!-- FOOTER -->
+      <div style="padding: 40px 0; border-top: 1px solid var(--border); margin-top: 20px;">
+        <p style="font-size:12px; color:var(--text-3); text-align:center;">
+          PRD Frontend Refactor — LaporBup · Sistem Pelaporan Bupati Madina<br>
+          Dibuat: <?php echo date('d F Y'); ?> · Menggunakan skill <strong>redesign-existing-projects</strong> · Versi 1.0
+        </p>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script>
+  // Reading progress bar
+  const main = document.getElementById('main');
+  const bar = document.getElementById('progress');
+  window.addEventListener('scroll', () => {
+    const total = document.body.scrollHeight - window.innerHeight;
+    const pct = (window.scrollY / total) * 100;
+    bar.style.width = pct + '%';
+  });
+
+  // Active nav on scroll
+  const sections = document.querySelectorAll('.section');
+  const navLinks = document.querySelectorAll('.nav-link');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(a => a.classList.remove('active'));
+        const link = document.querySelector('.nav-link[href="#' + e.target.id + '"]');
+        if (link) link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => obs.observe(s));
+</script>
+
+</body>
+</html>

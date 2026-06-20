@@ -18,9 +18,15 @@ $title = isset($title) ? $title : 'Dashboard - ' . $profile_nama_aplikasi;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title><?php echo htmlspecialchars($title); ?></title>
+    <meta name="description" content="Sistem Layanan Pelaporan Pemerintah Kabupaten Mandailing Natal.">
+    <meta property="og:title" content="<?php echo htmlspecialchars($title); ?>">
+    <meta property="og:description" content="Sistem Layanan Pelaporan Pemerintah Kabupaten Mandailing Natal.">
+    <meta property="og:image" content="<?= asset('assets/images/favicon.png') ?>">
+    <link rel="shortcut icon" href="<?= asset('assets/images/favicon.png') ?>" />
 
-    
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="<?= asset('assets/css/design-tokens.css') ?>" />
     <link rel="stylesheet" href="<?= asset('assets/css/custom-modern.css') ?>" />
 
     
@@ -29,22 +35,9 @@ $title = isset($title) ? $title : 'Dashboard - ' . $profile_nama_aplikasi;
           crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
-        :root {
-            --primary-black: #000000;
-            --primary-blue: #2F58CD;
-            --secondary-blue: #1E3A8A;
-            --primary-orange: #F59E0B;
-            --light-gray: #F5F6FA;
-            --dark-gray: #333333;
-            --card-shadow: 0 6px 16px rgba(0,0,0,0.08);
-            --transition: all 0.3s ease;
-            --header-height: 70px;
-            --footer-height: 40px;
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -52,7 +45,7 @@ $title = isset($title) ? $title : 'Dashboard - ' . $profile_nama_aplikasi;
         }
 
         body {
-            font-family: 'Poppins', 'Inter', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--light-gray);
             margin: 0;
             padding: 0;
@@ -128,6 +121,28 @@ $title = isset($title) ? $title : 'Dashboard - ' . $profile_nama_aplikasi;
             left: 0;
             background-color: var(--primary-orange);
             transition: var(--transition);
+        }
+
+        .nav-menu form {
+            margin: 0;
+        }
+
+        .nav-menu button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            color: white;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+            padding: clamp(3px, 1vw, 5px) 0;
+            font-size: clamp(12px, 2.5vw, 16px);
+            white-space: nowrap;
+        }
+
+        .nav-menu button:hover {
+            color: var(--primary-orange);
         }
 
         .nav-menu a:hover::after {

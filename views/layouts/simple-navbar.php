@@ -32,9 +32,12 @@ $profile_logo = $profile ? $profile['logo'] : null;
         <a href="<?= route(($current_role === 'opd') ? 'laporanOPD' : 'laporanCamat', 'index') ?>">Laporan</a>
         
         <div class="user-section">
-            <a href="<?= route('auth', 'logout') ?>">
-                <span>Keluar</span>
-            </a>
+            <form method="POST" action="<?= route('auth', 'logout') ?>">
+                <button type="submit">
+                    <span>Keluar</span>
+                </button>
+            </form>
+        </div>
     </nav>
 </header>
 

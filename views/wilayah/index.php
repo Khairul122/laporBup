@@ -317,13 +317,13 @@
       })
       .then(response => response.json())
       .then(data => {
-        let confirmMessage = 'Apakah Anda yakin ingin menghapus kecamatan ini?';
+        let confirmMessage = 'Kecamatan ini akan dihapus secara permanen.';
 
         if (data.relatedDesaCount > 0) {
-          confirmMessage = `Apakah Anda yakin ingin menghapus kecamatan ini? ${data.relatedDesaCount} desa terkait juga akan ikut dihapus.\n\nDaftar desa yang akan dihapus:\n${data.relatedDesaList.join('\n')}`;
+          confirmMessage = `Kecamatan ini akan dihapus secara permanen, beserta ${data.relatedDesaCount} desa terkait.<br><br>Daftar desa yang akan dihapus:<br>${data.relatedDesaList.join('<br>')}`;
         }
 
-        if (confirm(confirmMessage)) {
+        showConfirm(confirmMessage, function() {
           const form = document.createElement('form');
           form.method = 'POST';
           form.action = '<?= route('wilayah', 'deleteKecamatan') ?>';
@@ -336,12 +336,12 @@
           form.appendChild(input);
           document.body.appendChild(form);
           form.submit();
-        }
+        });
       })
       .catch(error => {
         console.error('Error checking kecamatan stats:', error);
-        
-        if (confirm('Apakah Anda yakin ingin menghapus kecamatan ini?')) {
+
+        showConfirm('Kecamatan ini akan dihapus secara permanen.', function() {
           const form = document.createElement('form');
           form.method = 'POST';
           form.action = '<?= route('wilayah', 'deleteKecamatan') ?>';
@@ -354,13 +354,13 @@
           form.appendChild(input);
           document.body.appendChild(form);
           form.submit();
-        }
+        });
       });
     }
 
     
     function deleteDesa(id) {
-      if (confirm('Apakah Anda yakin ingin menghapus desa ini?')) {
+      showConfirm('Desa ini akan dihapus secara permanen.', function() {
         fetch('<?= route('wilayah', 'deleteDesa') ?>', {
           method: 'POST',
           headers: {
@@ -373,7 +373,7 @@
         .then(data => {
           if (data.success) {
             showNotification(data.message, 'success');
-            
+
             setTimeout(() => {
               const currentUrl = new URL(window.location);
               currentUrl.searchParams.set('tab', 'desa');
@@ -387,7 +387,7 @@
           console.error('Error:', error);
           showNotification('Terjadi kesalahan saat menghapus data', 'error');
         });
-      }
+      });
     }
 
     

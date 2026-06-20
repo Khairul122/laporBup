@@ -56,34 +56,40 @@
                       <form id="pelaporForm" onsubmit="savePelapor(event)">
                         <input type="hidden" name="id" id="pelaporId" value="<?php echo $dataPelapor['id_user'] ?? ''; ?>">
 
-                        <div class="form-group mb-4">
-                          <label for="username" class="form-label fw-semibold">
-                            Username <span class="text-danger">*</span>
-                          </label>
-                          <div class="input-group">
-                            <span class="input-group-text">
-                              <i class="fas fa-user"></i>
-                            </span>
-                            <input type="text" class="form-control" id="username" name="username"
-                                   value="<?php echo htmlspecialchars($dataPelapor['username'] ?? ''); ?>"
-                                   placeholder="Masukkan username" required>
+                        <div class="row">
+                          <div class="col-md-6">
+                            <div class="form-group mb-4">
+                              <label for="username" class="form-label fw-semibold">
+                                Username <span class="text-danger">*</span>
+                              </label>
+                              <div class="input-group">
+                                <span class="input-group-text">
+                                  <i class="fas fa-user"></i>
+                                </span>
+                                <input type="text" class="form-control" id="username" name="username"
+                                       value="<?php echo htmlspecialchars($dataPelapor['username'] ?? ''); ?>"
+                                       placeholder="Masukkan username" required>
+                              </div>
+                              <small class="text-muted">Username minimal 3 karakter, hanya huruf, angka, dan underscore</small>
+                            </div>
                           </div>
-                          <small class="text-muted">Username minimal 3 karakter, hanya huruf, angka, dan underscore</small>
-                        </div>
 
-                        <div class="form-group mb-4">
-                          <label for="email" class="form-label fw-semibold">
-                            Email <span class="text-danger">*</span>
-                          </label>
-                          <div class="input-group">
-                            <span class="input-group-text">
-                              <i class="fas fa-envelope"></i>
-                            </span>
-                            <input type="email" class="form-control" id="email" name="email"
-                                   value="<?php echo htmlspecialchars($dataPelapor['email'] ?? ''); ?>"
-                                   placeholder="nama@contoh.com" required>
+                          <div class="col-md-6">
+                            <div class="form-group mb-4">
+                              <label for="email" class="form-label fw-semibold">
+                                Email <span class="text-danger">*</span>
+                              </label>
+                              <div class="input-group">
+                                <span class="input-group-text">
+                                  <i class="fas fa-envelope"></i>
+                                </span>
+                                <input type="email" class="form-control" id="email" name="email"
+                                       value="<?php echo htmlspecialchars($dataPelapor['email'] ?? ''); ?>"
+                                       placeholder="nama@contoh.com" required>
+                              </div>
+                              <small class="text-muted">Email harus valid dan akan digunakan untuk login</small>
+                            </div>
                           </div>
-                          <small class="text-muted">Email harus valid dan akan digunakan untuk login</small>
                         </div>
 
                         <div class="form-group mb-4">
@@ -107,87 +113,97 @@
                           <small class="text-muted">Pilih role pelapor (Camat atau OPD)</small>
                         </div>
 
-                        <div class="form-group mb-4">
-                          <label for="no_telp" class="form-label fw-semibold">
-                            Nomor Telepon <span class="text-muted">(Opsional)</span>
-                          </label>
-                          <div class="input-group">
-                            <span class="input-group-text">
-                              <i class="fas fa-phone"></i>
-                            </span>
-                            <input type="tel" class="form-control" id="no_telp" name="no_telp"
-                                   value="<?php echo htmlspecialchars($dataPelapor['no_telp'] ?? ''); ?>"
-                                   placeholder="Contoh: 08123456789 atau +628123456789"
-                                   pattern="(^\+62|62|^08)[0-9]{8,13}"
-                                   title="Format: 08xxxxxxxxxx atau +62xxxxxxxxxx">
+                        <div class="row">
+                          <div class="col-md-6">
+                            <div class="form-group mb-4">
+                              <label for="no_telp" class="form-label fw-semibold">
+                                Nomor Telepon <span class="text-muted">(Opsional)</span>
+                              </label>
+                              <div class="input-group">
+                                <span class="input-group-text">
+                                  <i class="fas fa-phone"></i>
+                                </span>
+                                <input type="tel" class="form-control" id="no_telp" name="no_telp"
+                                       value="<?php echo htmlspecialchars($dataPelapor['no_telp'] ?? ''); ?>"
+                                       placeholder="Contoh: 08123456789 atau +628123456789"
+                                       pattern="(^\+62|62|^08)[0-9]{8,13}"
+                                       title="Format: 08xxxxxxxxxx atau +62xxxxxxxxxx">
+                              </div>
+                              <small class="text-muted">Nomor telepon WhatsApp/SMS untuk komunikasi</small>
+                            </div>
                           </div>
-                          <small class="text-muted">Nomor telepon WhatsApp/SMS untuk komunikasi</small>
+
+                          <div class="col-md-6">
+                            <div class="form-group mb-4">
+                              <label for="jabatan" class="form-label fw-semibold">
+                                Jabatan <span class="text-danger">*</span>
+                              </label>
+                              <div class="input-group">
+                                <span class="input-group-text">
+                                  <i class="fas fa-briefcase"></i>
+                                </span>
+                                <input type="text" class="form-control" id="jabatan" name="jabatan"
+                                       value="<?php echo htmlspecialchars($dataPelapor['jabatan'] ?? ''); ?>"
+                                       placeholder="Contoh: Camat Kecamatan X, Kepala Dinas Y" required>
+                              </div>
+                              <small class="text-muted">Jabatan lengkap pelapor</small>
+                            </div>
+                          </div>
                         </div>
 
-                        <div class="form-group mb-4">
-                          <label for="jabatan" class="form-label fw-semibold">
-                            Jabatan <span class="text-danger">*</span>
-                          </label>
-                          <div class="input-group">
-                            <span class="input-group-text">
-                              <i class="fas fa-briefcase"></i>
-                            </span>
-                            <input type="text" class="form-control" id="jabatan" name="jabatan"
-                                   value="<?php echo htmlspecialchars($dataPelapor['jabatan'] ?? ''); ?>"
-                                   placeholder="Contoh: Camat Kecamatan X, Kepala Dinas Y" required>
+                        <div class="row">
+                          <div class="col-md-6">
+                            <div class="form-group mb-4">
+                              <label for="password" class="form-label fw-semibold">
+                                Password <span class="text-danger <?php echo $dataPelapor ? '' : '*'; ?>"></span>
+                              </label>
+                              <div class="input-group">
+                                <span class="input-group-text">
+                                  <i class="fas fa-lock"></i>
+                                </span>
+                                <input type="password" class="form-control" id="password" name="password"
+                                       placeholder="<?php echo $dataPelapor ? 'Kosongkan jika tidak ingin mengubah password' : 'Masukkan password'; ?>"
+                                       <?php echo $dataPelapor ? '' : 'required'; ?> minlength="6">
+                                <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('password')">
+                                  <i class="fas fa-eye" id="password-eye"></i>
+                                </button>
+                              </div>
+                              <small class="text-muted">Password minimal 6 karakter</small>
+                            </div>
                           </div>
-                          <small class="text-muted">Jabatan lengkap pelapor</small>
+
+                          <div class="col-md-6">
+                            <div class="form-group mb-4">
+                              <label for="confirm_password" class="form-label fw-semibold">
+                                Konfirmasi Password <span class="text-danger <?php echo $dataPelapor ? '' : '*'; ?>"></span>
+                              </label>
+                              <div class="input-group">
+                                <span class="input-group-text">
+                                  <i class="fas fa-lock"></i>
+                                </span>
+                                <input type="password" class="form-control" id="confirm_password" name="confirm_password"
+                                       placeholder="Ulangi password"
+                                       <?php echo $dataPelapor ? '' : 'required'; ?> minlength="6">
+                                <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('confirm_password')">
+                                  <i class="fas fa-eye" id="confirm_password-eye"></i>
+                                </button>
+                              </div>
+                              <small class="text-muted">Konfirmasi password harus sama dengan password</small>
+                            </div>
+                          </div>
                         </div>
 
-                        <div class="form-group mb-4">
-                          <label for="password" class="form-label fw-semibold">
-                            Password <span class="text-danger <?php echo $dataPelapor ? '' : '*'; ?>"></span>
-                          </label>
-                          <div class="input-group">
-                            <span class="input-group-text">
-                              <i class="fas fa-lock"></i>
-                            </span>
-                            <input type="password" class="form-control" id="password" name="password"
-                                   placeholder="<?php echo $dataPelapor ? 'Kosongkan jika tidak ingin mengubah password' : 'Masukkan password'; ?>"
-                                   <?php echo $dataPelapor ? '' : 'required'; ?> minlength="6">
-                            <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('password')">
-                              <i class="fas fa-eye" id="password-eye"></i>
-                            </button>
-                          </div>
-                          <small class="text-muted">Password minimal 6 karakter</small>
-                        </div>
-
-                        <div class="form-group mb-4">
-                          <label for="confirm_password" class="form-label fw-semibold">
-                            Konfirmasi Password <span class="text-danger <?php echo $dataPelapor ? '' : '*'; ?>"></span>
-                          </label>
-                          <div class="input-group">
-                            <span class="input-group-text">
-                              <i class="fas fa-lock"></i>
-                            </span>
-                            <input type="password" class="form-control" id="confirm_password" name="confirm_password"
-                                   placeholder="Ulangi password"
-                                   <?php echo $dataPelapor ? '' : 'required'; ?> minlength="6">
-                            <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('confirm_password')">
-                              <i class="fas fa-eye" id="confirm_password-eye"></i>
-                            </button>
-                          </div>
-                          <small class="text-muted">Konfirmasi password harus sama dengan password</small>
-                        </div>
-
-                        <div class="d-flex justify-content-between">
+                        <div class="form-actions">
                           <a href="<?= route('dataPelapor', 'index') ?>" class="btn btn-secondary">
                             <i class="fas fa-arrow-left"></i> Kembali
                           </a>
-                          <div>
-                            <button type="reset" class="btn btn-outline-secondary me-2">
-                              <i class="fas fa-undo"></i> Reset
-                            </button>
-                            <button type="submit" class="btn btn-primary" id="submitBtn">
-                              <i class="fas fa-save"></i>
-                              <span id="submitBtnText"><?php echo $dataPelapor ? 'Update Data' : 'Simpan Data'; ?></span>
-                            </button>
-                          </div>
+                          <button type="reset" class="btn btn-outline-secondary">
+                            <i class="fas fa-undo"></i> Reset
+                          </button>
+                          <button type="submit" class="btn btn-primary" id="submitBtn">
+                            <i class="fas fa-save"></i>
+                            <span id="submitBtnText"><?php echo $dataPelapor ? 'Update Data' : 'Simpan Data'; ?></span>
+                          </button>
                         </div>
                       </form>
                     </div>

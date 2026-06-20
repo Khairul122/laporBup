@@ -18,7 +18,13 @@
           <div class="row">
             <div class="col-12">
 
-              
+
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="<?= route('Dashboard', 'admin') ?>">Dashboard</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Laporan OPD</li>
+                </ol>
+              </nav>
               <div class="page-header d-flex justify-content-between align-items-center mb-4">
                 <div>
                   <h2 class="page-title">Manajemen Laporan OPD</h2>
@@ -173,10 +179,15 @@
                         <?php if (empty($laporans)): ?>
                           <tr>
                             <td colspan="6" class="text-center py-5">
-                              <div class="text-muted">
-                                <i class="mdi mdi-inbox-outline display-4"></i>
-                                <h5 class="mt-3">Tidak ada data laporan</h5>
-                                <p>Belum ada laporan yang sesuai dengan filter yang dipilih</p>
+                              <div class="empty-state">
+                                <div class="empty-state-icon">
+                                  <i class="mdi mdi-inbox-outline"></i>
+                                </div>
+                                <h5 class="mt-3">Belum ada data laporan</h5>
+                                <p class="text-muted mb-3">Belum ada laporan yang sesuai dengan filter yang dipilih</p>
+                                <a href="<?= route('laporanOPDAdmin', 'index') ?>" class="btn btn-outline-primary btn-sm">
+                                  <i class="mdi mdi-filter-remove me-1"></i> Hapus filter
+                                </a>
                               </div>
                             </td>
                           </tr>
@@ -264,7 +275,7 @@
                                   </button>
 
                                   <form method="POST" action="<?= route('laporanOPDAdmin', 'delete', ['id' => $laporan['id_laporan_opd'] ?? '']) ?>"
-                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus laporan ini?');"
+                                        onsubmit="showConfirm('Laporan ini akan dihapus secara permanen.', () => this.submit()); return false;"
                                         style="display: inline;">
                                     <input type="hidden" name="_method" value="DELETE">
                                     <button type="submit" class="btn btn-outline-danger" title="Hapus">
@@ -443,69 +454,6 @@
 
   <?php include 'views/layouts/admin-script.php'; ?>
 
-  <style>
-    .avatar-sm {
-      width: 48px;
-      height: 48px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.25rem;
-    }
-
-    .form-check-card {
-      cursor: pointer;
-    }
-
-    .form-check-card input[type="radio"] {
-      display: none;
-    }
-
-    .form-check-card input[type="radio"]:checked + .card {
-      border-color: #0d6efd;
-      background-color: #f8f9ff;
-    }
-
-    .form-check-card input[type="radio"]:checked + .card .card-body {
-      font-weight: 500;
-    }
-
-    .form-check-card .card {
-      transition: all 0.2s ease;
-      border: 2px solid #e9ecef;
-    }
-
-    .form-check-card .card:hover {
-      border-color: #0d6efd;
-      background-color: #f8f9ff;
-    }
-
-    .btn-group-sm .btn {
-      padding: 0.25rem 0.5rem;
-    }
-
-    .table th {
-      border-top: none;
-      font-weight: 600;
-      color: #495057;
-      font-size: 0.875rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .badge {
-      font-weight: 500;
-    }
-
-    .card {
-      border: 1px solid #e9ecef;
-      border-radius: 0.5rem;
-    }
-
-    .card:hover {
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-  </style>
 
   <script>
     

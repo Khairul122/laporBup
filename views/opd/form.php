@@ -11,6 +11,13 @@
           <div class="row">
             <div class="col-sm-12">
               
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="<?= route('Dashboard', 'admin') ?>">Dashboard</a></li>
+                  <li class="breadcrumb-item"><a href="<?= route('opd', 'index') ?>">OPD</a></li>
+                  <li class="breadcrumb-item active" aria-current="page"><?php echo isset($opd) ? 'Edit' : 'Tambah'; ?></li>
+                </ol>
+              </nav>
               <div class="d-flex align-items-center justify-content-between mb-4">
                 <div>
                   <h3 class="page-title mb-1">
@@ -64,22 +71,22 @@
                       </div>
                     </div>
 
-                    
-                    <div class="d-flex gap-2">
+
+                    <div class="form-actions">
+                      <?php if (isset($opd)): ?>
+                        <button type="button" class="btn btn-danger me-auto" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                          <i class="fas fa-trash"></i> Hapus OPD
+                        </button>
+                      <?php endif; ?>
+
+                      <a href="<?= route('opd', 'index') ?>" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Batal
+                      </a>
+
                       <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save"></i>
                         <?php echo isset($opd) ? 'Update OPD' : 'Simpan OPD'; ?>
                       </button>
-                      
-                      <a href="<?= route('opd', 'index') ?>" class="btn btn-secondary">
-                        <i class="fas fa-times"></i> Batal
-                      </a>
-                      
-                      <?php if (isset($opd)): ?>
-                        <button type="button" class="btn btn-danger ms-auto" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                          <i class="fas fa-trash"></i> Hapus OPD
-                        </button>
-                      <?php endif; ?>
                     </div>
                   </form>
                 </div>

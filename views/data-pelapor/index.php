@@ -327,7 +327,7 @@ function formatDateIndo($date) {
     }
 
     function deletePelapor(id, username) {
-      if (confirm('Apakah Anda yakin ingin menghapus pelapor "' + username + '"?')) {
+      showConfirm('Pelapor "' + username + '" akan dihapus secara permanen.', function() {
         const template = '<?php echo route("dataPelapor", "delete", ["id" => "ID_PLACEHOLDER"]); ?>';
         fetch(template.replace('ID_PLACEHOLDER', id), {
           method: 'DELETE'
@@ -337,13 +337,13 @@ function formatDateIndo($date) {
           if (result.success) {
             location.reload();
           } else {
-            alert(result.message);
+            showToast(result.message, 'error');
           }
         })
         .catch(error => {
-          alert('Error: ' + error.message);
+          showToast('Error: ' + error.message, 'error');
         });
-      }
+      });
     }
 
     function resetFilter() {

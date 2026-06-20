@@ -15,6 +15,13 @@ include 'views/layouts/admin-header.php';
             <div class="col-sm-12">
 
                             
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="<?= route('Dashboard', 'admin') ?>">Dashboard</a></li>
+                  <li class="breadcrumb-item"><a href="<?= route('profile', 'index') ?>">Profile</a></li>
+                  <li class="breadcrumb-item active" aria-current="page"><?php echo isset($profile) ? 'Edit' : 'Tambah'; ?></li>
+                </ol>
+              </nav>
               <div class="d-flex align-items-center justify-content-between mb-4">
                 <div>
                   <h3 class="page-title mb-1">
@@ -50,10 +57,10 @@ include 'views/layouts/admin-header.php';
                     
                     <div class="row mb-4">
                       <div class="col-12">
-                        <h5 class="mb-3">
-                          <i class="fas fa-image text-success me-2"></i>
+                        <div class="form-section-header">
+                          <i class="fas fa-image"></i>
                           Logo Aplikasi
-                        </h5>
+                        </div>
                       </div>
 
                       <div class="col-md-6">
@@ -62,11 +69,16 @@ include 'views/layouts/admin-header.php';
                             <i class="fas fa-upload text-muted me-2"></i>
                             Upload Logo (Opsional)
                           </label>
-                          <input type="file"
-                                 class="form-control"
-                                 id="logo"
-                                 name="logo"
-                                 accept="image/*">
+                          <div class="upload-dropzone">
+                            <i class="fas fa-cloud-upload-alt upload-dropzone__icon"></i>
+                            <div class="upload-dropzone__text">Klik atau tarik logo ke sini</div>
+                            <div class="upload-dropzone__hint">JPG, PNG, GIF, WebP - Maks 5MB</div>
+                            <input type="file"
+                                   class="upload-dropzone__input"
+                                   id="logo"
+                                   name="logo"
+                                   accept="image/*">
+                          </div>
                           <div class="form-text">
                             <i class="fas fa-info-circle me-1"></i>
                             Format: JPG, PNG, GIF, WebP. Maksimal 5MB.
@@ -110,10 +122,10 @@ include 'views/layouts/admin-header.php';
                     
                     <div class="row mb-4">
                       <div class="col-12">
-                        <h5 class="mb-3">
-                          <i class="fas fa-info-circle text-primary me-2"></i>
+                        <div class="form-section-header">
+                          <i class="fas fa-info-circle"></i>
                           Informasi Dasar
-                        </h5>
+                        </div>
                       </div>
 
                       <div class="col-md-8">
@@ -156,10 +168,10 @@ include 'views/layouts/admin-header.php';
                     
                     <div class="row mb-4">
                       <div class="col-12">
-                        <h5 class="mb-3">
-                          <i class="fas fa-eye text-info me-2"></i>
+                        <div class="form-section-header">
+                          <i class="fas fa-eye"></i>
                           Preview Profile
-                        </h5>
+                        </div>
                       </div>
 
                       <div class="col-12">
@@ -190,18 +202,14 @@ include 'views/layouts/admin-header.php';
                     </div>
 
                     
-                    <div class="row">
-                      <div class="col-12">
-                        <div class="d-flex gap-2 justify-content-end">
-                          <a href="<?= route('profile', 'index') ?>" class="btn btn-secondary">
-                            <i class="fas fa-times me-2"></i> Batal
-                          </a>
-                          <button type="submit" class="btn btn-primary" id="submitBtn">
-                            <i class="fas fa-save me-2"></i>
-                            <span><?php echo isset($profile) ? 'Update Profile' : 'Simpan Profile'; ?></span>
-                          </button>
-                        </div>
-                      </div>
+                    <div class="form-actions">
+                      <a href="<?= route('profile', 'index') ?>" class="btn btn-secondary">
+                        <i class="fas fa-times me-2"></i> Batal
+                      </a>
+                      <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <i class="fas fa-save me-2"></i>
+                        <span><?php echo isset($profile) ? 'Update Profile' : 'Simpan Profile'; ?></span>
+                      </button>
                     </div>
                   </form>
                 </div>

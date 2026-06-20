@@ -13,6 +13,13 @@ include 'views/layouts/admin-header.php';
         <div class="content-wrapper">
           <div class="row">
             <div class="col-sm-12">
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="<?= route('Dashboard', 'admin') ?>">Dashboard</a></li>
+                  <li class="breadcrumb-item"><a href="<?= route('laporan', 'index') ?>?tab=<?php echo htmlspecialchars($type); ?>">Cetak Laporan</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Tanda Tangan</li>
+                </ol>
+              </nav>
               <div class="d-flex align-items-center justify-content-between mb-4">
                 <div>
                   <h3 class="page-title mb-1">
@@ -96,7 +103,7 @@ include 'views/layouts/admin-header.php';
                       </div>
                     </div>
 
-                    <div class="d-flex gap-2 justify-content-end">
+                    <div class="form-actions">
                       <button type="button" class="btn btn-secondary" id="resetBtn">
                         <i class="fas fa-times me-2"></i> Reset
                       </button>
@@ -247,11 +254,11 @@ include 'views/layouts/admin-header.php';
       });
 
       resetBtn.addEventListener('click', function() {
-        if (confirm('Apakah Anda yakin ingin mereset form?')) {
+        showConfirm('Form akan direset dan isian saat ini akan hilang.', function() {
           form.reset();
           updatePreview();
           showToast('Form telah direset', 'success');
-        }
+        }, { confirmText: 'Reset' });
       });
 
       generatePDFBtn.addEventListener('click', function() {

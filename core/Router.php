@@ -75,12 +75,15 @@ class Router {
             return '#^$#';
         }
 
-        $escapedPath = preg_replace_callback('/\{([a-zA-Z0-9_]+)\}/', static function () {
-            return '([^/]+)';
-        }, preg_quote($path, '#'));
+        $compiled = preg_replace_callback('/\{[a-zA-Z0-9_]+\}|[^{}]+/', static function (array $match) {
+            $segment = $match[0];
+            if ($segment[0] === '{') {
+                return '([^/]+)';
+            }
+            return preg_quote($segment, '#');
+        }, $path);
 
-        $escapedPath = str_replace('\(\[\^/\]\+\)', '([^/]+)', $escapedPath);
-        return '#^' . $escapedPath . '$#';
+        return '#^' . $compiled . '$#';
     }
 
     private function invoke(string $handler, array $params = []): void {

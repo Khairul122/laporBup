@@ -3,7 +3,7 @@
 define('DB_HOST', 'localhost');
 define('DB_USER', 'root');
 define('DB_PASS', '');
-define('DB_NAME', 'helpdesk');
+define('DB_NAME', 'silapga_web');
 
 define('APP_NAME', 'Sistem ');
 define('APP_VERSION', '1.0.0');

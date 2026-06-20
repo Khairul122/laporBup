@@ -11,6 +11,13 @@
           <div class="row">
             <div class="col-sm-12">
 
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="<?= route('Dashboard', 'admin') ?>">Dashboard</a></li>
+                  <li class="breadcrumb-item"><a href="<?= route('desa', 'index') ?>">Desa</a></li>
+                  <li class="breadcrumb-item active" aria-current="page"><?php echo $desa ? 'Edit' : 'Tambah'; ?></li>
+                </ol>
+              </nav>
               <div class="page-header d-flex justify-content-between align-items-center mb-4">
                 <div>
                   <h2 class="page-title"><?php echo $desa ? 'Edit Desa' : 'Tambah Desa'; ?></h2>
@@ -77,17 +84,15 @@
                       </div>
                     </div>
 
-                    <div class="row">
-                      <div class="col-12">
-                        <button type="submit" class="btn btn-primary">
-                          <i class="mdi mdi-content-save me-2"></i>
-                          <?php echo $desa ? 'Update' : 'Simpan'; ?>
-                        </button>
-                        <a href="<?= route('desa', 'index') ?>"
-                           class="btn btn-secondary">
-                          <i class="mdi mdi-close-circle me-2"></i> Batal
-                        </a>
-                      </div>
+                    <div class="form-actions">
+                      <button type="submit" class="btn btn-primary">
+                        <i class="mdi mdi-content-save me-2"></i>
+                        <?php echo $desa ? 'Update' : 'Simpan'; ?>
+                      </button>
+                      <a href="<?= route('desa', 'index') ?>"
+                         class="btn btn-secondary">
+                        <i class="mdi mdi-close-circle me-2"></i> Batal
+                      </a>
                     </div>
                   </form>
                 </div>

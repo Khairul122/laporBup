@@ -1,5 +1,32 @@
 <?php
 
+if (!extension_loaded('curl')) {
+    $curlConstantDefaults = [
+        'CURLOPT_CONNECTTIMEOUT' => 5,
+        'CURLOPT_MAXREDIRS' => 5,
+        'CURLOPT_SSL_VERIFYHOST' => 2,
+        'CURLOPT_SSL_VERIFYPEER' => true,
+        'CURLOPT_TIMEOUT' => 30,
+        'CURLOPT_USERAGENT' => 78,
+        'CURLOPT_FAILONERROR' => 45,
+        'CURLOPT_RETURNTRANSFER' => 19913,
+        'CURLPROTO_HTTPS' => 2,
+        'CURLPROTO_HTTP' => 1,
+        'CURLPROTO_FTP' => 4,
+        'CURLPROTO_FTPS' => 8,
+        'CURLOPT_PROTOCOLS' => 181,
+        'CURLOPT_FOLLOWLOCATION' => 52,
+        'CURLOPT_URL' => 10002,
+        'CURLINFO_HTTP_CODE' => 2097154
+    ];
+
+    foreach ($curlConstantDefaults as $name => $value) {
+        if (!defined($name)) {
+            define($name, $value);
+        }
+    }
+}
+
 function asset($path) {
     return BASE_PATH . '/' . ltrim($path, '/');
 }

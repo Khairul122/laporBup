@@ -1,28 +1,28 @@
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
   <ul class="nav">
     <li class="nav-item">
-      <a class="nav-link" href="<?= route('Dashboard', 'admin') ?>">
+      <a class="nav-link <?php echo route_starts_with('admin/dashboard') ? 'active' : ''; ?>" href="<?= route('Dashboard', 'admin') ?>">
         <i class="mdi mdi-view-dashboard menu-icon"></i>
         <span class="menu-title">Dashboard</span>
       </a>
     </li>
 
     <li class="nav-item">
-      <a class="nav-link" href="<?= route('dataPelapor', 'index') ?>">
+      <a class="nav-link <?php echo route_starts_with('data-pelapor') ? 'active' : ''; ?>" href="<?= route('dataPelapor', 'index') ?>">
         <i class="mdi mdi-account-multiple menu-icon"></i>
         <span class="menu-title">Data Pelapor</span>
       </a>
     </li>
 
     <li class="nav-item">
-      <a class="nav-link" href="<?= route('laporanOPDAdmin', 'index') ?>">
+      <a class="nav-link <?php echo route_starts_with('admin/laporan-opd') ? 'active' : ''; ?>" href="<?= route('laporanOPDAdmin', 'index') ?>">
         <i class="mdi mdi-file-document menu-icon"></i>
         <span class="menu-title">Laporan OPD</span>
       </a>
     </li>
 
     <li class="nav-item">
-      <a class="nav-link" href="<?= route('laporanCamatAdmin', 'index') ?>">
+      <a class="nav-link <?php echo route_starts_with('admin/laporan-camat') ? 'active' : ''; ?>" href="<?= route('laporanCamatAdmin', 'index') ?>">
         <i class="mdi mdi-map-marker menu-icon"></i>
         <span class="menu-title">Laporan Camat</span>
       </a>
@@ -76,14 +76,14 @@
     </li>
 
     <li class="nav-item">
-      <a class="nav-link" href="<?= route('laporan', 'index') ?>">
+      <a class="nav-link <?php echo route_starts_with('laporan') ? 'active' : ''; ?>" href="<?= route('laporan', 'index') ?>">
         <i class="mdi mdi-printer menu-icon"></i>
         <span class="menu-title">Cetak Laporan</span>
       </a>
     </li>
 
     <li class="nav-item">
-      <a class="nav-link" href="<?= route('waGateway', 'index') ?>">
+      <a class="nav-link <?php echo route_starts_with('wa-messages') ? 'active' : ''; ?>" href="<?= route('waGateway', 'index') ?>">
         <i class="mdi mdi-whatsapp menu-icon"></i>
         <span class="menu-title">Kirim Pesan</span>
       </a>

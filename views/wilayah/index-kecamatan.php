@@ -204,12 +204,12 @@
       .then(response => response.json())
       .then(data => {
         if (data.success) {
-          let confirmMessage = 'Apakah Anda yakin ingin menghapus kecamatan ini?';
+          let confirmMessage = 'Kecamatan ini akan dihapus secara permanen.';
           if (data.relatedDesaCount > 0) {
-            confirmMessage += `\n\n${data.relatedDesaCount} desa terkait juga akan ikut dihapus:\n${data.relatedDesaList.join('\n')}`;
+            confirmMessage += `<br><br>${data.relatedDesaCount} desa terkait juga akan ikut dihapus:<br>${data.relatedDesaList.join('<br>')}`;
           }
 
-          if (confirm(confirmMessage)) {
+          showConfirm(confirmMessage, function() {
             fetch('<?= route('kecamatan', 'delete') ?>/' + id, {
               method: 'POST',
               headers: {
@@ -233,7 +233,7 @@
               console.error('Error:', error);
               showNotification('Terjadi kesalahan saat menghapus data', 'error');
             });
-          }
+          });
         } else {
           showNotification(data.message, 'error');
         }

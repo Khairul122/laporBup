@@ -18,7 +18,14 @@
           <div class="row">
             <div class="col-12">
 
-              
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="<?= route('Dashboard', 'admin') ?>">Dashboard</a></li>
+                  <li class="breadcrumb-item"><a href="<?= route('laporanCamatAdmin', 'index') ?>">Laporan Camat</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Edit</li>
+                </ol>
+              </nav>
+
               <?php if (isset($_SESSION['error'])): ?>
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                   <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
@@ -97,9 +104,13 @@
                           
                           <div class="mb-3">
                             <label for="upload_file" class="form-label">File Lampiran</label>
-                            <input type="file" class="form-control" id="upload_file" name="upload_file"
-                                   accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx">
-                            <small class="text-muted">Format: JPG, PNG, PDF, DOC, DOCX, XLS, XLSX (Maksimal 5MB)</small>
+                            <div class="upload-dropzone">
+                              <i class="mdi mdi-cloud-upload upload-dropzone__icon"></i>
+                              <div class="upload-dropzone__text">Klik atau tarik file ke sini</div>
+                              <div class="upload-dropzone__hint">JPG, PNG, PDF, DOC, DOCX, XLS, XLSX - Maks 5MB</div>
+                              <input type="file" class="upload-dropzone__input" id="upload_file" name="upload_file"
+                                     accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx">
+                            </div>
                             <?php if ($laporan['upload_file']): ?>
                               <div class="mt-2">
                                 <div class="alert alert-info py-2">
@@ -307,74 +318,6 @@
 
   <?php include 'views/layouts/admin-script.php'; ?>
 
-  <style>
-    .avatar-lg {
-      width: 64px;
-      height: 64px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-    }
-
-    .avatar-xs {
-      width: 24px;
-      height: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .avatar-title {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .breadcrumb {
-      background-color: transparent;
-      padding: 0;
-      margin-bottom: 1rem;
-    }
-
-    .breadcrumb-item + .breadcrumb-item::before {
-      content: ">";
-      color: #6c757d;
-    }
-
-    .card {
-      border: 1px solid #e9ecef;
-      border-radius: 0.5rem;
-    }
-
-    .table-sm td {
-      padding: 0.5rem;
-      vertical-align: top;
-    }
-
-    .badge {
-      font-weight: 500;
-    }
-
-    .alert {
-      border-radius: 0.5rem;
-    }
-
-    /* Character counter colors */
-    .text-success {
-      color: #198754 !important;
-    }
-
-    .text-warning {
-      color: #ffc107 !important;
-    }
-
-    .text-danger {
-      color: #dc3545 !important;
-    }
-  </style>
 
   <script>
     
@@ -401,60 +344,57 @@
     const editForm = document.getElementById('editForm');
     if (editForm) {
       editForm.addEventListener('submit', function(e) {
-        
+        e.preventDefault();
+
+        clearFieldError('uraian_laporan');
+        clearFieldError('nama_kecamatan');
+
         const uraian = document.getElementById('uraian_laporan').value.trim();
         const namaKecamatan = document.getElementById('nama_kecamatan').value.trim();
 
         if (uraian.length < 10) {
-          e.preventDefault();
-          alert('Uraian laporan minimal 10 karakter!');
+          showFieldError('uraian_laporan', 'Uraian laporan minimal 10 karakter!');
           return false;
         }
 
         if (!namaKecamatan.trim()) {
-          e.preventDefault();
-          alert('Nama kecamatan harus diisi!');
+          showFieldError('nama_kecamatan', 'Nama kecamatan harus diisi!');
           return false;
         }
 
-        
+
         const fileInput = document.getElementById('upload_file');
         if (fileInput.files[0]) {
           const file = fileInput.files[0];
-          const maxSize = 5 * 1024 * 1024; 
+          const maxSize = 5 * 1024 * 1024;
           const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf',
                                'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
                                'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
 
           if (file.size > maxSize) {
-            e.preventDefault();
-            alert('Ukuran file terlalu besar! Maksimal 5MB.');
+            showToast('Ukuran file terlalu besar! Maksimal 5MB.', 'error');
             return false;
           }
 
           if (!allowedTypes.includes(file.type)) {
-            e.preventDefault();
-            alert('Tipe file tidak diizinkan! Gunakan format yang sesuai.');
+            showToast('Tipe file tidak diizinkan! Gunakan format yang sesuai.', 'error');
             return false;
           }
         }
 
-        
-        if (!confirm('Apakah Anda yakin ingin menyimpan perubahan pada laporan ini?')) {
-          e.preventDefault();
-          return false;
-        }
+        showConfirm('Perubahan pada laporan ini akan disimpan.', function() {
+          const submitBtn = editForm.querySelector('button[type="submit"]');
+          const originalText = submitBtn.innerHTML;
+          submitBtn.innerHTML = '<i class="mdi mdi-loading mdi-spin me-2"></i>Menyimpan...';
+          submitBtn.disabled = true;
 
-        
-        const submitBtn = editForm.querySelector('button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<i class="mdi mdi-loading mdi-spin me-2"></i>Menyimpan...';
-        submitBtn.disabled = true;
+          setTimeout(() => {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+          }, 5000);
 
-        setTimeout(() => {
-          submitBtn.innerHTML = originalText;
-          submitBtn.disabled = false;
-        }, 5000);
+          editForm.submit();
+        }, { confirmText: 'Simpan' });
       });
     }
 
@@ -471,7 +411,7 @@
         }
       }
       localStorage.setItem(draftKey, JSON.stringify(data));
-      alert('Draft berhasil disimpan!');
+      showToast('Draft berhasil disimpan!', 'success');
     }
 
     function loadDraft() {
@@ -540,9 +480,9 @@
 
       
       if (e.key === 'Escape') {
-        if (confirm('Apakah Anda yakin ingin kembali? Perubahan yang belum tersimpan akan hilang.')) {
+        showConfirm('Perubahan yang belum tersimpan akan hilang jika Anda kembali.', function() {
           window.location.href = '<?= route('laporanCamatAdmin', 'index') ?>';
-        }
+        }, { confirmText: 'Kembali' });
       }
     });
 
