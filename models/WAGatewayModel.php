@@ -7,7 +7,7 @@ class WAGatewayModel extends BaseModel {
     private $conn;
     private $table = "wagateway";
 
-    // Fonnte API Configuration
+    
     private $fonnte_token = "mebMc5vfWw1ZpMbh1n77";
     private $api_url = "https://api.fonnte.com";
 
@@ -38,12 +38,12 @@ class WAGatewayModel extends BaseModel {
             $params[] = $date_filter;
         }
 
-        // Get total data
+        
         $countQuery = "SELECT COUNT(*) as total FROM " . $this->table . $whereClause;
         $result = query($countQuery, $params);
         $totalData = $result->fetch_assoc()['total'];
 
-        // Get data with pagination
+        
         $query = "SELECT * FROM " . $this->table . $whereClause . " ORDER BY created_at DESC LIMIT " . (int)$limit . " OFFSET " . (int)$offset;
         $result = query($query, $params);
 
@@ -97,7 +97,7 @@ class WAGatewayModel extends BaseModel {
     }
 
     public function sendWhatsAppMessage($no_tujuan, $pesan) {
-        // Format nomor telepon
+        
         $no_tujuan = $this->formatPhoneNumber($no_tujuan);
 
         $data = [
@@ -111,19 +111,19 @@ class WAGatewayModel extends BaseModel {
     }
 
     public function sendMessageAndSave($no_tujuan, $pesan) {
-        // Simpan ke database terlebih dahulu
+        
         $messageId = $this->createMessage($no_tujuan, $pesan, 'pending');
 
         if($messageId) {
-            // Kirim via WhatsApp
+            
             $response = $this->sendWhatsAppMessage($no_tujuan, $pesan);
 
             if($response && isset($response['success']) && $response['success']) {
-                // Update status jika berhasil
+                
                 $this->updateStatus($messageId, 'sent');
                 return ['success' => true, 'message' => 'Pesan berhasil dikirim', 'data' => $response];
             } else {
-                // Update status jika gagal
+                
                 $this->updateStatus($messageId, 'failed');
                 return ['success' => false, 'message' => 'Gagal mengirim pesan: ' . ($response['message'] ?? 'Unknown error')];
             }
@@ -133,10 +133,10 @@ class WAGatewayModel extends BaseModel {
     }
 
     private function formatPhoneNumber($phone) {
-        // Remove any non-numeric characters
+        
         $phone = preg_replace('/\D/', '', $phone);
 
-        // Add country code if not present
+        
         if(substr($phone, 0, 2) !== '62') {
             if(substr($phone, 0, 1) === '0') {
                 $phone = '62' . substr($phone, 1);
@@ -187,20 +187,20 @@ class WAGatewayModel extends BaseModel {
             return ['success' => false, 'message' => 'Invalid JSON response', 'raw_response' => $response];
         }
 
-        // Debug: Log the actual response to understand the format
+        
         error_log("Fonnte API Response: " . $response);
 
-        // Check multiple possible success indicators
+        
         $isSuccess = false;
 
-        // Check for various success indicators from Fonnte API
+        
         if(isset($decodedResponse['status']) && $decodedResponse['status'] === true) {
             $isSuccess = true;
         } elseif(isset($decodedResponse['id']) && !empty($decodedResponse['id'])) {
-            // If there's an ID, it usually means message was sent successfully
+            
             $isSuccess = true;
         } elseif(isset($decodedResponse['target']) && isset($decodedResponse['message'])) {
-            // If response contains target and message, it's likely successful
+            
             $isSuccess = true;
         }
 
@@ -218,12 +218,12 @@ class WAGatewayModel extends BaseModel {
     public function getMessageStatistics() {
         $stats = [];
 
-        // Total messages
+        
         $query = "SELECT COUNT(*) as total FROM " . $this->table;
         $result = query($query);
         $stats['total'] = $result->fetch_assoc()['total'];
 
-        // Messages by status
+        
         $statuses = ['sent', 'pending', 'failed'];
         foreach($statuses as $status) {
             $query = "SELECT COUNT(*) as count FROM " . $this->table . " WHERE status = ?";
@@ -231,7 +231,7 @@ class WAGatewayModel extends BaseModel {
             $stats[$status] = $result->fetch_assoc()['count'];
         }
 
-        // Messages today
+        
         $query = "SELECT COUNT(*) as today FROM " . $this->table . " WHERE DATE(tanggal_kirim) = CURDATE()";
         $result = query($query);
         $stats['today'] = $result->fetch_assoc()['today'];
@@ -327,7 +327,7 @@ class WAGatewayModel extends BaseModel {
         return $data;
     }
 
-    // Method untuk test kirim pesan tanpa save ke database
+    
     public function testSendMessage($no_tujuan, $pesan) {
         $no_tujuan = $this->formatPhoneNumber($no_tujuan);
 
@@ -337,12 +337,12 @@ class WAGatewayModel extends BaseModel {
             'countryCode' => '62'
         ];
 
-        // Call API and get detailed response for debugging
+        
         $result = $this->makeAPICallWithDebug('/send', $data);
         return $result;
     }
 
-    // Special method for debugging that returns raw response
+    
     private function makeAPICallWithDebug($endpoint, $data = []) {
         $url = $this->api_url . $endpoint;
 
@@ -369,7 +369,7 @@ class WAGatewayModel extends BaseModel {
         $error_msg = curl_errno($curl) ? curl_error($curl) : null;
         curl_close($curl);
 
-        // Prepare debug info
+        
         $debugInfo = [
             'url' => $url,
             'sent_data' => $data,
@@ -406,7 +406,7 @@ class WAGatewayModel extends BaseModel {
 
         $debugInfo['parsed_response'] = $decodedResponse;
 
-        // Check for success - let's be more lenient and see what we actually get
+        
         $isSuccess = false;
         $successReason = '';
 
@@ -417,7 +417,7 @@ class WAGatewayModel extends BaseModel {
             $isSuccess = true;
             $successReason = 'has ID';
         } elseif($httpCode === 200 && !isset($decodedResponse['status']) && !isset($decodedResponse['error'])) {
-            // If HTTP 200 and no explicit error, consider it success
+            
             $isSuccess = true;
             $successReason = 'HTTP 200 with no error';
         }

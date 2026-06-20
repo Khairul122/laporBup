@@ -6,7 +6,7 @@ include 'views/layouts/simple-header.php';
 
 <div class="fullscreen-container">
     <div class="fullscreen-content">
-    <!-- Page Header -->
+    
     <div class="page-header">
         <div class="header-content">
             <h1 class="page-title">
@@ -14,7 +14,7 @@ include 'views/layouts/simple-header.php';
                 <?php echo isset($laporan) ? 'Edit Laporan OPD' : 'Buat Laporan OPD Baru'; ?>
             </h1>
             <div class="page-actions">
-                <a href="index.php?controller=laporanOPD&action=index" class="btn btn-secondary">
+                <a href="<?= route('laporanOPD', 'index') ?>" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i>
                     Kembali ke Daftar
                 </a>
@@ -22,17 +22,17 @@ include 'views/layouts/simple-header.php';
         </div>
     </div>
 
-    <!-- Form Container -->
+    
     <div class="form-container">
         <form id="laporanForm" method="POST" enctype="multipart/form-data"
-              action="index.php?controller=laporanOPD&action=<?php echo isset($laporan) ? 'update' : 'store'; ?>"
+              action="<?php echo isset($laporan) ? route('laporanOPD', 'update') : route('laporanOPD', 'store'); ?>"
               novalidate>
 
             <?php if (isset($laporan)): ?>
                 <input type="hidden" name="id" value="<?php echo $laporan['id_laporan_opd']; ?>">
             <?php endif; ?>
 
-            <!-- Informasi OPD Section -->
+            
             <div class="form-section">
                 <h2 class="section-title">
                     <i class="fas fa-building"></i>
@@ -68,7 +68,7 @@ include 'views/layouts/simple-header.php';
                 </div>
             </div>
 
-            <!-- Kegiatan Section -->
+            
             <div class="form-section">
                 <h2 class="section-title">
                     <i class="fas fa-tasks"></i>
@@ -111,7 +111,7 @@ include 'views/layouts/simple-header.php';
                 </div>
             </div>
 
-            <!-- Tujuan Section -->
+            
             <div class="form-section">
                 <h2 class="section-title">
                     <i class="fas fa-paper-plane"></i>
@@ -142,7 +142,7 @@ include 'views/layouts/simple-header.php';
                 </div>
             </div>
 
-            <!-- Lampiran Section -->
+            
             <div class="form-section">
                 <h2 class="section-title">
                     <i class="fas fa-paperclip"></i>
@@ -173,7 +173,7 @@ include 'views/layouts/simple-header.php';
                         <?php if (isset($laporan) && !empty($laporan['upload_file'])): ?>
                             <div class="current-file">
                                 <strong>File saat ini:</strong>
-                                <a href="index.php?controller=laporanOPD&action=download&id=<?php echo $laporan['id_laporan_opd']; ?>"
+                                <a href="<?= route('laporanOPD', 'download') ?>?id=<?php echo $laporan['id_laporan_opd']; ?>"
                                    target="_blank"
                                    class="file-link">
                                     <i class="fas fa-download"></i>
@@ -186,14 +186,14 @@ include 'views/layouts/simple-header.php';
                 </div>
             </div>
 
-            <!-- Form Actions -->
+            
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary" id="submitBtn">
                     <i class="fas fa-save"></i>
                     <span><?php echo isset($laporan) ? 'Update Laporan' : 'Simpan Laporan'; ?></span>
                 </button>
 
-                <a href="index.php?controller=laporanOPD&action=index" class="btn btn-secondary">
+                <a href="<?= route('laporanOPD', 'index') ?>" class="btn btn-secondary">
                     <i class="fas fa-times"></i>
                     Batal
                 </a>
@@ -209,7 +209,6 @@ include 'views/layouts/simple-header.php';
     </div>
 </div>
 
-<!-- Delete Confirmation Modal -->
 <div id="deleteModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -221,7 +220,7 @@ include 'views/layouts/simple-header.php';
             <p class="text-danger">Tindakan ini tidak dapat dibatalkan.</p>
         </div>
         <div class="modal-footer">
-            <form id="deleteForm" method="POST" action="index.php?controller=laporanOPD&action=delete" style="display: inline;">
+            <form id="deleteForm" method="POST" action="<?= route('laporanOPD', 'delete') ?>" style="display: inline;">
                 <input type="hidden" name="id" id="deleteId">
                 <button type="submit" class="btn btn-danger">Hapus</button>
             </form>
@@ -773,7 +772,6 @@ select.form-control {
 }
 </style>
 
-<!-- Error/Success Messages -->
 <?php if (isset($_SESSION['errors'])): ?>
     <div class="error-message">
         <strong>Kesalahan:</strong>
@@ -786,274 +784,7 @@ select.form-control {
     <?php unset($_SESSION['errors']); ?>
 <?php endif; ?>
 
-<script>
-// Character counter
-document.addEventListener('DOMContentLoaded', function() {
-    const textarea = document.getElementById('uraian_laporan');
-    const counter = document.getElementById('charCount');
-
-    if (textarea && counter) {
-        // Set initial count
-        counter.textContent = textarea.value.length;
-
-        // Update count on input
-        textarea.addEventListener('input', function() {
-            counter.textContent = this.value.length;
-
-            // Update counter color based on length
-            if (this.value.length < 10) {
-                counter.style.color = '#dc3545';
-            } else if (this.value.length > 500) {
-                counter.style.color = '#ffc107';
-            } else {
-                counter.style.color = '#666';
-            }
-        });
-    }
-
-    // Create custom dropdown for nama_opd
-    const originalSelect = document.getElementById('nama_opd');
-    if (originalSelect) {
-        // Create custom dropdown structure
-        const originalParent = originalSelect.parentNode;
-        const customSelect = document.createElement('div');
-        customSelect.className = 'custom-select';
-        customSelect.innerHTML = `
-            <input type="text" id="custom_nama_opd_input" class="form-control" placeholder="Pilih Nama OPD" readonly>
-            <div class="custom-select-arrow">▼</div>
-            <div class="custom-select-options" style="display: none;">
-                <div class="custom-select-option" data-value="">Pilih Nama OPD</div>
-                ${Array.from(originalSelect.options).slice(1).map(option => 
-                    `<div class="custom-select-option" data-value="${option.value}">${option.text}</div>`
-                ).join('')}
-            </div>
-            <input type="hidden" id="nama_opd" name="nama_opd" value="${originalSelect.value}">
-        `;
-        
-        // Replace original select with custom dropdown
-        originalSelect.parentNode.replaceChild(customSelect, originalSelect);
-        
-        // Add event listeners for custom dropdown
-        const customInput = customSelect.querySelector('#custom_nama_opd_input');
-        const optionsContainer = customSelect.querySelector('.custom-select-options');
-        const hiddenInput = customSelect.querySelector('#nama_opd');
-        const options = customSelect.querySelectorAll('.custom-select-option');
-        
-        // Set initial value
-        if (hiddenInput.value) {
-            const selectedOption = Array.from(options).find(opt => opt.dataset.value === hiddenInput.value);
-            if (selectedOption) {
-                customInput.value = selectedOption.textContent;
-            }
-        }
-        
-        // Toggle options
-        customInput.addEventListener('click', function() {
-            optionsContainer.style.display = optionsContainer.style.display === 'block' ? 'none' : 'block';
-        });
-        
-        customSelect.querySelector('.custom-select-arrow').addEventListener('click', function() {
-            optionsContainer.style.display = optionsContainer.style.display === 'block' ? 'none' : 'block';
-        });
-        
-        // Select option
-        options.forEach(option => {
-            option.addEventListener('click', function() {
-                const value = this.dataset.value;
-                hiddenInput.value = value;
-                customInput.value = this.textContent;
-                optionsContainer.style.display = 'none';
-                
-                // Trigger change event for validation
-                hiddenInput.dispatchEvent(new Event('change'));
-            });
-        });
-        
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!customSelect.contains(e.target)) {
-                optionsContainer.style.display = 'none';
-            }
-        });
-    }
-
-    // Form validation
-    const form = document.getElementById('laporanForm');
-    const submitBtn = document.getElementById('submitBtn');
-
-    if (form && submitBtn) {
-        form.addEventListener('submit', function(e) {
-            let isValid = true;
-            const errors = [];
-
-            // Validate required fields - using hidden input for validation
-            const hiddenNamaOPD = document.getElementById('nama_opd');
-            const namaKegiatan = document.getElementById('nama_kegiatan');
-            const uraianLaporan = document.getElementById('uraian_laporan');
-
-            if (!hiddenNamaOPD.value.trim()) {
-                errors.push('Nama OPD harus dipilih');
-                // Add error class to custom input
-                const customInput = document.querySelector('#custom_nama_opd_input');
-                if (customInput) customInput.classList.add('error');
-                isValid = false;
-            } else {
-                // Remove error class from custom input
-                const customInput = document.querySelector('#custom_nama_opd_input');
-                if (customInput) customInput.classList.remove('error');
-            }
-
-            if (!namaKegiatan.value.trim()) {
-                errors.push('Nama kegiatan harus diisi');
-                namaKegiatan.classList.add('error');
-                isValid = false;
-            } else {
-                namaKegiatan.classList.remove('error');
-            }
-
-            if (!uraianLaporan.value.trim()) {
-                errors.push('Uraian laporan harus diisi');
-                uraianLaporan.classList.add('error');
-                isValid = false;
-            } else if (uraianLaporan.value.trim().length < 10) {
-                errors.push('Uraian laporan minimal 10 karakter');
-                uraianLaporan.classList.add('error');
-                isValid = false;
-            } else {
-                uraianLaporan.classList.remove('error');
-            }
-
-            // Show errors if any
-            if (!isValid) {
-                e.preventDefault();
-                showErrors(errors);
-            }
-        });
-    }
-
-    // File input preview
-    const fileInput = document.getElementById('upload_file');
-    if (fileInput) {
-        fileInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                // Check file size (50MB limit)
-                if (file.size > 50 * 1024 * 1024) {
-                    e.target.value = '';
-                    showNotification('Ukuran file terlalu besar. Maksimal 50MB.', 'error');
-                    return;
-                }
-
-                // Check file type
-                const allowedTypes = [
-                    // Documents
-                    'application/pdf', 'application/msword',
-                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                    'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                    'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-                    // Images
-                    'image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/webp', 'image/svg+xml',
-                    // Videos
-                    'video/mp4', 'video/avi', 'video/quicktime', 'video/x-ms-wmv',
-                    'video/x-flv', 'video/x-matroska', 'video/webm', 'video/3gpp'
-                ];
-                const allowedExtensions = /\.(pdf|doc|docx|xls|xlsx|ppt|pptx|jpg|jpeg|png|gif|bmp|webp|svg|mp4|avi|mov|wmv|flv|mkv|webm|3gp)$/i;
-                if (!allowedTypes.includes(file.type) && !file.name.match(allowedExtensions)) {
-                    e.target.value = '';
-                    showNotification('Tipe file tidak didukung. Hanya dokumen, gambar, dan video yang diperbolehkan.', 'error');
-                    return;
-                }
-
-                showNotification(`File "${file.name}" siap diupload.`, 'success');
-            }
-        });
-    }
-});
-
-// Show errors function
-function showErrors(errors) {
-    const existingError = document.querySelector('.error-message');
-    if (existingError) {
-        existingError.remove();
-    }
-
-    const errorDiv = document.createElement('div');
-    errorDiv.className = 'error-message';
-    errorDiv.innerHTML = `
-        <strong>Kesalahan:</strong>
-        <ul>
-            ${errors.map(error => `<li>${error}</li>`).join('')}
-        </ul>
-    `;
-
-    const form = document.getElementById('laporanForm');
-    form.insertBefore(errorDiv, form.firstChild);
-
-    // Scroll to top to see errors
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-
-    // Auto remove after 5 seconds
-    setTimeout(() => {
-        if (errorDiv.parentElement) {
-            errorDiv.remove();
-        }
-    }, 5000);
-}
-
-// Delete confirmation
-function confirmDelete(id) {
-    document.getElementById('deleteId').value = id;
-    document.getElementById('deleteModal').style.display = 'block';
-}
-
-function closeModal() {
-    document.getElementById('deleteModal').style.display = 'none';
-}
-
-// Close modal when clicking outside
-window.onclick = function(event) {
-    const modal = document.getElementById('deleteModal');
-    if (event.target === modal) {
-        closeModal();
-    }
-}
-
-// Show notifications
-function showNotification(message, type) {
-    // Remove existing notifications
-    const existingNotifications = document.querySelectorAll('.notification');
-    existingNotifications.forEach(n => n.remove());
-
-    // Create notification element
-    const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    notification.innerHTML = `
-        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
-        <span>${message}</span>
-        <button onclick="this.parentElement.remove()">&times;</button>
-    `;
-
-    // Add to page
-    document.body.appendChild(notification);
-
-    // Auto remove after 5 seconds
-    setTimeout(() => {
-        if (notification.parentElement) {
-            notification.remove();
-        }
-    }, 5000);
-}
-
-// Add error style
-const style = document.createElement('style');
-style.textContent = `
-    .form-control.error {
-        border-color: #dc3545;
-        box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
-    }
-`;
-document.head.appendChild(style);
-</script>
+<script></script>
 
 <style>
 /* Notification Styles */

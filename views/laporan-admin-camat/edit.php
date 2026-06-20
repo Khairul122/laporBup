@@ -2,23 +2,23 @@
 
 <body class="with-welcome-text">
   <div class="container-scroller">
-    <!-- Navbar -->
+    
     <?php include 'views/layouts/admin-navbar.php'; ?>
 
     <div class="container-fluid page-body-wrapper">
-      <!-- Settings Panel -->
+      
       <?php include 'views/layouts/admin-setting-panel.php'; ?>
 
-      <!-- Sidebar -->
+      
       <?php include 'views/layouts/admin-sidebar.php'; ?>
 
-      <!-- Main Panel -->
+      
       <div class="main-panel">
         <div class="content-wrapper">
           <div class="row">
             <div class="col-12">
 
-              <!-- Success/Error Messages -->
+              
               <?php if (isset($_SESSION['error'])): ?>
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                   <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
@@ -34,7 +34,7 @@
               <?php endif; ?>
 
               <?php if ($laporan): ?>
-                <!-- Header Section -->
+                
                 <div class="card mb-4">
                   <div class="card-body">
                     <div class="row align-items-center">
@@ -58,20 +58,20 @@
                   </div>
                 </div>
 
-                <!-- Edit Form -->
+                
                 <form method="POST" enctype="multipart/form-data" id="editForm">
                   <input type="hidden" name="id_laporan_camat" value="<?php echo $laporan['id_laporan_camat']; ?>">
 
                   <div class="row">
-                    <!-- Main Form Section -->
+                    
                     <div class="col-lg-8">
-                      <!-- Informasi Laporan Card -->
+                      
                       <div class="card mb-4">
                         <div class="card-header">
                           <h5 class="card-title mb-0">Informasi Laporan</h5>
                         </div>
                         <div class="card-body">
-                          <!-- Nama Kecamatan -->
+                          
                           <div class="mb-3">
                             <label for="nama_kecamatan" class="form-label">Nama Kecamatan <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="nama_kecamatan" name="nama_kecamatan"
@@ -81,9 +81,7 @@
                             <small class="text-muted">Masukkan nama lengkap kecamatan yang membuat laporan</small>
                           </div>
 
-
-
-                          <!-- Uraian Laporan -->
+                          
                           <div class="mb-3">
                             <label for="uraian_laporan" class="form-label">Uraian Laporan <span class="text-danger">*</span></label>
                             <textarea class="form-control" id="uraian_laporan" name="uraian_laporan"
@@ -96,7 +94,7 @@
                             </div>
                           </div>
 
-                          <!-- File Upload -->
+                          
                           <div class="mb-3">
                             <label for="upload_file" class="form-label">File Lampiran</label>
                             <input type="file" class="form-control" id="upload_file" name="upload_file"
@@ -123,7 +121,7 @@
                         </div>
                       </div>
 
-                      <!-- Status Card -->
+                      
                       <div class="card mb-4">
                         <div class="card-header">
                           <h5 class="card-title mb-0">Status</h5>
@@ -160,9 +158,9 @@
                       </div>
                     </div>
 
-                    <!-- Sidebar Section -->
+                    
                     <div class="col-lg-4">
-                      <!-- Info Laporan Card -->
+                      
                       <div class="card mb-4">
                         <div class="card-header">
                           <h5 class="card-title mb-0">Informasi Laporan</h5>
@@ -236,7 +234,7 @@
                         </div>
                       </div>
 
-                      <!-- Actions Card -->
+                      
                       <div class="card mb-4">
                         <div class="card-header">
                           <h5 class="card-title mb-0">Aksi</h5>
@@ -247,12 +245,12 @@
                               <i class="mdi mdi-content-save me-2"></i>Simpan Perubahan
                             </button>
 
-                            <a href="index.php?controller=laporanCamatAdmin&action=detail&id=<?php echo $laporan['id_laporan_camat']; ?>"
+                            <a href="<?= route('laporanCamatAdmin', 'detail') ?>?id=<?php echo $laporan['id_laporan_camat']; ?>"
                                class="btn btn-outline-secondary">
                               <i class="mdi mdi-eye me-2"></i>Lihat Detail
                             </a>
 
-                            <a href="index.php?controller=laporanCamatAdmin&action=index"
+                            <a href="<?= route('laporanCamatAdmin', 'index') ?>"
                                class="btn btn-outline-secondary">
                               <i class="mdi mdi-arrow-left me-2"></i>Kembali
                             </a>
@@ -269,7 +267,7 @@
                         </div>
                       </div>
 
-                      <!-- Tips Card -->
+                      
                       <div class="card bg-light">
                         <div class="card-body">
                           <h6 class="mb-2">
@@ -288,13 +286,13 @@
                   </div>
                 </form>
               <?php else: ?>
-                <!-- Error State -->
+                
                 <div class="card">
                   <div class="card-body text-center py-5">
                     <i class="mdi mdi-alert-circle-outline text-muted display-1"></i>
                     <h4 class="mt-3">Data Tidak Ditemukan!</h4>
                     <p class="text-muted">Laporan yang ingin diedit tidak ditemukan dalam database.</p>
-                    <a href="index.php?controller=laporanCamatAdmin&action=index" class="btn btn-primary">
+                    <a href="<?= route('laporanCamatAdmin', 'index') ?>" class="btn btn-primary">
                       Kembali ke Daftar Laporan
                     </a>
                   </div>
@@ -379,7 +377,7 @@
   </style>
 
   <script>
-    // Character counter
+    
     const textarea = document.getElementById('uraian_laporan');
     const charCount = document.getElementById('charCount');
 
@@ -388,7 +386,7 @@
         const length = this.value.length;
         charCount.textContent = length;
 
-        // Change color based on length
+        
         if (length < 10) {
           charCount.className = 'text-danger';
         } else if (length < 50) {
@@ -399,11 +397,11 @@
       });
     }
 
-    // Form validation
+    
     const editForm = document.getElementById('editForm');
     if (editForm) {
       editForm.addEventListener('submit', function(e) {
-        // Additional validation
+        
         const uraian = document.getElementById('uraian_laporan').value.trim();
         const namaKecamatan = document.getElementById('nama_kecamatan').value.trim();
 
@@ -419,11 +417,11 @@
           return false;
         }
 
-        // File validation
+        
         const fileInput = document.getElementById('upload_file');
         if (fileInput.files[0]) {
           const file = fileInput.files[0];
-          const maxSize = 5 * 1024 * 1024; // 5MB
+          const maxSize = 5 * 1024 * 1024; 
           const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf',
                                'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
                                'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
@@ -441,13 +439,13 @@
           }
         }
 
-        // Confirmation
+        
         if (!confirm('Apakah Anda yakin ingin menyimpan perubahan pada laporan ini?')) {
           e.preventDefault();
           return false;
         }
 
-        // Show loading state
+        
         const submitBtn = editForm.querySelector('button[type="submit"]');
         const originalText = submitBtn.innerHTML;
         submitBtn.innerHTML = '<i class="mdi mdi-loading mdi-spin me-2"></i>Menyimpan...';
@@ -460,7 +458,7 @@
       });
     }
 
-    // Auto-save draft
+    
     let autoSaveTimer;
     const draftKey = 'laporan_draft_<?php echo $laporan['id_laporan_camat'] ?? 0; ?>';
 
@@ -468,7 +466,7 @@
       const formData = new FormData(editForm);
       const data = {};
       for (let [key, value] of formData.entries()) {
-        if (key !== 'upload_file') { // Don't save file to draft
+        if (key !== 'upload_file') { 
           data[key] = value;
         }
       }
@@ -493,7 +491,7 @@
       localStorage.removeItem(draftKey);
     }
 
-    // Auto-save every 30 seconds
+    
     function startAutoSave() {
       autoSaveTimer = setInterval(() => {
         const formData = new FormData(editForm);
@@ -508,7 +506,7 @@
       }, 30000);
     }
 
-    // Input change listener for auto-save
+    
     const formElements = editForm.querySelectorAll('input, textarea, select');
     formElements.forEach(function(element) {
       element.addEventListener('input', function() {
@@ -526,29 +524,29 @@
       });
     });
 
-    // Keyboard shortcuts
+    
     document.addEventListener('keydown', function(e) {
-      // Ctrl/Cmd + S untuk save
+      
       if ((e.ctrlKey || e.metaKey) && e.key === 's') {
         e.preventDefault();
         editForm.dispatchEvent(new Event('submit'));
       }
 
-      // Ctrl/Cmd + D untuk save draft
+      
       if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
         e.preventDefault();
         saveDraft();
       }
 
-      // Escape untuk kembali
+      
       if (e.key === 'Escape') {
         if (confirm('Apakah Anda yakin ingin kembali? Perubahan yang belum tersimpan akan hilang.')) {
-          window.location.href = 'index.php?controller=laporanCamatAdmin&action=index';
+          window.location.href = '<?= route('laporanCamatAdmin', 'index') ?>';
         }
       }
     });
 
-    // File input preview
+    
     const fileInput = document.getElementById('upload_file');
     if (fileInput) {
       fileInput.addEventListener('change', function() {
@@ -557,7 +555,7 @@
           const fileSize = (file.size / 1024 / 1024).toFixed(2);
           const fileName = file.name;
 
-          // Update the info alert
+          
           const existingAlert = this.parentNode.querySelector('.alert');
           if (existingAlert) {
             const fileDiv = existingAlert.querySelector('.flex-grow-1 div');
@@ -569,13 +567,13 @@
       });
     }
 
-    // Initialize
+    
     document.addEventListener('DOMContentLoaded', function() {
       loadDraft();
       startAutoSave();
     });
 
-    // Clear draft on successful submit
+    
     <?php if (isset($_SESSION['success'])): ?>
       clearDraft();
     <?php endif; ?>

@@ -11,7 +11,7 @@
           <div class="row">
             <div class="col-sm-12">
 
-              <!-- Header Section -->
+              
               <div class="page-header d-flex justify-content-between align-items-center mb-4">
                 <div>
                   <h2 class="page-title">Manajemen Laporan</h2>
@@ -19,7 +19,7 @@
                 </div>
               </div>
 
-              <!-- Tab Navigation -->
+              
               <div class="card mb-4">
                 <div class="card-body p-0">
                   <ul class="nav nav-tabs nav-justified" id="reportTabs" role="tablist">
@@ -53,15 +53,15 @@
                 </div>
               </div>
 
-              <!-- Tab Content -->
+              
               <div class="tab-content" id="reportTabContent">
-                <!-- Camat Tab Panel -->
+                
                 <div class="tab-pane fade <?php echo ($activeTab ?? 'camat') === 'camat' ? 'show active' : ''; ?>"
                      id="camat-panel"
                      role="tabpanel"
                      aria-labelledby="camat-tab">
 
-                  <!-- Statistics Cards for Camat -->
+                  
                   <div class="row mb-4">
                     <div class="col-xl-3 col-md-6 mb-3">
                       <div class="card">
@@ -136,7 +136,7 @@
                     </div>
                   </div>
 
-                  <!-- Camat Filter Section -->
+                  
                   <div class="card mb-4">
                     <div class="card-body">
                       <form method="GET" id="camatFilterForm">
@@ -217,7 +217,7 @@
                             <select name="tahun" class="form-select">
                               <option value="">Semua</option>
                               <?php
-                              $years = [2023, 2024, 2025]; // You can make this dynamic
+                              $years = [2023, 2024, 2025]; 
                               foreach ($years as $year):
                               ?>
                                 <option value="<?php echo $year; ?>" <?php echo $tahun == $year ? 'selected' : ''; ?>>
@@ -237,10 +237,10 @@
                           <div class="col-md-3">
                             <label class="form-label">&nbsp;</label>
                             <div class="btn-group w-100">
-                              <a href="index.php?controller=laporan&action=index&tab=camat" class="btn btn-outline-secondary">
+                              <a href="<?= route('laporan', 'index') ?>?tab=camat" class="btn btn-outline-secondary">
                                 <i class="mdi mdi-refresh"></i> Reset
                               </a>
-                              <a href="index.php?controller=laporan&action=tandaTangan&id=0&type=camat" class="btn btn-outline-info">
+                              <a href="<?= route('laporan', 'tandaTangan') ?>?id=0&type=camat" class="btn btn-outline-info">
                                 <i class="mdi mdi-draw me-1"></i>TTD
                               </a>
                               <button type="button" class="btn btn-outline-danger" onclick="generatePDF('camat')">
@@ -256,7 +256,7 @@
                     </div>
                   </div>
 
-                  <!-- Camat Data Table -->
+                  
                   <div class="card">
                     <div class="card-header">
                       <h5 class="card-title mb-0">
@@ -293,7 +293,7 @@
                               <?php
                               $no = ($page - 1) * $limit + 1;
                               foreach ($laporans as $laporan):
-                                // Format tanggal Indonesia
+                                
                                 $hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
                                 $bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
                                           'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
@@ -347,13 +347,13 @@
                   </div>
                 </div>
 
-                <!-- OPD Tab Panel -->
+                
                 <div class="tab-pane fade <?php echo ($activeTab ?? 'camat') === 'opd' ? 'show active' : ''; ?>"
                      id="opd-panel"
                      role="tabpanel"
                      aria-labelledby="opd-tab">
 
-                  <!-- Statistics Cards for OPD -->
+                  
                   <div class="row mb-4">
                     <div class="col-xl-3 col-md-6 mb-3">
                       <div class="card">
@@ -428,7 +428,7 @@
                     </div>
                   </div>
 
-                  <!-- OPD Filter Section -->
+                  
                   <div class="card mb-4">
                     <div class="card-body">
                       <form method="GET" id="opdFilterForm">
@@ -496,7 +496,7 @@
                             <select name="tahun" class="form-select">
                               <option value="">Semua</option>
                               <?php
-                              $years = [2023, 2024, 2025]; // You can make this dynamic
+                              $years = [2023, 2024, 2025]; 
                               foreach ($years as $year):
                               ?>
                                 <option value="<?php echo $year; ?>" <?php echo $tahun == $year ? 'selected' : ''; ?>>
@@ -512,10 +512,10 @@
                               <button type="submit" class="btn btn-primary">
                                 <i class="mdi mdi-magnify me-1"></i>Cari
                               </button>
-                              <a href="index.php?controller=laporan&action=index&tab=opd" class="btn btn-outline-secondary">
+                              <a href="<?= route('laporan', 'index') ?>?tab=opd" class="btn btn-outline-secondary">
                                 <i class="mdi mdi-refresh"></i> Reset
                               </a>
-                              <a href="index.php?controller=laporan&action=tandaTangan&id=0&type=opd" class="btn btn-outline-info">
+                              <a href="<?= route('laporan', 'tandaTangan') ?>?id=0&type=opd" class="btn btn-outline-info">
                                 <i class="mdi mdi-draw me-1"></i>TTD
                               </a>
                               <button type="button" class="btn btn-outline-danger" onclick="generatePDF('opd')">
@@ -531,7 +531,7 @@
                     </div>
                   </div>
 
-                  <!-- OPD Data Table -->
+                  
                   <div class="card">
                     <div class="card-header">
                       <h5 class="card-title mb-0">
@@ -567,7 +567,7 @@
                               <?php
                               $no = ($page - 1) * $limit + 1;
                               foreach ($laporans as $laporan):
-                                // Format tanggal Indonesia
+                                
                                 $hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
                                 $bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
                                           'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
@@ -619,7 +619,7 @@
                 </div>
               </div>
 
-              <!-- Pagination -->
+              
               <?php if ($totalPages > 1): ?>
                 <div class="card">
                   <div class="card-footer">
@@ -632,7 +632,7 @@
                         <ul class="pagination mb-0">
                           <?php if ($page > 1): ?>
                             <li class="page-item">
-                              <a class="page-link" href="?controller=laporan&action=index&tab=<?php echo urlencode($activeTab ?? 'camat'); ?>&page=<?php echo $page - 1; ?>&search=<?php echo urlencode($search); ?>&status=<?php echo urlencode($status); ?>&tujuan=<?php echo urlencode($tujuan); ?>&hari=<?php echo urlencode($hari); ?>&bulan=<?php echo urlencode($bulan); ?>&tahun=<?php echo urlencode($tahun); ?>">
+                              <a class="page-link" href="<?= route('laporan', 'index') ?>?tab=<?php echo urlencode($activeTab ?? 'camat'); ?>&page=<?php echo $page - 1; ?>&search=<?php echo urlencode($search); ?>&status=<?php echo urlencode($status); ?>&tujuan=<?php echo urlencode($tujuan); ?>&hari=<?php echo urlencode($hari); ?>&bulan=<?php echo urlencode($bulan); ?>&tahun=<?php echo urlencode($tahun); ?>">
                                 <i class="mdi mdi-chevron-left"></i>
                               </a>
                             </li>
@@ -643,7 +643,7 @@
                           $endPage = min($totalPages, $page + 2);
 
                           if ($startPage > 1) {
-                            echo '<li class="page-item"><a class="page-link" href="?controller=laporan&action=index&tab=' . urlencode($activeTab ?? 'camat') . '&page=1&search=' . urlencode($search) . '&status=' . urlencode($status) . '&tujuan=' . urlencode($tujuan) . '&hari=' . urlencode($hari) . '&bulan=' . urlencode($bulan) . '&tahun=' . urlencode($tahun) . '">1</a></li>';
+                            echo '<li class="page-item"><a class="page-link" href="' . route('laporan', 'index') . '?tab=' . urlencode($activeTab ?? 'camat') . '&page=1&search=' . urlencode($search) . '&status=' . urlencode($status) . '&tujuan=' . urlencode($tujuan) . '&hari=' . urlencode($hari) . '&bulan=' . urlencode($bulan) . '&tahun=' . urlencode($tahun) . '">1</a></li>';
                             if ($startPage > 2) {
                               echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
                             }
@@ -652,7 +652,7 @@
                           for ($i = $startPage; $i <= $endPage; $i++) {
                             $activeClass = $i == $page ? 'active' : '';
                             echo '<li class="page-item ' . $activeClass . '">';
-                            echo '<a class="page-link" href="?controller=laporan&action=index&tab=' . urlencode($activeTab ?? 'camat') . '&page=' . $i . '&search=' . urlencode($search) . '&status=' . urlencode($status) . '&tujuan=' . urlencode($tujuan) . '&hari=' . urlencode($hari) . '&bulan=' . urlencode($bulan) . '&tahun=' . urlencode($tahun) . '">' . $i . '</a>';
+                            echo '<a class="page-link" href="' . route('laporan', 'index') . '?tab=' . urlencode($activeTab ?? 'camat') . '&page=' . $i . '&search=' . urlencode($search) . '&status=' . urlencode($status) . '&tujuan=' . urlencode($tujuan) . '&hari=' . urlencode($hari) . '&bulan=' . urlencode($bulan) . '&tahun=' . urlencode($tahun) . '">' . $i . '</a>';
                             echo '</li>';
                           }
 
@@ -660,13 +660,13 @@
                             if ($endPage < $totalPages - 1) {
                               echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
                             }
-                            echo '<li class="page-item"><a class="page-link" href="?controller=laporan&action=index&tab=' . urlencode($activeTab ?? 'camat') . '&page=' . $totalPages . '&search=' . urlencode($search) . '&status=' . urlencode($status) . '&tujuan=' . urlencode($tujuan) . '&hari=' . urlencode($hari) . '&bulan=' . urlencode($bulan) . '&tahun=' . urlencode($tahun) . '">' . $totalPages . '</a></li>';
+                            echo '<li class="page-item"><a class="page-link" href="' . route('laporan', 'index') . '?tab=' . urlencode($activeTab ?? 'camat') . '&page=' . $totalPages . '&search=' . urlencode($search) . '&status=' . urlencode($status) . '&tujuan=' . urlencode($tujuan) . '&hari=' . urlencode($hari) . '&bulan=' . urlencode($bulan) . '&tahun=' . urlencode($tahun) . '">' . $totalPages . '</a></li>';
                           }
                           ?>
 
                           <?php if ($page < $totalPages): ?>
                             <li class="page-item">
-                              <a class="page-link" href="?controller=laporan&action=index&tab=<?php echo urlencode($activeTab ?? 'camat'); ?>&page=<?php echo $page + 1; ?>&search=<?php echo urlencode($search); ?>&status=<?php echo urlencode($status); ?>&tujuan=<?php echo urlencode($tujuan); ?>&hari=<?php echo urlencode($hari); ?>&bulan=<?php echo urlencode($bulan); ?>&tahun=<?php echo urlencode($tahun); ?>">
+                              <a class="page-link" href="<?= route('laporan', 'index') ?>?tab=<?php echo urlencode($activeTab ?? 'camat'); ?>&page=<?php echo $page + 1; ?>&search=<?php echo urlencode($search); ?>&status=<?php echo urlencode($status); ?>&tujuan=<?php echo urlencode($tujuan); ?>&hari=<?php echo urlencode($hari); ?>&bulan=<?php echo urlencode($bulan); ?>&tahun=<?php echo urlencode($tahun); ?>">
                                 <i class="mdi mdi-chevron-right"></i>
                               </a>
                             </li>
@@ -686,7 +686,7 @@
   </div>
   <?php include 'views/layouts/admin-script.php'; ?>
 
-  <!-- JavaScript for report generation -->
+  
   <script>
     function generatePDF(tab) {
       const formId = tab === 'opd' ? 'opdFilterForm' : 'camatFilterForm';
@@ -698,11 +698,11 @@
         params.append(key, value);
       }
 
-      params.set('controller', 'laporan');
-      params.set('action', 'generatePDF');
+      params.delete('controller');
+      params.delete('action');
       params.set('tab', tab);
 
-      window.open('index.php?' + params.toString(), '_blank');
+      window.open('<?= url("laporan/generatePDF") ?>?' + params.toString(), '_blank');
     }
 
     function generateExcel(tab) {
@@ -715,21 +715,19 @@
         params.append(key, value);
       }
 
-      params.set('controller', 'laporan');
-      params.set('action', 'generateExcel');
+      params.delete('controller');
+      params.delete('action');
       params.set('tab', tab);
 
-      window.open('index.php?' + params.toString(), '_blank');
+      window.open('<?= url("laporan/generateExcel") ?>?' + params.toString(), '_blank');
     }
 
-    // Handle tab switching with form data preservation
     document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tabButton => {
       tabButton.addEventListener('shown.bs.tab', function (e) {
         const targetTab = e.target.getAttribute('aria-controls');
         const currentTab = e.relatedTarget?.getAttribute('aria-controls');
 
         if (currentTab) {
-          // Store current form data
           const currentFormId = currentTab === 'opd-panel' ? 'opdFilterForm' : 'camatFilterForm';
           const currentForm = document.getElementById(currentFormId);
 
@@ -743,11 +741,12 @@
               }
             }
 
-            // Navigate to new tab with current filters
             const newTab = targetTab === 'opd-panel' ? 'opd' : 'camat';
             params.set('tab', newTab);
+            params.delete('controller');
+            params.delete('action');
 
-            window.location.href = 'index.php?' + params.toString();
+            window.location.href = '<?= url("laporan/index") ?>?' + params.toString();
           }
         }
       });

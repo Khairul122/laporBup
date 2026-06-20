@@ -4,23 +4,17 @@ require_once 'models/LaporanModel.php';
 require_once __DIR__ . '/../vendor/tecnickcom/tcpdf/tcpdf.php';
 require_once __DIR__ . '/../vendor/autoload.php';
 
-// Disable error reporting to prevent output before PDF
-error_reporting(0);
-ini_set('display_errors', 0);
-
 class LaporanController extends BaseController {
     private $laporanModel;
 
     public function __construct()
     {
         $this->laporanModel = new LaporanModel();
-        // Create TTD table if not exists
+        
         $this->laporanModel->createTTDTable();
     }
 
-    /**
-     * Require role admin untuk mengakses halaman
-     */
+    
     private function requireAdmin()
     {
         $this->requireLogin();
@@ -36,22 +30,19 @@ class LaporanController extends BaseController {
                 echo json_encode($response);
                 exit;
             } else {
-                header('Location: index.php?controller=dashboard&action=' . $_SESSION['role']);
-                exit;
+                $this->redirectToDashboard();
             }
         }
     }
 
-    /**
-     * Menampilkan halaman laporan untuk admin
-     */
+    
     public function index()
     {
         $this->requireAdmin();
 
         $user = $this->getCurrentUser();
 
-        // Parameters untuk filtering
+        
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
         $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
         $search = $_GET['search'] ?? '';
@@ -61,7 +52,7 @@ class LaporanController extends BaseController {
         $bulan = $_GET['bulan'] ?? '';
         $tahun = $_GET['tahun'] ?? '';
 
-        // Admin can access both OPD and Camat data
+        
         $activeTab = $_GET['tab'] ?? 'camat';
 
         if ($activeTab === 'opd') {
@@ -69,7 +60,7 @@ class LaporanController extends BaseController {
             $statistics = $this->laporanModel->getOPDStatistics();
             $tujuanOptions = [];
         } else {
-            // Default to camat
+            
             $result = $this->laporanModel->getLaporanCamat($page, $limit, $search, $status, $tujuan);
             $statistics = $this->laporanModel->getCamatStatistics();
             $tujuanOptions = $this->laporanModel->getCamatTujuanOptions();
@@ -79,7 +70,7 @@ class LaporanController extends BaseController {
         $totalLaporan = $result['total'];
         $totalPages = $result['total_pages'];
 
-        // Format statistics untuk view
+        
         $stats = [
             'total' => $statistics['total']['total_laporan'] ?? 0,
             'baru' => 0,
@@ -91,13 +82,11 @@ class LaporanController extends BaseController {
             $stats[$stat['status_laporan']] = $stat['total'];
         }
 
-        // Include view dengan data yang sesuai
+        
         include 'views/laporan/index.php';
     }
 
-    /**
-     * Generate PDF report
-     */
+    
     public function generatePDF()
     {
         $this->requireAdmin();
@@ -109,25 +98,23 @@ class LaporanController extends BaseController {
         $status = $_GET['status'] ?? '';
         $tujuan = $_GET['tujuan'] ?? '';
 
-        // Get data based on active tab
+        
         if ($activeTab === 'opd') {
             $data = $this->laporanModel->getLaporanOPDForPDF($hari, $bulan, $tahun, $status);
             $title = 'Laporan OPD';
             $role = 'opd';
         } else {
-            // Default to camat
+            
             $data = $this->laporanModel->getLaporanCamatForPDF($hari, $bulan, $tahun, $status, $tujuan);
             $title = 'Laporan Camat';
             $role = 'camat';
         }
 
-        // Generate PDF
+        
         $this->generatePDFFile($data, $title, $role, $hari, $bulan, $tahun, $status, $tujuan);
     }
 
-    /**
-     * Generate Excel report
-     */
+    
     public function generateExcel()
     {
         $this->requireAdmin();
@@ -139,25 +126,23 @@ class LaporanController extends BaseController {
         $status = $_GET['status'] ?? '';
         $tujuan = $_GET['tujuan'] ?? '';
 
-        // Get data based on active tab
+        
         if ($activeTab === 'opd') {
             $data = $this->laporanModel->getLaporanOPDForExcel($hari, $bulan, $tahun, $status);
             $title = 'Laporan OPD';
             $role = 'opd';
         } else {
-            // Default to camat
+            
             $data = $this->laporanModel->getLaporanCamatForExcel($hari, $bulan, $tahun, $status, $tujuan);
             $title = 'Laporan Camat';
             $role = 'camat';
         }
 
-        // Generate Excel
+        
         $this->generateExcelFile($data, $title, $role, $hari, $bulan, $tahun, $status, $tujuan);
     }
 
-    /**
-     * Generate PDF file using TCPDF
-     */
+    
     private function generatePDFFile($data, $title, $role, $hari, $bulan, $tahun, $status, $tujuan)
     {
         $pdf = new TCPDF('L', PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
@@ -177,50 +162,50 @@ class LaporanController extends BaseController {
 
         $logoPath = __DIR__ . '/../uploads/logo-resmi.png';
 
-        // Set posisi Y awal untuk logo dan teks (misalnya 15mm dari atas)
+        
         $y_start = 15;
         $x_logo = 15;
         $y_logo = $y_start;
-        $w_logo = 20; // Lebar logo
-        $h_logo = 24; // Tinggi logo
+        $w_logo = 20; 
+        $h_logo = 24; 
 
-        // Tambahkan Logo menggunakan Image (untuk memastikan rendering)
+        
         if (file_exists($logoPath)) {
-            // Posisi logo di kiri, 15mm dari tepi kiri, y_start dari atas
+            
             $pdf->Image($logoPath, $x_logo, $y_logo, $w_logo, $h_logo, '', '', 'T', false, 300, '', false, false, 0, false, false, false);
         }
 
-        // Set posisi X dan Y untuk teks kop (tengah kertas, accounting untuk logo di kiri)
-        $center_x = 148.5; // Tengah halaman A4 Landscape (297/2)
-        $y_text = $y_start + 2; // Sedikit lebih rendah dari logo agar sejajar
+        
+        $center_x = 148.5; 
+        $y_text = $y_start + 2; 
 
-        // PEMERINTAH KABUPATEN MANDAILING NATAL
+        
         $pdf->SetY($y_text);
         $pdf->SetFont('times', '', 16);
         $pdf->Cell(0, 6, 'PEMERINTAH KABUPATEN MANDAILING NATAL', 0, 1, 'C', 0, '', 0, false, 'T', 'M');
 
-        // DINAS KOMUNIKASI DAN INFORMATIKA
+        
         $pdf->SetY($y_text + 6);
         $pdf->SetFont('times', 'B', 20);
         $pdf->Cell(0, 6, 'DINAS KOMUNIKASI DAN INFORMATIKA', 0, 1, 'C', 0, '', 0, false, 'T', 'M');
 
-        // KOMPLEK PERKANTORAN PAYALOTING
+        
         $pdf->SetY($y_text + 13);
         $pdf->SetFont('times', '', 10);
         $pdf->Cell(0, 5, 'KOMPLEK PERKANTORAN PAYALOTING, PANYABUNGAN SUMATERA UTARA, KODE POS 22978', 0, 1, 'C', 0, '', 0, false, 'T', 'M');
 
-        // Telp dan Fax
+        
         $pdf->SetY($y_text + 17);
         $pdf->Cell(0, 5, 'Telp. (0636) 326255, 326258 Fax: (0636) 326254', 0, 1, 'C', 0, '', 0, false, 'T', 'M');
 
-        // Email dan Website
+        
         $pdf->SetY($y_text + 22);
         $pdf->Cell(0, 5, 'E-mail : diskominfo@M.madina.go.id    Website : www.diskominfo.madina.go.id', 0, 1, 'C', 0, '', 0, false, 'T', 'M');
 
-        // Tambahkan garis horizontal di bawah kop
+        
         $pdf->SetLineWidth(1);
         $pdf->Line(10, $y_text + 30, 287, $y_text + 30);
-        $pdf->SetY($y_text + 35); // Pindah ke baris berikutnya
+        $pdf->SetY($y_text + 35); 
 
         $html = '<h1 align="center" style="font-size: 18px; font-weight: bold; margin-top: 20px; line-height: 1.0;">' . $title . '</h1>';
 
@@ -248,40 +233,13 @@ class LaporanController extends BaseController {
         </thead>
         <tbody>';
 
-        function formatTanggalIndonesia($tanggal)
-        {
-            $hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-            $bulan = [
-                'Januari',
-                'Februari',
-                'Maret',
-                'April',
-                'Mei',
-                'Juni',
-                'Juli',
-                'Agustus',
-                'September',
-                'Oktober',
-                'November',
-                'Desember'
-            ];
-
-            $timestamp = strtotime($tanggal);
-            $nama_hari = $hari[date('w', $timestamp)];
-            $tanggal_num = date('d', $timestamp);
-            $nama_bulan = $bulan[date('n', $timestamp) - 1];
-            $tahun = date('Y', $timestamp);
-
-            return "$nama_hari, $tanggal_num $nama_bulan $tahun";
-        }
-
         $no = 1;
         foreach ($data as $row) {
             $html .= '<tr>
                 <td style="width:30px">' . $no++ . '</td>';
 
             if ($role === 'opd') {
-                // Convert 'dinas kominfo' to 'Dinas Komunikasi dan Informatika'
+                
                 $tujuan = $row['tujuan'] ?? '';
                 if ($tujuan === 'dinas kominfo') {
                     $tujuan_display = 'DINAS KOMUNIKASI DAN INFORMATIKA';
@@ -293,9 +251,9 @@ class LaporanController extends BaseController {
                         <td>' . htmlspecialchars($row['nama_kegiatan'] ?? '') . '</td>
                         <td style="width:230px">' . htmlspecialchars(strip_tags($row['uraian_laporan'] ?? '')) . '</td>
                         <td>' . htmlspecialchars($tujuan_display) . '</td>
-                        <td>' . $this->formatTanggalIndonesia($row['created_at']) . '</td>';
+                        <td>' . formatTanggalIndonesia($row['created_at']) . '</td>';
             } else {
-                // Convert 'dinas kominfo' to 'Dinas Komunikasi dan Informatika'
+                
                 $tujuan = $row['tujuan'] ?? '';
                 if ($tujuan === 'dinas kominfo') {
                     $tujuan_display = 'DINAS KOMUNIKASI DAN INFORMATIKA';
@@ -308,7 +266,7 @@ class LaporanController extends BaseController {
                         <td>' . htmlspecialchars($row['nama_kecamatan'] ?? '') . '</td>
                         <td>' . htmlspecialchars($tujuan_display) . '</td>
                         <td style="width:200px">' . htmlspecialchars(strip_tags($row['uraian_laporan'] ?? '')) . '</td>
-                        <td>' . $this->formatTanggalIndonesia($row['created_at']) . '</td>';
+                        <td>' . formatTanggalIndonesia($row['created_at']) . '</td>';
             }
 
             $html .= '</tr>';
@@ -319,7 +277,7 @@ class LaporanController extends BaseController {
 
         $pdf->writeHTML($html, true, false, true, false, '');
 
-        // Add signature section
+        
         $this->addSignatureToPDF($pdf, $role);
 
         $filename = $title . '_' . date('Y-m-d_H-i-s') . '.pdf';
@@ -327,45 +285,13 @@ class LaporanController extends BaseController {
         exit;
     }
 
-    /**
-     * Format tanggal dalam format Indonesia
-     */
-    private function formatTanggalIndonesia($tanggal)
-    {
-        $hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-        $bulan = [
-            'Januari',
-            'Februari',
-            'Maret',
-            'April',
-            'Mei',
-            'Juni',
-            'Juli',
-            'Agustus',
-            'September',
-            'Oktober',
-            'November',
-            'Desember'
-        ];
-
-        $timestamp = strtotime($tanggal);
-        $nama_hari = $hari[date('w', $timestamp)];
-        $tanggal_num = date('d', $timestamp);
-        $nama_bulan = $bulan[date('n', $timestamp) - 1];
-        $tahun = date('Y', $timestamp);
-
-        return "$nama_hari, $tanggal_num $nama_bulan $tahun";
-    }
-
-    /**
-     * Generate Excel file using PhpSpreadsheet
-     */
+    
     private function generateExcelFile($data, $title, $role, $hari, $bulan, $tahun, $status, $tujuan)
     {
-        // Create new Spreadsheet object
+        
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
 
-        // Set document properties
+        
         $spreadsheet->getProperties()
             ->setCreator('SILAP GAWAT')
             ->setLastModifiedBy('Admin')
@@ -373,11 +299,11 @@ class LaporanController extends BaseController {
             ->setSubject($title)
             ->setDescription('Laporan ' . ucfirst($role));
 
-        // Add sheet data
+        
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle($title);
 
-        // Set headers
+        
         $headers = ['No'];
         if ($role === 'opd') {
             $headers = array_merge($headers, ['Nama OPD', 'Nama Kegiatan', 'Uraian Laporan', 'Tujuan', 'Status', 'Tanggal']);
@@ -387,7 +313,7 @@ class LaporanController extends BaseController {
 
         $sheet->fromArray($headers, NULL, 'A1');
 
-        // Style header row
+        
         $headerStyle = [
             'font' => ['bold' => true],
             'fill' => [
@@ -398,7 +324,7 @@ class LaporanController extends BaseController {
         ];
         $sheet->getStyle('A1:' . $sheet->getHighestColumn() . '1')->applyFromArray($headerStyle);
 
-        // Add data
+        
         $row = 2;
         $no = 1;
         foreach ($data as $item) {
@@ -429,18 +355,18 @@ class LaporanController extends BaseController {
             $row++;
         }
 
-        // Auto-size columns
+        
         foreach (range('A', $sheet->getHighestColumn()) as $columnID) {
             $sheet->getColumnDimension($columnID)->setAutoSize(true);
         }
 
-        // Add signature section
+        
         $this->addSignatureToExcel($sheet, $role, $row + 1);
 
-        // Create Excel file
+        
         $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
 
-        // Set headers for download
+        
         $filename = $title . '_' . date('Y-m-d_H-i-s') . '.xlsx';
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="' . $filename . '"');
@@ -450,9 +376,7 @@ class LaporanController extends BaseController {
         exit;
     }
 
-    /**
-     * Add signature to Excel - Format sesuai PDF (5 field)
-     */
+    
     private function addSignatureToExcel($sheet, $role, $startRow)
     {
         $defaultSignature = $this->laporanModel->getDefaultSignature($role);
@@ -561,9 +485,7 @@ class LaporanController extends BaseController {
         }
     }
 
-    /**
-     * Custom wordwrap function for PDF
-     */
+    
     private function pdfWordWrap($text, $maxWidth)
     {
         $words = explode(' ', $text);
@@ -588,31 +510,29 @@ class LaporanController extends BaseController {
         return $lines;
     }
 
-    /**
-     * Add signature to PDF - Format yang Benar-Benar Rapi
-     */
+    
     private function addSignatureToPDF($pdf, $role)
     {
-        // Get page height and current Y position to determine if we need a new page
+        
         $pageHeight = $pdf->getPageHeight();
         $currentY = $pdf->GetY();
-        $pageMargin = 20; // Standard margin
+        $pageMargin = 20; 
         $usablePageHeight = $pageHeight - (2 * $pageMargin);
-        $tableThreshold = 0.7 * $usablePageHeight; // 70% of usable page height
+        $tableThreshold = 0.7 * $usablePageHeight; 
 
-        // Check if table content exceeds 70% of the page
+        
         if ($currentY > $tableThreshold) {
-            // Add new page for signature
+            
             $pdf->AddPage();
-            $startY = 120; // Start from a standard position on the new page
+            $startY = 120; 
         } else {
-            // Add spacing below the table on the same page
-            $startY = $currentY + 20; // Add 20 units spacing
+            
+            $startY = $currentY + 20; 
         }
 
         $defaultSignature = $this->laporanModel->getDefaultSignature($role);
 
-        // Format tanggal formal Indonesia
+        
         $bulan = [
             'Januari',
             'Februari',
@@ -633,78 +553,76 @@ class LaporanController extends BaseController {
         $tahun = date('Y');
         $tempatTanggal = "Panyabungan, $tanggal $nama_bulan $tahun";
 
-        // Set posisi awal untuk signature block di pojok kanan
-        $startX = 200;  // Posisi X di pojok kanan
+        
+        $startX = 200;  
 
         if ($defaultSignature) {
-            // 1. Tempat dan Tanggal - menggunakan koordinat spesifik
+            
             $pdf->SetFont('times', '', 11);
             $pdf->SetXY($startX, $startY);
             $pdf->Cell(70, 6, $tempatTanggal, 0, 0, 'L');
 
-            // 2. Jabatan Penandatangan - menggunakan koordinat spesifik
+            
             $pdf->SetFont('times', 'B', 11);
             $pdf->SetXY($startX, $startY + -4 + 10);
             $pdf->MultiCell(70, 5, strtoupper($defaultSignature['jabatan_penanda_tangan']), 0, 'L');
 
-            // 3. Nama - menggunakan koordinat spesifik
+            
             $pdf->SetFont('times', 'B', 11);
             $pdf->SetXY($startX, $startY + 6 + 13 + 13);
             $pdf->Cell(70, 6, strtoupper($defaultSignature['nama_penanda_tangan']), 0, 0, 'L');
 
-            // 4. Pangkat - menggunakan koordinat spesifik
+            
             $pdf->SetFont('times', '', 10);
             $pdf->SetXY($startX, $startY + 6 + 10 + 15 + 6);
             $pdf->Cell(70, 5, $defaultSignature['pangkat'] ?? 'PEMBINA UTAMA MUDA', 0, 0, 'L');
 
-            // 5. NIP - menggunakan koordinat spesifik
+            
             $pdf->SetFont('times', '', 10);
             $pdf->SetXY($startX, $startY + 6 + 10 + 15 + 6 + 5);
             $pdf->Cell(70, 5, 'NIP. ' . $defaultSignature['nip'], 0, 0, 'L');
         } else {
-            // Default ketika tidak ada data signature - menggunakan koordinat spesifik
-            // 1. Tempat dan Tanggal
+            
+            
             $pdf->SetFont('times', '', 11);
             $pdf->SetXY($startX, $startY);
             $pdf->Cell(70, 6, $tempatTanggal, 0, 0, 'L');
 
-            // 2. Jabatan Penandatangan
+            
             $pdf->SetFont('times', 'B', 11);
             $pdf->SetXY($startX, $startY + 6 + 10);
             $pdf->MultiCell(70, 5, "PLT. KEPALA DINAS KOMUNIKASI DAN INFORMATIKA\nKABUPATEN MANDAILING NATAL", 0, 'L');
 
-            // 3. Nama
+            
             $pdf->SetFont('times', 'B', 11);
             $pdf->SetXY($startX, $startY + 6 + 10 + 15);
             $pdf->Cell(70, 6, 'RAHMAD HIDAYAT, S.Pd', 0, 0, 'L');
 
-            // 4. Pangkat
+            
             $pdf->SetFont('times', 'I', 10);
             $pdf->SetXY($startX, $startY + 6 + 10 + 15 + 6);
             $pdf->Cell(70, 5, 'PEMBINA UTAMA MUDA', 0, 0, 'L');
 
-            // 5. NIP
+            
             $pdf->SetFont('times', '', 10);
             $pdf->SetXY($startX, $startY + 6 + 10 + 15 + 6 + 5);
             $pdf->Cell(70, 5, 'NIP. 19730417 199903 1 003', 0, 0, 'L');
         }
     }
 
-    /**
-     * Halaman tanda tangan laporan
-     */
+    
     public function tandaTangan()
     {
         $this->requireAdmin();
 
         $id = $_GET['id'] ?? 0;
-        $type = $_GET['type'] ?? 'camat'; // camat atau opd
+        $type = $_GET['type'] ?? 'camat'; 
 
-        // Handle global tanda tangan (when id = 0)
+        
         if ($id == 0) {
             $laporan = null;
         } else {
-            // Get laporan data
+            
             if ($type === 'opd') {
                 $laporan = $this->laporanModel->getLaporanOPDById($id);
             } else {
@@ -713,19 +631,17 @@ class LaporanController extends BaseController {
 
             if (!$laporan) {
                 $_SESSION['error'] = 'Laporan tidak ditemukan';
-                $this->redirect('index.php?controller=laporan&action=index');
+                $this->redirect(route('laporan', 'index'));
             }
         }
 
-        // Get signature data if exists
+        
         $signature = $this->laporanModel->getSignature($id, $type);
 
         include 'views/laporan/tanda-tangan.php';
     }
 
-    /**
-     * Upload tanda tangan
-     */
+    
     public function uploadTandaTangan()
     {
         $this->requireAdmin();
@@ -736,7 +652,7 @@ class LaporanController extends BaseController {
             exit;
         }
 
-        // Prepare signature data according to table structure
+        
         $data = [
             'nama_penanda_tangan' => trim($_POST['nama_penanda_tangan'] ?? ''),
             'jabatan_penanda_tangan' => trim($_POST['jabatan_penanda_tangan'] ?? ''),
@@ -744,7 +660,7 @@ class LaporanController extends BaseController {
             'nip' => trim($_POST['nip'] ?? '')
         ];
 
-        // Save signature
+        
         $result = $this->laporanModel->saveSignature($data);
 
         header('Content-Type: application/json');
@@ -752,9 +668,7 @@ class LaporanController extends BaseController {
         exit;
     }
 
-    /**
-     * Generate PDF with signature
-     */
+    
     public function generatePDFWithSignature()
     {
         $this->requireAdmin();
@@ -762,7 +676,7 @@ class LaporanController extends BaseController {
         $id = $_GET['id'] ?? 0;
         $type = $_GET['type'] ?? 'camat';
 
-        // Get laporan data
+        
         if ($type === 'opd') {
             $laporan = $this->laporanModel->getLaporanOPDById($id);
             $title = 'Laporan OPD';
@@ -773,19 +687,17 @@ class LaporanController extends BaseController {
 
         if (!$laporan) {
             $_SESSION['error'] = 'Laporan tidak ditemukan';
-            $this->redirect('index.php?controller=laporan&action=index');
+            $this->redirect(route('laporan', 'index'));
         }
 
-        // Get signature data
+        
         $signature = $this->laporanModel->getSignature($id, $type);
 
-        // Generate PDF with signature
+        
         $this->generatePDFWithSignatureData($laporan, $title, $type, $signature);
     }
 
-    /**
-     * Generate PDF file with signature data
-     */
+    
     private function generatePDFWithSignatureData($laporan, $title, $type, $signature)
     {
         $pdf = new TCPDF('P', PDF_UNIT, 'A4', true, 'UTF-8', false);
@@ -798,33 +710,31 @@ class LaporanController extends BaseController {
         $pdf->AddPage();
         $pdf->SetFont('times', '', 12);
 
-        // Header/KOP Surat
+        
         $this->addPDFHeader($pdf);
 
-        // Content
+        
         $this->addPDFContent($pdf, $laporan, $type);
 
-        // Signature Section
+        
         $this->addPDFSignature($pdf, $signature);
 
-        // Output PDF
+        
         $filename = $title . '_Tanda_Tangan_' . date('Y-m-d_H-i-s') . '.pdf';
         $pdf->Output($filename, 'I');
         exit;
     }
 
-    /**
-     * Add PDF Header
-     */
+    
     private function addPDFHeader($pdf)
     {
-        // Logo
+        
         $logoPath = __DIR__ . '/../uploads/logo-resmi.png';
         if (file_exists($logoPath)) {
             $pdf->Image($logoPath, 15, 15, 25, 25);
         }
 
-        // Instansi Info
+        
         $pdf->SetFont('times', 'B', 14);
         $pdf->Cell(0, 5, 'PEMERINTAHAN KABUPATEN MANDAILING NATAL', 0, 1, 'C');
         $pdf->SetFont('times', 'B', 16);
@@ -833,16 +743,14 @@ class LaporanController extends BaseController {
         $pdf->Cell(0, 5, 'Jl. Lintas Sumatera No. 01 Panyabungan - 22916', 0, 1, 'C');
         $pdf->Cell(0, 5, 'Telp. (0638) 21123 Fax. (0638) 21634', 0, 1, 'C');
 
-        // Line
+        
         $pdf->Line(15, 50, 195, 50);
         $pdf->Line(15, 51, 195, 51);
 
         $pdf->Ln(10);
     }
 
-    /**
-     * Add PDF Content
-     */
+    
     private function addPDFContent($pdf, $laporan, $type)
     {
         $pdf->SetFont('times', 'B', 14);
@@ -898,43 +806,41 @@ class LaporanController extends BaseController {
         $pdf->MultiCell(0, 6, strip_tags($laporan['uraian_laporan']), 0, 'L');
     }
 
-    /**
-     * Add PDF Signature Section
-     */
+    
     private function addPDFSignature($pdf, $signature)
     {
         $pdf->Ln(20);
 
         if ($signature) {
-            // Tempat dan tanggal
+            
             $pdf->SetFont('times', '', 12);
             $pdf->Cell(0, 6, $signature['tempat'] . ', ' . $signature['bulan'] . ' ' . $signature['tahun'], 0, 1, 'R');
             $pdf->Ln(15);
 
-            // Jabatan
+            
             $pdf->SetFont('times', 'B', 12);
             $pdf->Cell(0, 6, $signature['jabatan'], 0, 1, 'R');
             $pdf->Ln(25);
 
-            // Signature image if exists
+            
             if (!empty($signature['signature_path']) && file_exists($signature['signature_path'])) {
                 $pdf->Image($signature['signature_path'], 150, $pdf->GetY(), 40, 20);
                 $pdf->Ln(20);
             }
 
-            // Nama
+            
             $pdf->SetFont('times', 'B', 12);
             $pdf->Cell(0, 6, $signature['nama_penandatangan'], 0, 1, 'R');
 
-            // Pangkat
+            
             $pdf->SetFont('times', 'I', 10);
             $pdf->Cell(0, 4, $signature['pangkat'], 0, 1, 'R');
 
-            // NIP
+            
             $pdf->SetFont('times', '', 10);
             $pdf->Cell(0, 4, 'NIP. ' . $signature['nip'], 0, 1, 'R');
         } else {
-            // Default signature when no signature data
+            
             $pdf->SetFont('times', '', 12);
             $pdf->Cell(0, 6, 'Panyabungan, ' . date('F Y'), 0, 1, 'R');
             $pdf->Ln(15);
@@ -954,34 +860,32 @@ class LaporanController extends BaseController {
         }
     }
 
-    /**
-     * Handle signature upload
-     */
+    
     private function handleSignatureUpload($file)
     {
-        // Check file size (2MB limit)
+        
         if ($file['size'] > 2 * 1024 * 1024) {
             return null;
         }
 
-        // Check file type
+        
         $allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
         if (!in_array($file['type'], $allowedTypes)) {
             return null;
         }
 
-        // Create upload directory if not exists
+        
         $uploadDir = 'uploads/signatures/';
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0777, true);
         }
 
-        // Generate unique filename
+        
         $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
         $filename = 'signature_' . date('YmdHis') . '_' . uniqid() . '.' . $extension;
         $uploadPath = $uploadDir . $filename;
 
-        // Move uploaded file
+        
         if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
             return $uploadPath;
         }

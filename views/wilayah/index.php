@@ -11,14 +11,14 @@
           <div class="row">
             <div class="col-sm-12">
 
-              <!-- Header Section -->
+              
               <div class="page-header d-flex justify-content-between align-items-center mb-4">
                 <div>
                   <h2 class="page-title">Manajemen Wilayah</h2>
                 </div>
               </div>
 
-              <!-- Statistics Cards -->
+              
               <div class="row mb-4">
                 <div class="col-md-4">
                   <div class="card bg-primary text-white">
@@ -52,7 +52,7 @@
                 </div>
               </div>
 
-              <!-- Main Card -->
+              
               <div class="card">
                 <div class="card-header">
                   <ul class="nav nav-tabs card-header-tabs" id="wilayahTab" role="tablist">
@@ -76,16 +76,14 @@
                 </div>
                 <div class="card-body">
                   <div class="tab-content" id="wilayahTabContent">
-                    <!-- Kecamatan Tab -->
+                    
                     <div class="tab-pane fade <?php echo $activeTab === 'kecamatan' ? 'show active' : ''; ?>"
                          id="kecamatan" role="tabpanel" aria-labelledby="kecamatan-tab">
 
-                      <!-- Filter and Actions -->
+                      
                       <div class="row mb-3">
                         <div class="col-md-6">
-                          <form method="GET" class="d-flex">
-                            <input type="hidden" name="controller" value="wilayah">
-                            <input type="hidden" name="action" value="index">
+                          <form method="GET" action="<?= route('wilayah', 'index') ?>" class="d-flex">
                             <input type="hidden" name="tab" value="kecamatan">
                             <input type="text" class="form-control me-2" name="search"
                                    placeholder="Cari kecamatan..." value="<?php echo htmlspecialchars($search); ?>">
@@ -95,14 +93,14 @@
                           </form>
                         </div>
                         <div class="col-md-6 text-end">
-                          <a href="index.php?controller=wilayah&action=formKecamatan"
+                          <a href="<?= route('wilayah', 'formKecamatan') ?>"
                              class="btn btn-primary">
                             <i class="mdi mdi-plus-circle me-2"></i> Tambah Kecamatan
                           </a>
                         </div>
                       </div>
 
-                      <!-- Table Kecamatan -->
+                      
                       <div class="table-responsive">
                         <table class="table table-striped table-hover">
                           <thead class="table-dark">
@@ -114,7 +112,7 @@
                           </thead>
                           <tbody>
                             <?php
-                            // Temp debug - tampilkan info variabel
+                            
                             echo '<tr><td colspan="3" style="background: #f0f0f0; font-size: 12px;">';
                             echo 'Tab: ' . ($activeTab ?? 'null') . ' | Count: ' . count($wilayahData ?? []) . ' | Page: ' . ($page ?? 1);
                             echo '</td></tr>';
@@ -131,7 +129,7 @@
                                   <td><?php echo htmlspecialchars($kecamatan['nama_kecamatan'] ?? ''); ?></td>
                                   <td class="text-center">
                                     <div class="btn-group" role="group">
-                                      <a href="index.php?controller=wilayah&action=formKecamatan&id=<?php echo $kecamatan['id_kecamatan'] ?? ''; ?>"
+                                      <a href="<?= route('wilayah', 'formKecamatan') ?>?id=<?php echo $kecamatan['id_kecamatan'] ?? ''; ?>"
                                          class="btn btn-sm btn-warning"
                                          title="Edit">
                                         <i class="mdi mdi-pencil"></i>
@@ -150,13 +148,13 @@
                         </table>
                       </div>
 
-                      <!-- Pagination -->
+                      
                       <?php if ($totalPages > 1): ?>
                         <nav aria-label="Page navigation" class="mt-3">
                           <ul class="pagination justify-content-center">
                             <?php if ($result['current_page'] > 1): ?>
                               <li class="page-item">
-                                <a class="page-link" href="?controller=wilayah&action=index&tab=kecamatan&page=<?php echo $result['current_page'] - 1; ?>&search=<?php echo urlencode($search); ?>">
+                                <a class="page-link" href="<?= route('wilayah', 'index') ?>?tab=kecamatan&page=<?php echo $result['current_page'] - 1; ?>&search=<?php echo urlencode($search); ?>">
                                   <i class="mdi mdi-chevron-left"></i> Previous
                                 </a>
                               </li>
@@ -164,13 +162,13 @@
 
                             <?php for ($i = 1; $i <= $totalPages; $i++): ?>
                               <li class="page-item <?php echo $i == $result['current_page'] ? 'active' : ''; ?>">
-                                <a class="page-link" href="?controller=wilayah&action=index&tab=kecamatan&page=<?php echo $i; ?>&search=<?php echo urlencode($search); ?>"><?php echo $i; ?></a>
+                                <a class="page-link" href="<?= route('wilayah', 'index') ?>?tab=kecamatan&page=<?php echo $i; ?>&search=<?php echo urlencode($search); ?>"><?php echo $i; ?></a>
                               </li>
                             <?php endfor; ?>
 
                             <?php if ($result['current_page'] < $totalPages): ?>
                               <li class="page-item">
-                                <a class="page-link" href="?controller=wilayah&action=index&tab=kecamatan&page=<?php echo $result['current_page'] + 1; ?>&search=<?php echo urlencode($search); ?>">
+                                <a class="page-link" href="<?= route('wilayah', 'index') ?>?tab=kecamatan&page=<?php echo $result['current_page'] + 1; ?>&search=<?php echo urlencode($search); ?>">
                                   Next <i class="mdi mdi-chevron-right"></i>
                                 </a>
                               </li>
@@ -180,16 +178,14 @@
                       <?php endif; ?>
                     </div>
 
-                    <!-- Desa Tab -->
+                    
                     <div class="tab-pane fade <?php echo $activeTab === 'desa' ? 'show active' : ''; ?>"
                          id="desa" role="tabpanel" aria-labelledby="desa-tab">
 
-                      <!-- Filter and Actions -->
+                      
                       <div class="row mb-3">
                         <div class="col-md-8">
-                          <form method="GET" class="row g-2">
-                            <input type="hidden" name="controller" value="wilayah">
-                            <input type="hidden" name="action" value="index">
+                          <form method="GET" action="<?= route('wilayah', 'index') ?>" class="row g-2">
                             <input type="hidden" name="tab" value="desa">
                             <div class="col-md-5">
                               <input type="text" class="form-control" name="search"
@@ -214,14 +210,14 @@
                           </form>
                         </div>
                         <div class="col-md-4 text-end">
-                          <a href="index.php?controller=wilayah&action=formDesa"
+                          <a href="<?= route('wilayah', 'formDesa') ?>"
                              class="btn btn-primary">
                             <i class="mdi mdi-plus-circle me-2"></i> Tambah Desa
                           </a>
                         </div>
                       </div>
 
-                      <!-- Table Desa -->
+                      
                       <div class="table-responsive">
                         <table class="table table-striped table-hover">
                           <thead class="table-dark">
@@ -240,7 +236,7 @@
                             <?php else: ?>
                               <?php $no = ($result['current_page'] - 1) * $limit + 1; ?>
                               <?php foreach ($wilayahData as $desa): ?>
-                                <?php // Skip jika nama desa kosong atau null ?>
+                                <?php ?>
                                 <?php if (empty($desa['nama_desa'])) continue; ?>
                                 <tr>
                                   <td><?php echo $no++; ?></td>
@@ -248,7 +244,7 @@
                                   <td><?php echo htmlspecialchars($desa['nama_kecamatan']); ?></td>
                                   <td class="text-center">
                                     <div class="btn-group" role="group">
-                                      <a href="index.php?controller=wilayah&action=formDesa&id=<?php echo $desa['id_desa'] ?? ''; ?>"
+                                      <a href="<?= route('wilayah', 'formDesa') ?>?id=<?php echo $desa['id_desa'] ?? ''; ?>"
                                          class="btn btn-sm btn-warning"
                                          title="Edit">
                                         <i class="mdi mdi-pencil"></i>
@@ -267,13 +263,13 @@
                         </table>
                       </div>
 
-                      <!-- Pagination -->
+                      
                       <?php if ($totalPages > 1): ?>
                         <nav aria-label="Page navigation" class="mt-3">
                           <ul class="pagination justify-content-center">
                             <?php if ($result['current_page'] > 1): ?>
                               <li class="page-item">
-                                <a class="page-link" href="?controller=wilayah&action=index&tab=desa&page=<?php echo $result['current_page'] - 1; ?>&search=<?php echo urlencode($search); ?>&kecamatan_filter=<?php echo urlencode($_GET['kecamatan_filter'] ?? ''); ?>">
+                                <a class="page-link" href="<?= route('wilayah', 'index') ?>?tab=desa&page=<?php echo $result['current_page'] - 1; ?>&search=<?php echo urlencode($search); ?>&kecamatan_filter=<?php echo urlencode($_GET['kecamatan_filter'] ?? ''); ?>">
                                   <i class="mdi mdi-chevron-left"></i> Previous
                                 </a>
                               </li>
@@ -281,13 +277,13 @@
 
                             <?php for ($i = 1; $i <= $totalPages; $i++): ?>
                               <li class="page-item <?php echo $i == $result['current_page'] ? 'active' : ''; ?>">
-                                <a class="page-link" href="?controller=wilayah&action=index&tab=desa&page=<?php echo $i; ?>&search=<?php echo urlencode($search); ?>&kecamatan_filter=<?php echo urlencode($_GET['kecamatan_filter'] ?? ''); ?>"><?php echo $i; ?></a>
+                                <a class="page-link" href="<?= route('wilayah', 'index') ?>?tab=desa&page=<?php echo $i; ?>&search=<?php echo urlencode($search); ?>&kecamatan_filter=<?php echo urlencode($_GET['kecamatan_filter'] ?? ''); ?>"><?php echo $i; ?></a>
                               </li>
                             <?php endfor; ?>
 
                             <?php if ($result['current_page'] < $totalPages): ?>
                               <li class="page-item">
-                                <a class="page-link" href="?controller=wilayah&action=index&tab=desa&page=<?php echo $result['current_page'] + 1; ?>&search=<?php echo urlencode($search); ?>&kecamatan_filter=<?php echo urlencode($_GET['kecamatan_filter'] ?? ''); ?>">
+                                <a class="page-link" href="<?= route('wilayah', 'index') ?>?tab=desa&page=<?php echo $result['current_page'] + 1; ?>&search=<?php echo urlencode($search); ?>&kecamatan_filter=<?php echo urlencode($_GET['kecamatan_filter'] ?? ''); ?>">
                                   Next <i class="mdi mdi-chevron-right"></i>
                                 </a>
                               </li>
@@ -308,12 +304,12 @@
   </div>
   <?php include 'views/layouts/admin-script.php'; ?>
 
-  <!-- Custom Scripts -->
+  
   <script>
-    // Delete kecamatan
+    
     function deleteKecamatan(id) {
-      // First check if there are related desa
-      fetch(`index.php?controller=wilayah&action=getKecamatanStats&id=${id}`, {
+      
+      fetch(`<?= route('wilayah', 'getKecamatanStats') ?>?id=${id}`, {
         method: 'GET',
         headers: {
           'X-Requested-With': 'XMLHttpRequest'
@@ -330,7 +326,7 @@
         if (confirm(confirmMessage)) {
           const form = document.createElement('form');
           form.method = 'POST';
-          form.action = 'index.php?controller=wilayah&action=deleteKecamatan';
+          form.action = '<?= route('wilayah', 'deleteKecamatan') ?>';
 
           const input = document.createElement('input');
           input.type = 'hidden';
@@ -344,11 +340,11 @@
       })
       .catch(error => {
         console.error('Error checking kecamatan stats:', error);
-        // Fallback to simple confirm if stats check fails
+        
         if (confirm('Apakah Anda yakin ingin menghapus kecamatan ini?')) {
           const form = document.createElement('form');
           form.method = 'POST';
-          form.action = 'index.php?controller=wilayah&action=deleteKecamatan';
+          form.action = '<?= route('wilayah', 'deleteKecamatan') ?>';
 
           const input = document.createElement('input');
           input.type = 'hidden';
@@ -362,10 +358,10 @@
       });
     }
 
-    // Delete desa
+    
     function deleteDesa(id) {
       if (confirm('Apakah Anda yakin ingin menghapus desa ini?')) {
-        fetch('index.php?controller=wilayah&action=deleteDesa', {
+        fetch('<?= route('wilayah', 'deleteDesa') ?>', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -377,7 +373,7 @@
         .then(data => {
           if (data.success) {
             showNotification(data.message, 'success');
-            // Reload halaman dengan parameter tab yang benar
+            
             setTimeout(() => {
               const currentUrl = new URL(window.location);
               currentUrl.searchParams.set('tab', 'desa');
@@ -394,11 +390,11 @@
       }
     }
 
-    // Simple notification function
+    
     function showNotification(message, type = 'success') {
       console.log('Showing notification:', message, type);
 
-      // Create a simple toast notification
+      
       const toastContainer = document.createElement('div');
       toastContainer.style.cssText = `
         position: fixed;
@@ -425,7 +421,7 @@
         <button style="background: none; border: none; color: white; cursor: pointer; font-size: 20px; margin-left: 10px;" onclick="this.parentElement.remove()">×</button>
       `;
 
-      // Add animation
+      
       const style = document.createElement('style');
       style.textContent = `
         @keyframes slideIn {
@@ -453,7 +449,7 @@
 
       document.body.appendChild(toastContainer);
 
-      // Auto remove after 5 seconds
+      
       setTimeout(() => {
         toastContainer.style.animation = 'slideOut 0.3s ease-in';
         setTimeout(() => {
@@ -466,7 +462,7 @@
       console.log('Custom toast shown');
     }
 
-    // Show notifications on page load
+    
     <?php if (isset($_SESSION['success'])): ?>
       showNotification('<?php echo addslashes($_SESSION['success']); ?>', 'success');
       <?php unset($_SESSION['success']); ?>
@@ -477,7 +473,7 @@
       <?php unset($_SESSION['error']); ?>
     <?php endif; ?>
 
-    // Tab persistence
+    
     document.addEventListener('DOMContentLoaded', function() {
       const tabButtons = document.querySelectorAll('#wilayahTab button[data-bs-toggle="tab"]');
       tabButtons.forEach(button => {
@@ -485,7 +481,7 @@
           const target = e.target.getAttribute('data-bs-target');
           const tab = target === '#kecamatan' ? 'kecamatan' : 'desa';
 
-          // Update URL without page reload
+          
           const url = new URL(window.location);
           url.searchParams.set('tab', tab);
           window.history.replaceState({}, '', url);

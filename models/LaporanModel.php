@@ -4,13 +4,11 @@ require_once __DIR__ . '/../config/koneksi.php';
 require_once __DIR__ . '/BaseModel.php';
 
 class LaporanModel extends BaseModel {
-    /**
-     * Get laporan OPD with pagination and filtering
-     */
+    
     public function getLaporanOPD($page = 1, $limit = 10, $search = '', $status = '') {
         $offset = ($page - 1) * $limit;
 
-        // Build WHERE conditions
+        
         $whereClause = "";
         $params = [];
 
@@ -28,7 +26,7 @@ class LaporanModel extends BaseModel {
             }
         }
 
-        // Main query
+        
         $query = "SELECT lo.*, u.username, '' as nama_kegiatan
                   FROM laporan_opd lo
                   LEFT JOIN users u ON lo.id_user = u.id_user
@@ -44,7 +42,7 @@ class LaporanModel extends BaseModel {
             }
         }
 
-        // Get total count for pagination
+        
         $countQuery = "SELECT COUNT(*) as total FROM laporan_opd lo
                        LEFT JOIN users u ON lo.id_user = u.id_user
                        $whereClause";
@@ -65,13 +63,11 @@ class LaporanModel extends BaseModel {
         ];
     }
 
-    /**
-     * Get laporan Camat with pagination and filtering
-     */
+    
     public function getLaporanCamat($page = 1, $limit = 10, $search = '', $status = '', $tujuan = '') {
         $offset = ($page - 1) * $limit;
 
-        // Build WHERE conditions
+        
         $whereClause = "";
         $params = [];
 
@@ -98,7 +94,7 @@ class LaporanModel extends BaseModel {
             }
         }
 
-        // Main query
+        
         $query = "SELECT lc.*, u.username, '' as nama_kegiatan
                   FROM laporan_camat lc
                   LEFT JOIN users u ON lc.id_user = u.id_user
@@ -114,7 +110,7 @@ class LaporanModel extends BaseModel {
             }
         }
 
-        // Get total count for pagination
+        
         $countQuery = "SELECT COUNT(*) as total FROM laporan_camat lc
                        LEFT JOIN users u ON lc.id_user = u.id_user
                        $whereClause";
@@ -135,16 +131,14 @@ class LaporanModel extends BaseModel {
         ];
     }
 
-    /**
-     * Get OPD statistics
-     */
+    
     public function getOPDStatistics() {
-        // Total laporan
+        
         $query = "SELECT COUNT(*) as total_laporan FROM laporan_opd";
         $result = $this->db->query($query);
         $total = $result ? $result->fetch_assoc() : ['total_laporan' => 0];
 
-        // Statistik by status
+        
         $query = "SELECT status_laporan, COUNT(*) as total
                   FROM laporan_opd
                   GROUP BY status_laporan";
@@ -162,16 +156,14 @@ class LaporanModel extends BaseModel {
         ];
     }
 
-    /**
-     * Get Camat statistics
-     */
+    
     public function getCamatStatistics() {
-        // Total laporan
+        
         $query = "SELECT COUNT(*) as total_laporan FROM laporan_camat";
         $result = $this->db->query($query);
         $total = $result ? $result->fetch_assoc() : ['total_laporan' => 0];
 
-        // Statistik by status
+        
         $query = "SELECT status_laporan, COUNT(*) as total
                   FROM laporan_camat
                   GROUP BY status_laporan";
@@ -189,11 +181,9 @@ class LaporanModel extends BaseModel {
         ];
     }
 
-    /**
-     * Get camat tujuan options
-     */
+    
     public function getCamatTujuanOptions() {
-        // Enum options for tujuan field
+        
         return [
             'Bupati',
             'Wakil Bupati',
@@ -202,9 +192,7 @@ class LaporanModel extends BaseModel {
         ];
     }
 
-    /**
-     * Get laporan OPD for PDF export
-     */
+    
     public function getLaporanOPDForPDF($hari = '', $bulan = '', $tahun = '', $status = '') {
         $whereClause = "";
 
@@ -261,16 +249,12 @@ class LaporanModel extends BaseModel {
         return $data;
     }
 
-    /**
-     * Get laporan OPD for Excel export
-     */
+    
     public function getLaporanOPDForExcel($hari = '', $bulan = '', $tahun = '', $status = '') {
         return $this->getLaporanOPDForPDF($hari, $bulan, $tahun, $status);
     }
 
-    /**
-     * Get laporan Camat for PDF export
-     */
+    
     public function getLaporanCamatForPDF($hari = '', $bulan = '', $tahun = '', $status = '', $tujuan = '') {
         $whereClause = "";
 
@@ -336,16 +320,12 @@ class LaporanModel extends BaseModel {
         return $data;
     }
 
-    /**
-     * Get laporan Camat for Excel export
-     */
+    
     public function getLaporanCamatForExcel($hari = '', $bulan = '', $tahun = '', $status = '', $tujuan = '') {
         return $this->getLaporanCamatForPDF($hari, $bulan, $tahun, $status, $tujuan);
     }
 
-    /**
-     * Get available years for filters
-     */
+    
     public function getAvailableYears() {
         $query = "SELECT DISTINCT YEAR(created_at) as year
                   FROM (
@@ -366,9 +346,7 @@ class LaporanModel extends BaseModel {
         return $years;
     }
 
-    /**
-     * Get available days for filters
-     */
+    
     public function getAvailableDays() {
         return [
             'Monday' => 'Senin',
@@ -381,9 +359,7 @@ class LaporanModel extends BaseModel {
         ];
     }
 
-    /**
-     * Get available months for filters
-     */
+    
     public function getAvailableMonths() {
         return [
             1 => 'Januari',
@@ -401,9 +377,7 @@ class LaporanModel extends BaseModel {
         ];
     }
 
-    /**
-     * Get laporan Camat by ID
-     */
+    
     public function getLaporanCamatById($id) {
         $id = (int)$id;
         $query = "SELECT lc.*, d.nama_desa, k.nama_kecamatan
@@ -419,9 +393,7 @@ class LaporanModel extends BaseModel {
         return null;
     }
 
-    /**
-     * Get laporan OPD by ID
-     */
+    
     public function getLaporanOPDById($id) {
         $id = (int)$id;
         $query = "SELECT lo.*, u.username, u.pangkat
@@ -436,21 +408,19 @@ class LaporanModel extends BaseModel {
         return null;
     }
 
-    /**
-     * Save signature data
-     */
+    
     public function saveSignature($data) {
         $jabatan_penanda_tangan = escapeString($data['jabatan_penanda_tangan']);
         $nama_penanda_tangan = escapeString($data['nama_penanda_tangan']);
         $pangkat = escapeString($data['pangkat'] ?? '');
         $nip = escapeString($data['nip'] ?? '');
 
-        // Check if signature already exists
+        
         $checkQuery = "SELECT id_ttd_laporan FROM ttd_laporan LIMIT 1";
         $checkResult = $this->db->query($checkQuery);
 
         if ($checkResult && $checkResult->num_rows > 0) {
-            // Update existing signature
+            
             $id_ttd = $checkResult->fetch_assoc()['id_ttd_laporan'];
             $query = "UPDATE ttd_laporan SET
                       jabatan_penanda_tangan = '$jabatan_penanda_tangan',
@@ -459,7 +429,7 @@ class LaporanModel extends BaseModel {
                       nip = '$nip'
                       WHERE id_ttd_laporan = $id_ttd";
         } else {
-            // Insert new signature
+            
             $query = "INSERT INTO ttd_laporan
                       (jabatan_penanda_tangan, nama_penanda_tangan, pangkat, nip)
                       VALUES
@@ -481,22 +451,20 @@ class LaporanModel extends BaseModel {
         }
     }
 
-    /**
-     * Get signature data
-     */
+    
     public function getSignature($id_laporan = null, $type = null) {
-        // Get the latest signature (only one record should exist)
+        
         $query = "SELECT * FROM ttd_laporan ORDER BY id_ttd_laporan DESC LIMIT 1";
         $result = $this->db->query($query);
 
         if ($result && $result->num_rows > 0) {
             $signature = $result->fetch_assoc();
 
-            // Add automatic date and place
+            
             $signature['tempat'] = 'Panyabungan';
             $signature['tanggal_format'] = $this->formatTanggalIndo(date('Y-m-d'));
 
-            // Map fields for compatibility
+            
             $signature['nama_penandatangan'] = $signature['nama_penanda_tangan'];
             $signature['jabatan_penanda_tangan'] = $signature['jabatan_penanda_tangan'];
 
@@ -505,9 +473,7 @@ class LaporanModel extends BaseModel {
         return null;
     }
 
-    /**
-     * Create ttd_laporan table if not exists
-     */
+    
     public function createTTDTable() {
         $query = "CREATE TABLE IF NOT EXISTS ttd_laporan (
             id_ttd_laporan INT AUTO_INCREMENT PRIMARY KEY,
@@ -520,42 +486,38 @@ class LaporanModel extends BaseModel {
         try {
             return $this->db->query($query);
         } catch (\mysqli_sql_exception $e) {
-            // User DB tidak punya privilege CREATE TABLE; abaikan jika tabel sudah ada
+            
             error_log("createTTDTable skipped: " . $e->getMessage());
             return false;
         }
     }
 
-    /**
-     * Get default signature data
-     */
+    
     public function getDefaultSignature($type = null) {
-        // Get the latest signature (only one record should exist)
+        
         $query = "SELECT * FROM ttd_laporan ORDER BY id_ttd_laporan DESC LIMIT 1";
         $result = $this->db->query($query);
 
         if ($result && $result->num_rows > 0) {
             $signature = $result->fetch_assoc();
 
-            // Add automatic date and place
+            
             $signature['tempat'] = 'Panyabungan';
             $signature['tanggal_format'] = $this->formatTanggalIndo(date('Y-m-d'));
 
-            // Map fields for compatibility - sesuai struktur tabel baru
+            
             $signature['nama_penandatangan'] = $signature['nama_penanda_tangan'];
             $signature['jabatan_penanda_tangan'] = $signature['jabatan_penanda_tangan'];
-            // pangkat dan nip sudah ada di tabel baru
+            
 
             return $signature;
         }
 
-        // Return null if no signature found
+        
         return null;
     }
 
-    /**
-     * Format tanggal dalam bahasa Indonesia
-     */
+    
     private function formatTanggalIndo($tanggal) {
         $hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
         $bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',

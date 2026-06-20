@@ -12,28 +12,25 @@
           <div class="row">
             <div class="col-sm-12">
 
-              <!-- Page Header -->
               <div class="page-header mb-4">
                 <div class="d-flex align-items-center justify-content-between">
                   <div>
                     <h3 class="page-title mb-1">Data Pelapor</h3>
                     <nav aria-label="breadcrumb">
                       <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index.php?controller=dashboard&action=admin">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="<?= route('dashboard', 'admin') ?>">Dashboard</a></li>
                         <li class="breadcrumb-item active">Data Pelapor</li>
                       </ol>
                     </nav>
                   </div>
                   <div class="page-actions">
-                    <a href="index.php?controller=dataPelapor&action=form" class="btn btn-primary btn-sm">
+                    <a href="<?= route('dataPelapor', 'form') ?>" class="btn btn-primary btn-sm">
                       <i class="fas fa-plus-circle"></i> Tambah Pelapor
                     </a>
-                                      </div>
+                  </div>
                 </div>
               </div>
 
-              
-              <!-- Search and Filter Full Width -->
               <div class="row mb-4">
                 <div class="col-12">
                   <div class="card border-0 shadow-sm">
@@ -63,10 +60,10 @@
                             <select class="form-select" id="roleFilter">
                               <option value="">Semua Role</option>
                               <option value="camat" <?php echo $role === 'camat' ? 'selected' : ''; ?>>
-                                <i class="fas fa-map-marker-alt"></i> Camat
+                                Camat
                               </option>
                               <option value="opd" <?php echo $role === 'opd' ? 'selected' : ''; ?>>
-                                <i class="fas fa-building"></i> OPD
+                                OPD
                               </option>
                             </select>
                           </div>
@@ -93,7 +90,6 @@
                         </div>
                       </form>
 
-                      <!-- Info Bar -->
                       <div class="row mt-3 pt-3 border-top">
                         <div class="col-md-4">
                           <div class="d-flex align-items-center">
@@ -128,13 +124,12 @@
                             </div>
                           </div>
                         </div>
-                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- Data Table -->
               <div class="row mb-4">
                 <div class="col-12">
                   <div class="card border-0 shadow-sm">
@@ -158,7 +153,7 @@
                                 <th class="border-top-0">Role</th>
                                 <th class="border-top-0">Total Laporan</th>
                                 <th class="border-top-0">Tanggal Dibuat</th>
-                                                                <th class="border-top-0 text-center">Aksi</th>
+                                <th class="border-top-0 text-center">Aksi</th>
                               </tr>
                             </thead>
                             <tbody id="dataTableBody">
@@ -230,14 +225,13 @@
                           </table>
                         </div>
 
-                        <!-- Pagination (dirender ulang secara dinamis via JS) -->
                         <div id="paginationWrapper"></div>
                       <?php else: ?>
                         <div class="text-center py-5">
                           <i class="fas fa-users text-muted" style="font-size: 3rem;"></i>
                           <h5 class="mt-3 text-muted">Belum ada data pelapor</h5>
                           <p class="text-muted">Tambahkan data pelapor untuk memulai</p>
-                          <a href="index.php?controller=dataPelapor&action=form" class="btn btn-primary">
+                          <a href="<?= route('dataPelapor', 'form') ?>" class="btn btn-primary">
                             <i class="fas fa-plus-circle"></i> Tambah Pelapor
                           </a>
                         </div>
@@ -254,9 +248,7 @@
     </div>
   </div>
 
-  
   <?php
-// Helper function untuk format tanggal Indonesia
 function formatDateIndo($date) {
     $days = array('Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu');
     $months = array('', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember');
@@ -273,336 +265,54 @@ function formatDateIndo($date) {
 
   <?php include 'views/layouts/admin-script.php'; ?>
 
-  <!-- Custom JavaScript -->
-  <script>
+  <script></script>
 
-    // State filter saat ini (diisi dari render awal PHP)
-    const dpState = {
-      search: <?php echo json_encode($search); ?>,
-      role: <?php echo json_encode($role); ?>,
-      limit: <?php echo json_encode((int)$limit); ?>,
-      page: <?php echo json_encode((int)$result['page']); ?>
-    };
-
-    // Render pagination awal berdasarkan data dari PHP
-    document.addEventListener('DOMContentLoaded', function() {
-      renderPagination({
-        current_page: <?php echo (int)$result['page']; ?>,
-        total_pages: <?php echo (int)$result['total_pages']; ?>,
-        total: <?php echo (int)$result['total']; ?>
-      });
-    });
-
-    // Edit pelapor
-    function editPelapor(id) {
-      window.location.href = 'index.php?controller=dataPelapor&action=form&id=' + id;
+  <style>
+    .form-control.is-invalid {
+      border-color: #dc3545;
     }
 
-    // Function untuk format tanggal Indonesia (JavaScript version)
-    function formatDateIndoJS(dateString) {
-      const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-      const months = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-
-      const date = new Date(dateString);
-      const dayName = days[date.getDay()];
-      const day = date.getDate();
-      const month = months[date.getMonth()];
-      const year = date.getFullYear();
-
-      return `${dayName}, ${day} ${month} ${year}`;
+    .form-control.is-invalid:focus {
+      border-color: #dc3545;
+      box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
     }
 
-    // Delete pelapor
-    function deletePelapor(id, username) {
-      if (confirm(`Apakah Anda yakin ingin menghapus pelapor "${username}"?`)) {
-        fetch('index.php?controller=dataPelapor&action=delete', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          body: 'id=' + id
-        })
-        .then(response => response.json())
-        .then(result => {
-          if (result.success) {
-            showAlert('success', result.message);
-            location.reload();
-          } else {
-            showAlert('danger', result.message);
-          }
-        })
-        .catch(error => {
-          showAlert('danger', 'Error: ' + error.message);
-        });
+    .alert {
+      animation: slideInRight 0.3s ease-out;
+    }
+
+    @keyframes slideInRight {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
       }
     }
 
-    // Export data
-    function exportData() {
-      const role = document.getElementById('roleFilter').value;
-      const url = 'index.php?controller=dataPelapor&action=export';
-      window.open(url + (role ? '?role=' + role : ''), '_blank');
+    .spinner-border-sm {
+      width: 1rem;
+      height: 1rem;
     }
 
-    // Reset filter
-    function resetFilter() {
-      document.getElementById('searchInput').value = '';
-      document.getElementById('roleFilter').value = '';
-      document.getElementById('limitSelect').value = '10';
-      loadData(1);
+    .input-group-text {
+      background-color: #f8f9fa;
+      border-right: none;
     }
 
-    // Ganti jumlah data per halaman
-    function changeLimit() {
-      loadData(1);
+    .form-control:focus + .input-group-text {
+      border-color: #86b7fe;
     }
 
-    // Bangun query string dari filter saat ini
-    function buildQuery(page) {
-      const search = document.getElementById('searchInput').value;
-      const role = document.getElementById('roleFilter').value;
-      const limit = document.getElementById('limitSelect').value;
-
-      const params = new URLSearchParams();
-      params.append('controller', 'dataPelapor');
-      if (search) params.append('search', search);
-      if (role) params.append('role', role);
-      params.append('limit', limit);
-      params.append('page', page);
-
-      return { params, search, role, limit };
+    .card {
+      transition: transform 0.2s ease-in-out;
     }
 
-    // Muat data secara dinamis (AJAX) sesuai filter, limit, dan halaman
-    function loadData(page) {
-      const { params, search, role, limit } = buildQuery(page);
-
-      const fetchParams = new URLSearchParams(params);
-      fetchParams.set('action', 'getData');
-
-      fetch('index.php?' + fetchParams.toString(), {
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-      })
-        .then(response => response.json())
-        .then(json => {
-          if (!json.success) {
-            showAlert('danger', json.message || 'Gagal memuat data');
-            return;
-          }
-
-          const result = json.data;
-          result.current_page = result.page; // normalisasi key dari API (page -> current_page)
-
-          dpState.search = search;
-          dpState.role = role;
-          dpState.limit = parseInt(limit, 10);
-          dpState.page = result.current_page;
-
-          renderTable(result);
-          renderInfo(result);
-          renderPagination(result);
-
-          // Update URL browser tanpa reload halaman
-          const urlParams = new URLSearchParams(params);
-          urlParams.set('action', 'index');
-          const newUrl = 'index.php?' + urlParams.toString();
-          window.history.replaceState(null, '', newUrl);
-        })
-        .catch(error => {
-          showAlert('danger', 'Error: ' + error.message);
-        });
+    .card:hover {
+      transform: translateY(-2px);
     }
-
-    // Render isi tabel data pelapor
-    function renderTable(result) {
-      const content = document.getElementById('dataContent');
-
-      if (!result.data || result.data.length === 0) {
-        content.innerHTML = `
-          <div class="text-center py-5">
-            <i class="fas fa-users text-muted" style="font-size: 3rem;"></i>
-            <h5 class="mt-3 text-muted">Belum ada data pelapor</h5>
-            <p class="text-muted">Tambahkan data pelapor untuk memulai</p>
-            <a href="index.php?controller=dataPelapor&action=form" class="btn btn-primary">
-              <i class="fas fa-plus-circle"></i> Tambah Pelapor
-            </a>
-          </div>`;
-        return;
-      }
-
-      let rows = '';
-      result.data.forEach((pelapor, idx) => {
-        const no = (result.current_page - 1) * dpState.limit + idx + 1;
-        const roleBadgeColor = pelapor.role === 'camat' ? 'primary' : 'info';
-        const roleIcon = pelapor.role === 'camat' ? 'map-marker-alt' : 'building';
-        const initial = (pelapor.username || '').charAt(0).toUpperCase();
-
-        let phoneCell = '<span class="text-muted">-</span>';
-        if (pelapor.no_telp) {
-          const cleanPhone = String(pelapor.no_telp).replace(/[^0-9]/g, '');
-          phoneCell = `<a href="https://wa.me/${cleanPhone}" target="_blank" class="text-decoration-none text-success">
-            <i class="fab fa-whatsapp"></i> ${escapeHtml(pelapor.no_telp)}</a>`;
-        }
-
-        rows += `
-          <tr>
-            <td><span class="fw-bold">${no}</span></td>
-            <td>
-              <div class="d-flex align-items-center">
-                <div class="avatar-sm bg-${roleBadgeColor} text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
-                  ${initial}
-                </div>
-                <div class="fw-semibold">${escapeHtml(pelapor.username)}</div>
-              </div>
-            </td>
-            <td><a href="mailto:${escapeHtml(pelapor.email)}" class="text-decoration-none">${escapeHtml(pelapor.email)}</a></td>
-            <td>${phoneCell}</td>
-            <td>${escapeHtml(pelapor.jabatan)}</td>
-            <td>
-              <span class="badge bg-${roleBadgeColor}">
-                <i class="fas fa-${roleIcon}"></i> ${pelapor.role.charAt(0).toUpperCase() + pelapor.role.slice(1)}
-              </span>
-            </td>
-            <td>
-              <div class="d-flex flex-column">
-                <span class="fw-bold">${Number(pelapor.total_laporan || 0).toLocaleString('id-ID')}</span>
-                <small class="text-muted">Camat: ${pelapor.total_laporan_camat || 0} | OPD: ${pelapor.total_laporan_opd || 0}</small>
-              </div>
-            </td>
-            <td><small class="text-muted">${formatDateIndoJS(pelapor.created_at)}</small></td>
-            <td class="text-center">
-              <div class="btn-group btn-group-sm">
-                <button class="btn btn-outline-primary" onclick="editPelapor(${pelapor.id_user})" title="Edit"><i class="fas fa-edit"></i></button>
-                <button class="btn btn-outline-danger" onclick="deletePelapor(${pelapor.id_user}, '${escapeHtml(pelapor.username)}')" title="Hapus"><i class="fas fa-trash"></i></button>
-              </div>
-            </td>
-          </tr>`;
-      });
-
-      content.innerHTML = `
-        <div class="table-responsive">
-          <table class="table table-hover">
-            <thead>
-              <tr>
-                <th class="border-top-0">No</th>
-                <th class="border-top-0">Username</th>
-                <th class="border-top-0">Email</th>
-                <th class="border-top-0">No. Telepon</th>
-                <th class="border-top-0">Jabatan</th>
-                <th class="border-top-0">Role</th>
-                <th class="border-top-0">Total Laporan</th>
-                <th class="border-top-0">Tanggal Dibuat</th>
-                <th class="border-top-0 text-center">Aksi</th>
-              </tr>
-            </thead>
-            <tbody id="dataTableBody">${rows}</tbody>
-          </table>
-        </div>
-        <div id="paginationWrapper"></div>`;
-    }
-
-    // Render info bar (total data, halaman, range)
-    function renderInfo(result) {
-      const limit = dpState.limit;
-      const rangeStart = result.total > 0 ? ((result.current_page - 1) * limit) + 1 : 0;
-      const rangeEnd = Math.min(result.current_page * limit, result.total);
-
-      document.getElementById('totalDataCount').textContent = Number(result.total).toLocaleString('id-ID') + ' pelapor';
-      document.getElementById('pageInfo').textContent = result.current_page + ' dari ' + Math.max(1, result.total_pages);
-      document.getElementById('rangeInfo').textContent = rangeStart + '-' + rangeEnd + ' dari ' + Number(result.total).toLocaleString('id-ID');
-    }
-
-    // Render navigasi pagination secara dinamis
-    function renderPagination(result) {
-      const wrapper = document.getElementById('paginationWrapper');
-      if (!wrapper) return;
-
-      if (result.total_pages <= 1) {
-        wrapper.innerHTML = '';
-        return;
-      }
-
-      const limit = dpState.limit;
-      const rangeStart = result.total > 0 ? ((result.current_page - 1) * limit) + 1 : 0;
-      const rangeEnd = Math.min(result.current_page * limit, result.total);
-
-      let html = `
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 mt-4">
-          <div class="text-muted small text-center text-md-start">
-            Menampilkan ${rangeStart}-${rangeEnd} dari ${Number(result.total).toLocaleString('id-ID')} data
-          </div>
-          <nav>
-            <ul class="pagination pagination-sm flex-wrap justify-content-center mb-0">`;
-
-      const page = result.current_page;
-      const totalPages = result.total_pages;
-
-      if (page > 1) {
-        html += `<li class="page-item"><a class="page-link" href="#" onclick="loadData(${page - 1}); return false;"><i class="fas fa-chevron-left"></i></a></li>`;
-      }
-
-      const startPage = Math.max(1, page - 2);
-      const endPage = Math.min(totalPages, page + 2);
-
-      if (startPage > 1) {
-        html += `<li class="page-item"><a class="page-link" href="#" onclick="loadData(1); return false;">1</a></li>`;
-        if (startPage > 2) {
-          html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
-        }
-      }
-
-      for (let i = startPage; i <= endPage; i++) {
-        const activeClass = i === page ? 'active' : '';
-        html += `<li class="page-item ${activeClass}"><a class="page-link" href="#" onclick="loadData(${i}); return false;">${i}</a></li>`;
-      }
-
-      if (endPage < totalPages) {
-        if (endPage < totalPages - 1) {
-          html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
-        }
-        html += `<li class="page-item"><a class="page-link" href="#" onclick="loadData(${totalPages}); return false;">${totalPages}</a></li>`;
-      }
-
-      if (page < totalPages) {
-        html += `<li class="page-item"><a class="page-link" href="#" onclick="loadData(${page + 1}); return false;"><i class="fas fa-chevron-right"></i></a></li>`;
-      }
-
-      html += `</ul></nav></div>`;
-      wrapper.innerHTML = html;
-    }
-
-    // Escape HTML sederhana untuk mencegah XSS saat render via JS
-    function escapeHtml(str) {
-      if (str === null || str === undefined) return '';
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-    }
-
-    // Show alert
-    function showAlert(type, message) {
-      const alertDiv = document.createElement('div');
-      alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
-      alertDiv.innerHTML = `
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      `;
-
-      document.querySelector('.page-header').after(alertDiv);
-
-      setTimeout(() => {
-        alertDiv.remove();
-      }, 5000);
-    }
-
-    // Search form submission
-    document.getElementById('searchForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      loadData(1);
-    });
-  </script>
+  </style>
 </body>
 </html>

@@ -4,9 +4,7 @@ require_once __DIR__ . '/../config/koneksi.php';
 require_once __DIR__ . '/BaseModel.php';
 
 class DataPelaporModel extends BaseModel {
-    /**
-     * Get all data pelapor with pagination and filtering
-     */
+    
     public function getAllDataPelapor($page = 1, $limit = 10, $search = '', $role = '') {
         $offset = ($page - 1) * $limit;
 
@@ -27,19 +25,19 @@ class DataPelaporModel extends BaseModel {
             $params[] = $role;
         }
 
-        // Add role filter to exclude admin
+        
         if ($whereClause) {
             $whereClause .= " AND u.role != 'admin'";
         } else {
             $whereClause = " WHERE u.role != 'admin'";
         }
 
-        // Get total data
+        
         $countQuery = "SELECT COUNT(*) as total FROM users u" . $whereClause;
         $countResult = query($countQuery, $params);
         $totalData = $countResult->fetch_assoc()['total'];
 
-        // Get data with pagination - use string concatenation for LIMIT
+        
         $query = "SELECT
                     u.id_user,
                     u.username,
@@ -71,9 +69,7 @@ class DataPelaporModel extends BaseModel {
         ];
     }
 
-    /**
-     * Get data pelapor by ID
-     */
+    
     public function getDataPelaporById($id) {
         $query = "SELECT
                     u.id_user,
@@ -93,11 +89,9 @@ class DataPelaporModel extends BaseModel {
         return $result->fetch_assoc();
     }
 
-    /**
-     * Create new data pelapor
-     */
+    
     public function createDataPelapor($data) {
-        // Check if username, email, or no_telp already exists
+        
         $checkQuery = "SELECT id_user FROM users WHERE username = '" . escapeString($data['username']) . "' OR email = '" . escapeString($data['email']) . "'";
         if (!empty($data['no_telp'])) {
             $checkQuery .= " OR no_telp = '" . escapeString($data['no_telp']) . "'";
@@ -111,10 +105,10 @@ class DataPelaporModel extends BaseModel {
             ];
         }
 
-        // Hash password
+        
         $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
 
-        // Insert new user
+        
         $query = "INSERT INTO users (username, email, no_telp, password, jabatan, role, created_at)
                   VALUES ('" . escapeString($data['username']) . "', '" . escapeString($data['email']) . "', '" . escapeString($data['no_telp']) . "', '" . $hashedPassword . "', '" . escapeString($data['jabatan']) . "', '" . escapeString($data['role']) . "', NOW())";
 
@@ -134,11 +128,9 @@ class DataPelaporModel extends BaseModel {
         }
     }
 
-    /**
-     * Update data pelapor
-     */
+    
     public function updateDataPelapor($id, $data) {
-        // Check if username/email/no_telp already exists (excluding current user)
+        
         $checkQuery = "SELECT id_user FROM users WHERE (username = '" . escapeString($data['username']) . "' OR email = '" . escapeString($data['email']) . "'";
         if (!empty($data['no_telp'])) {
             $checkQuery .= " OR no_telp = '" . escapeString($data['no_telp']) . "'";
@@ -153,7 +145,7 @@ class DataPelaporModel extends BaseModel {
             ];
         }
 
-        // Build query dynamically
+        
         $fields = [];
         $params = [];
 
@@ -163,7 +155,7 @@ class DataPelaporModel extends BaseModel {
         $fields[] = "jabatan = '" . escapeString($data['jabatan']) . "'";
         $fields[] = "role = '" . escapeString($data['role']) . "'";
 
-        // Add password if provided
+        
         if (!empty($data['password'])) {
             $fields[] = "password = '" . password_hash($data['password'], PASSWORD_DEFAULT) . "'";
         }
@@ -185,11 +177,9 @@ class DataPelaporModel extends BaseModel {
         }
     }
 
-    /**
-     * Delete data pelapor
-     */
+    
     public function deleteDataPelapor($id) {
-        // Delete user
+        
         $query = "DELETE FROM users WHERE id_user = " . (int)$id . " AND role IN ('camat', 'opd')";
         $result = query($query);
 
@@ -206,9 +196,7 @@ class DataPelaporModel extends BaseModel {
         }
     }
 
-    /**
-     * Get statistics for pelapor
-     */
+    
     public function getPelaporStatistics() {
         $query = "SELECT
                     role,
@@ -229,9 +217,7 @@ class DataPelaporModel extends BaseModel {
         return $data;
     }
 
-    /**
-     * Get data pelapor by role
-     */
+    
     public function getDataPelaporByRole($role) {
         $query = "SELECT
                     u.id_user,
@@ -256,9 +242,7 @@ class DataPelaporModel extends BaseModel {
         return $data;
     }
 
-    /**
-     * Search data pelapor
-     */
+    
     public function searchDataPelapor($keyword) {
         $searchTerm = '%' . $keyword . '%';
         $query = "SELECT

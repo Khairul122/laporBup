@@ -3,13 +3,11 @@ require_once __DIR__ . '/../config/koneksi.php';
 require_once __DIR__ . '/BaseModel.php';
 
 class ProfileModel extends BaseModel {
-    /**
-     * Get all profiles with pagination
-     */
+    
     public function getAllProfiles($page = 1, $limit = 10, $search = '', $role_filter = '') {
         $offset = ($page - 1) * $limit;
 
-        // Build WHERE conditions
+        
         $whereClause = "WHERE 1=1";
         $params = [];
 
@@ -24,7 +22,7 @@ class ProfileModel extends BaseModel {
             $params[] = $role_filter;
         }
 
-        // Main query
+        
         $query = "SELECT * FROM profile $whereClause ORDER BY nama_aplikasi ASC LIMIT $limit OFFSET $offset";
         $stmt = $this->db->prepare($query);
 
@@ -41,7 +39,7 @@ class ProfileModel extends BaseModel {
             $data[] = $row;
         }
 
-        // Get total count for pagination
+        
         $countQuery = "SELECT COUNT(*) as total FROM profile $whereClause";
         $countStmt = $this->db->prepare($countQuery);
 
@@ -66,9 +64,7 @@ class ProfileModel extends BaseModel {
         ];
     }
 
-    /**
-     * Get profile by ID
-     */
+    
     public function getProfileById($id_profile) {
         $id_profile = (int)$id_profile;
         $query = "SELECT * FROM profile WHERE id_profile = ?";
@@ -84,9 +80,7 @@ class ProfileModel extends BaseModel {
         return null;
     }
 
-    /**
-     * Create new profile
-     */
+    
     public function createProfile($data) {
         $query = "INSERT INTO profile (nama_aplikasi, logo, role) VALUES (?, ?, ?)";
         $stmt = $this->db->prepare($query);
@@ -106,9 +100,7 @@ class ProfileModel extends BaseModel {
         }
     }
 
-    /**
-     * Update profile
-     */
+    
     public function updateProfile($id_profile, $data) {
         $id_profile = (int)$id_profile;
         $query = "UPDATE profile SET nama_aplikasi = ?, logo = ?, role = ? WHERE id_profile = ?";
@@ -135,13 +127,11 @@ class ProfileModel extends BaseModel {
         }
     }
 
-    /**
-     * Delete profile
-     */
+    
     public function deleteProfile($id_profile) {
         $id_profile = (int)$id_profile;
 
-        // Check if profile exists
+        
         $profile = $this->getProfileById($id_profile);
         if (!$profile) {
             return [
@@ -174,9 +164,7 @@ class ProfileModel extends BaseModel {
         }
     }
 
-    /**
-     * Get profile statistics
-     */
+    
     public function getProfileStats() {
         $query = "SELECT
                     COUNT(*) as total,
@@ -196,9 +184,7 @@ class ProfileModel extends BaseModel {
         ];
     }
 
-    /**
-     * Check if nama_aplikasi already exists
-     */
+    
     public function checkNamaAplikasiExists($nama_aplikasi, $exclude_id = null) {
         $query = "SELECT COUNT(*) as count FROM profile WHERE nama_aplikasi = ?";
         $params = [$nama_aplikasi];
@@ -223,9 +209,7 @@ class ProfileModel extends BaseModel {
         return false;
     }
 
-    /**
-     * Get profiles by role
-     */
+    
     public function getProfilesByRole($role) {
         $query = "SELECT * FROM profile WHERE role = ? ORDER BY nama_aplikasi ASC";
         $stmt = $this->db->prepare($query);

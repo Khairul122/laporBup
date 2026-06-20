@@ -5,12 +5,12 @@ include 'views/layouts/simple-header.php';
 <?php include 'views/layouts/simple-navbar.php'; ?>
 
 <script>
-// Load desa berdasarkan kecamatan yang dipilih
+
 function loadDesa() {
     const kecamatanId = document.getElementById('id_kecamatan').value;
     const desaSelect = document.getElementById('id_desa');
 
-    // Update hidden field nama_kecamatan based on selected kecamatan
+    
     if(kecamatanId) {
         const kecamatanText = document.querySelector(`#id_kecamatan option[value="${kecamatanId}"]`).text;
         document.getElementById('hidden_nama_kecamatan').value = kecamatanText;
@@ -24,11 +24,11 @@ function loadDesa() {
         return;
     }
 
-    // Kosongkan dropdown desa sebelumnya
+    
     desaSelect.innerHTML = '<option value="">Memuat...</option>';
 
-    // Gunakan fetch untuk mendapatkan daftar desa
-    fetch(`index.php?controller=desa&action=getDesaByKecamatan&id_kecamatan=${kecamatanId}`, {
+    
+    fetch(`<?= route('desa', 'getDesaByKecamatan') ?>?id_kecamatan=${kecamatanId}`, {
         headers: {
             'X-Requested-With': 'XMLHttpRequest'
         }
@@ -43,7 +43,7 @@ function loadDesa() {
                     option.value = desa.id_desa;
                     option.textContent = desa.nama_desa;
 
-                    // Jika sebelumnya sudah dipilih desa, pilih kembali
+                    
                     <?php if (isset($laporan) && isset($selected_desa_id)): ?>
                         if (desa.id_desa == <?php echo $selected_desa_id; ?>) {
                             option.selected = true;
@@ -62,7 +62,6 @@ function loadDesa() {
         });
 }
 
-// Update hidden field nama_desa when desa is selected
 document.addEventListener('change', function(e) {
     if(e.target.id === 'id_desa') {
         const desaId = e.target.value;
@@ -78,7 +77,7 @@ document.addEventListener('change', function(e) {
 
 <div class="fullscreen-container">
     <div class="fullscreen-content">
-    <!-- Page Header -->
+    
     <div class="page-header">
         <div class="header-content">
             <h1 class="page-title">
@@ -86,7 +85,7 @@ document.addEventListener('change', function(e) {
                 <?php echo isset($laporan) ? 'Edit Laporan Camat' : 'Buat Laporan Camat Baru'; ?>
             </h1>
             <div class="page-actions">
-                <a href="index.php?controller=laporanCamat&action=index" class="btn btn-secondary">
+                <a href="<?= route('laporanCamat', 'index') ?>" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i>
                     Kembali ke Daftar
                 </a>
@@ -94,21 +93,21 @@ document.addEventListener('change', function(e) {
         </div>
     </div>
 
-    <!-- Form Container -->
+    
     <div class="form-container">
         <form id="laporanForm" method="POST" enctype="multipart/form-data"
-              action="index.php?controller=laporanCamat&action=<?php echo isset($laporan) ? 'update' : 'store'; ?>"
+              action="<?php echo isset($laporan) ? route('laporanCamat', 'update') : route('laporanCamat', 'store'); ?>"
               novalidate>
 
             <?php if (isset($laporan)): ?>
                 <input type="hidden" name="id" value="<?php echo $laporan['id_laporan_camat']; ?>">
             <?php endif; ?>
             
-            <!-- Hidden inputs to pass the names after selection -->
+            
             <input type="hidden" name="nama_kecamatan" id="hidden_nama_kecamatan" value="<?php echo isset($old_input['nama_kecamatan']) ? htmlspecialchars($old_input['nama_kecamatan']) : (isset($laporan) ? htmlspecialchars($laporan['nama_kecamatan']) : ''); ?>">
             <input type="hidden" name="nama_desa" id="hidden_nama_desa" value="<?php echo isset($old_input['nama_desa']) ? htmlspecialchars($old_input['nama_desa']) : (isset($laporan) ? htmlspecialchars($laporan['nama_desa']) : ''); ?>">
 
-            <!-- Informasi Pelapor Section -->
+            
             <div class="form-section">
                 <h2 class="section-title">
                     <i class="fas fa-user"></i>
@@ -131,7 +130,7 @@ document.addEventListener('change', function(e) {
                 </div>
             </div>
 
-            <!-- Wilayah Section -->
+            
             <div class="form-section">
                 <h2 class="section-title">
                     <i class="fas fa-map-marker-alt"></i>
@@ -154,7 +153,7 @@ document.addEventListener('change', function(e) {
                                         } else if (isset($laporan) && isset($selected_kecamatan_id)) {
                                             $selected_kec_id = $selected_kecamatan_id;
                                         } else if (isset($laporan)) {
-                                            // Jika tidak ada selected_kecamatan_id, cari berdasarkan nama
+                                            
                                             foreach($kecamatan_list as $kec_check) {
                                                 if($kec_check['nama_kecamatan'] === $laporan['nama_kecamatan']) {
                                                     $selected_kec_id = $kec_check['id_kecamatan'];
@@ -186,7 +185,7 @@ document.addEventListener('change', function(e) {
                                             } else if (isset($laporan) && isset($selected_desa_id)) {
                                                 $selected_desa_id_option = $selected_desa_id;
                                             } else if (isset($laporan)) {
-                                                // Jika tidak ada selected_desa_id, cari berdasarkan nama dalam desa_list
+                                                
                                                 foreach($desa_list as $desa_check) {
                                                     if($desa_check['nama_desa'] === $laporan['nama_desa']) {
                                                         $selected_desa_id_option = $desa_check['id_desa'];
@@ -205,7 +204,7 @@ document.addEventListener('change', function(e) {
                 </div>
             </div>
 
-            <!-- Kejadian Section -->
+            
             <div class="form-section">
                 <h2 class="section-title">
                     <i class="fas fa-calendar-alt"></i>
@@ -264,7 +263,7 @@ document.addEventListener('change', function(e) {
                 </div>
             </div>
 
-            <!-- Lampiran Section -->
+            
             <div class="form-section">
                 <h2 class="section-title">
                     <i class="fas fa-paperclip"></i>
@@ -295,7 +294,7 @@ document.addEventListener('change', function(e) {
                         <?php if (isset($laporan) && !empty($laporan['upload_file'])): ?>
                             <div class="current-file">
                                 <strong>File saat ini:</strong>
-                                <a href="index.php?controller=laporanCamat&action=download&id=<?php echo $laporan['id_laporan_camat']; ?>"
+                                <a href="<?= route('laporanCamat', 'download') ?>?id=<?php echo $laporan['id_laporan_camat']; ?>"
                                    target="_blank"
                                    class="file-link">
                                     <i class="fas fa-download"></i>
@@ -308,14 +307,14 @@ document.addEventListener('change', function(e) {
                 </div>
             </div>
 
-            <!-- Form Actions -->
+            
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary" id="submitBtn">
                     <i class="fas fa-save"></i>
                     <span><?php echo isset($laporan) ? 'Update Laporan' : 'Simpan Laporan'; ?></span>
                 </button>
 
-                <a href="index.php?controller=laporanCamat&action=index" class="btn btn-secondary">
+                <a href="<?= route('laporanCamat', 'index') ?>" class="btn btn-secondary">
                     <i class="fas fa-times"></i>
                     Batal
                 </a>
@@ -337,7 +336,6 @@ document.addEventListener('change', function(e) {
 
 <?php include 'views/layouts/simple-footer.php'; ?>
 
-<!-- Delete Confirmation Modal -->
 <div id="deleteModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -349,7 +347,7 @@ document.addEventListener('change', function(e) {
             <p class="text-danger">Tindakan ini tidak dapat dibatalkan.</p>
         </div>
         <div class="modal-footer">
-            <form id="deleteForm" method="POST" action="index.php?controller=laporanCamat&action=delete" style="display: inline;">
+            <form id="deleteForm" method="POST" action="<?= route('laporanCamat', 'delete') ?>" style="display: inline;">
                 <input type="hidden" name="id" id="deleteId">
                 <button type="submit" class="btn btn-danger">Hapus</button>
             </form>
@@ -358,285 +356,8 @@ document.addEventListener('change', function(e) {
     </div>
 </div>
 
+<script></script>
 
-
-
-<script>
-// Auto-select the kecamatan and load desa when page loads (for edit mode)
-document.addEventListener('DOMContentLoaded', function() {
-    <?php if (isset($laporan)): ?>
-        // Simulate loading desa after page load to ensure kecamatan is selected
-        setTimeout(function() {
-            // First, make sure the kecamatan is selected using the ID
-            const kecamatanSelect = document.getElementById('id_kecamatan');
-            const desaSelect = document.getElementById('id_desa');
-            
-            if (kecamatanSelect) {
-                // Set the kecamatan based on the stored ID from the controller
-                const kecamatanId = <?php echo json_encode($selected_kecamatan_id); ?>;
-                
-                if(kecamatanId) {
-                    kecamatanSelect.value = kecamatanId;
-                    
-                    // Now load the desa based on selected kecamatan
-                    loadDesa();
-                    
-                    // After desa is loaded, select the correct desa
-                    setTimeout(function() {
-                        const desaId = <?php echo json_encode($selected_desa_id); ?>;
-
-                        if(desaId && desaSelect) {
-                            desaSelect.value = desaId;
-
-                            // Update hidden fields
-                            const selectedDesa = desaSelect.options[desaSelect.selectedIndex];
-                            if(selectedDesa) {
-                                document.getElementById('hidden_nama_desa').value = selectedDesa.text;
-                            }
-                        }
-                    }, 300); // Wait for desa to load
-                }
-            }
-        }, 100); // Wait a bit to ensure DOM is fully loaded
-    <?php endif; ?>
-});
-
-// Character counter
-document.addEventListener('DOMContentLoaded', function() {
-    // Load desa jika kecamatan sudah dipilih sebelumnya
-    <?php if (isset($laporan) && $laporan['id_kecamatan']): ?>
-        window.addEventListener('load', function() {
-            // Simulate selecting the kecamatan to load the desa
-            setTimeout(function() {
-                loadDesa();
-            }, 100);
-        });
-    <?php endif; ?>
-
-    const textarea = document.getElementById('uraian_laporan');
-    const counter = document.getElementById('charCount');
-
-    if (textarea && counter) {
-        // Set initial count
-        counter.textContent = textarea.value.length;
-
-        // Update count on input
-        textarea.addEventListener('input', function() {
-            counter.textContent = this.value.length;
-
-            // Update counter color based on length
-            if (this.value.length < 10) {
-                counter.style.color = '#dc3545';
-            } else if (this.value.length > 500) {
-                counter.style.color = '#ffc107';
-            } else {
-                counter.style.color = '#666';
-            }
-        });
-    }
-
-    // Form validation
-    const form = document.getElementById('laporanForm');
-    const submitBtn = document.getElementById('submitBtn');
-
-    if (form && submitBtn) {
-        form.addEventListener('submit', function(e) {
-            let isValid = true;
-            const errors = [];
-
-            // Validate required fields
-            const namaPelapor = document.getElementById('nama_pelapor');
-            const idDesa = document.getElementById('id_desa');
-            const idKecamatan = document.getElementById('id_kecamatan');
-            const waktuKejadian = document.getElementById('waktu_kejadian');
-            const tujuan = document.getElementById('tujuan');
-            const uraianLaporan = document.getElementById('uraian_laporan');
-
-            if (!namaPelapor.value.trim()) {
-                errors.push('Nama pelapor harus diisi');
-                namaPelapor.classList.add('error');
-                isValid = false;
-            } else {
-                namaPelapor.classList.remove('error');
-            }
-
-            if (!idDesa.value) {
-                errors.push('Nama desa harus dipilih');
-                idDesa.classList.add('error');
-                isValid = false;
-            } else {
-                idDesa.classList.remove('error');
-            }
-
-            if (!idKecamatan.value) {
-                errors.push('Nama kecamatan harus dipilih');
-                idKecamatan.classList.add('error');
-                isValid = false;
-            } else {
-                idKecamatan.classList.remove('error');
-            }
-
-            if (!waktuKejadian.value) {
-                errors.push('Waktu kejadian harus diisi');
-                waktuKejadian.classList.add('error');
-                isValid = false;
-            } else {
-                waktuKejadian.classList.remove('error');
-            }
-
-            if (!tujuan.value) {
-                errors.push('Tujuan laporan harus dipilih');
-                tujuan.classList.add('error');
-                isValid = false;
-            } else {
-                tujuan.classList.remove('error');
-            }
-
-            if (!uraianLaporan.value.trim()) {
-                errors.push('Uraian laporan harus diisi');
-                uraianLaporan.classList.add('error');
-                isValid = false;
-            } else if (uraianLaporan.value.trim().length < 10) {
-                errors.push('Uraian laporan minimal 10 karakter');
-                uraianLaporan.classList.add('error');
-                isValid = false;
-            } else {
-                uraianLaporan.classList.remove('error');
-            }
-
-            // Show errors if any
-            if (!isValid) {
-                e.preventDefault();
-                showErrors(errors);
-            }
-        });
-    }
-
-    // File input preview
-    const fileInput = document.getElementById('upload_file');
-    if (fileInput) {
-        fileInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                // Check file size (50MB limit)
-                if (file.size > 50 * 1024 * 1024) {
-                    e.target.value = '';
-                    showNotification('Ukuran file terlalu besar. Maksimal 50MB.', 'error');
-                    return;
-                }
-
-                // Check file type
-                const allowedTypes = [
-                    // Documents
-                    'application/pdf', 'application/msword',
-                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                    'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                    'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-                    // Images
-                    'image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/webp', 'image/svg+xml',
-                    // Videos
-                    'video/mp4', 'video/avi', 'video/quicktime', 'video/x-ms-wmv',
-                    'video/x-flv', 'video/x-matroska', 'video/webm', 'video/3gpp'
-                ];
-                const allowedExtensions = /\.(pdf|doc|docx|xls|xlsx|ppt|pptx|jpg|jpeg|png|gif|bmp|webp|svg|mp4|avi|mov|wmv|flv|mkv|webm|3gp)$/i;
-                if (!allowedTypes.includes(file.type) && !file.name.match(allowedExtensions)) {
-                    e.target.value = '';
-                    showNotification('Tipe file tidak didukung. Hanya dokumen, gambar, dan video yang diperbolehkan.', 'error');
-                    return;
-                }
-
-                showNotification(`File "${file.name}" siap diupload.`, 'success');
-            }
-        });
-    }
-});
-
-// Show errors function
-function showErrors(errors) {
-    const existingError = document.querySelector('.error-message');
-    if (existingError) {
-        existingError.remove();
-    }
-
-    const errorDiv = document.createElement('div');
-    errorDiv.className = 'error-message';
-    errorDiv.innerHTML = `
-        <strong>Kesalahan:</strong>
-        <ul>
-            ${errors.map(error => `<li>${error}</li>`).join('')}
-        </ul>
-    `;
-
-    const form = document.getElementById('laporanForm');
-    form.insertBefore(errorDiv, form.firstChild);
-
-    // Scroll to top to see errors
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-
-    // Auto remove after 5 seconds
-    setTimeout(() => {
-        if (errorDiv.parentElement) {
-            errorDiv.remove();
-        }
-    }, 5000);
-}
-
-// Delete confirmation
-function confirmDelete(id) {
-    document.getElementById('deleteId').value = id;
-    document.getElementById('deleteModal').style.display = 'block';
-}
-
-function closeModal() {
-    document.getElementById('deleteModal').style.display = 'none';
-}
-
-// Close modal when clicking outside
-window.onclick = function(event) {
-    const modal = document.getElementById('deleteModal');
-    if (event.target === modal) {
-        closeModal();
-    }
-}
-
-// Show notifications
-function showNotification(message, type) {
-    // Remove existing notifications
-    const existingNotifications = document.querySelectorAll('.notification');
-    existingNotifications.forEach(n => n.remove());
-
-    // Create notification element
-    const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    notification.innerHTML = `
-        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
-        <span>${message}</span>
-        <button onclick="this.parentElement.remove()">&times;</button>
-    `;
-
-    // Add to page
-    document.body.appendChild(notification);
-
-    // Auto remove after 5 seconds
-    setTimeout(() => {
-        if (notification.parentElement) {
-            notification.remove();
-        }
-    }, 5000);
-}
-
-// Add error style
-const style = document.createElement('style');
-style.textContent = `
-    .form-control.error {
-        border-color: #dc3545;
-        box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
-    }
-`;
-document.head.appendChild(style);
-</script>
-
-<!-- Error/Success Messages -->
 <?php if (isset($_SESSION['errors'])): ?>
     <div class="error-message">
         <strong>Kesalahan:</strong>

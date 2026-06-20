@@ -9,9 +9,7 @@ class KecamatanController extends BaseController {
         $this->wilayahModel = new WilayahModel();
     }
 
-    /**
-     * Require role admin untuk mengakses halaman
-     */
+    
     private function requireAdmin() {
         $this->requireLogin();
 
@@ -26,19 +24,16 @@ class KecamatanController extends BaseController {
                 echo json_encode($response);
                 exit;
             } else {
-                header('Location: index.php?controller=dashboard&action=' . $_SESSION['role']);
-                exit;
+                $this->redirectToDashboard();
             }
         }
     }
 
-    /**
-     * Menampilkan halaman utama kecamatan
-     */
+    
     public function index() {
         $this->requireAdmin();
 
-        // Parameters untuk pagination dan search
+        
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
         $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
         $search = $_GET['search'] ?? '';
@@ -53,9 +48,7 @@ class KecamatanController extends BaseController {
         include 'views/wilayah/index-kecamatan.php';
     }
 
-    /**
-     * Menampilkan form tambah/edit kecamatan
-     */
+    
     public function form() {
         $this->requireAdmin();
 
@@ -66,16 +59,14 @@ class KecamatanController extends BaseController {
             $kecamatan = $this->wilayahModel->getKecamatanById($id_kecamatan);
             if (!$kecamatan) {
                 $_SESSION['error'] = 'Kecamatan tidak ditemukan';
-                $this->redirect('views/wilayah/index-kecamatan.php');
+                $this->redirect(route('kecamatan', 'index'));
             }
         }
 
         include 'views/wilayah/form-kecamatan.php';
     }
 
-    /**
-     * Menyimpan kecamatan (tambah/edit)
-     */
+    
     public function save() {
         $this->requireAdmin();
 
@@ -85,7 +76,7 @@ class KecamatanController extends BaseController {
                 'nama_kecamatan' => trim($_POST['nama_kecamatan'] ?? '')
             ];
 
-            // Validasi
+            
             if (empty($data['nama_kecamatan'])) {
                 $response = [
                     'success' => false,
@@ -93,7 +84,7 @@ class KecamatanController extends BaseController {
                 ];
             } else {
                 if ($id_kecamatan) {
-                    // Update
+                    
                     $result = $this->wilayahModel->updateKecamatan($id_kecamatan, $data);
                     $message = $result ? 'Kecamatan berhasil diperbarui' : 'Gagal memperbarui kecamatan';
                     $response = [
@@ -101,7 +92,7 @@ class KecamatanController extends BaseController {
                         'message' => $message
                     ];
                 } else {
-                    // Insert
+                    
                     $result = $this->wilayahModel->insertKecamatan($data);
                     $message = $result ? 'Kecamatan berhasil ditambahkan' : 'Gagal menambahkan kecamatan';
                     $response = [
@@ -117,14 +108,12 @@ class KecamatanController extends BaseController {
                 exit;
             } else {
                 $_SESSION[$response['success'] ? 'success' : 'error'] = $response['message'];
-                $this->redirect('../views/wilayah/index-kecamatan.php');
+                $this->redirect(route('kecamatan', 'index'));
             }
         }
     }
 
-    /**
-     * Menghapus kecamatan
-     */
+    
     public function delete() {
         $this->requireAdmin();
 
@@ -148,13 +137,11 @@ class KecamatanController extends BaseController {
             exit;
         } else {
             $_SESSION[$response['success'] ? 'success' : 'error'] = $response['message'];
-            $this->redirect('../views/wilayah/index-kecamatan.php');
+            $this->redirect(route('kecamatan', 'index'));
         }
     }
 
-    /**
-     * Get kecamatan stats for delete confirmation
-     */
+    
     public function getStats() {
         $this->requireAdmin();
 
@@ -170,10 +157,10 @@ class KecamatanController extends BaseController {
         }
 
         if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-            // Get related desa
+            
             $query = "SELECT id_desa, nama_desa FROM desa WHERE id_kecamatan = " . (int)$id_kecamatan . " ORDER BY nama_desa ASC";
 
-            // Get database connection from model
+            
             $db = $this->wilayahModel->db;
             $result = $db->query($query);
 

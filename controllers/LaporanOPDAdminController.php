@@ -9,9 +9,7 @@ class LaporanOPDAdminController extends BaseController {
         $this->laporanOPDAdminModel = new LaporanOPDAdminModel();
     }
 
-    /**
-     * Require role admin untuk mengakses halaman
-     */
+    
     private function requireAdmin() {
         $this->requireLogin();
 
@@ -26,14 +24,12 @@ class LaporanOPDAdminController extends BaseController {
                 echo json_encode($response);
                 exit;
             } else {
-                $this->redirect('index.php?controller=dashboard&action=admin');
+                $this->redirect(route('dashboard', 'admin'));
             }
         }
     }
 
-    /**
-     * Menampilkan halaman daftar laporan OPD
-     */
+    
     public function index() {
         $this->requireAdmin();
 
@@ -43,16 +39,16 @@ class LaporanOPDAdminController extends BaseController {
         $search = $_GET['search'] ?? '';
         $status = $_GET['status'] ?? '';
 
-        // Get data laporan OPD
+        
         $result = $this->laporanOPDAdminModel->getAllLaporanOPD($page, $limit, $search, $status);
         $laporans = $result['data'];
         $totalLaporan = $result['total'];
         $totalPages = $result['total_pages'];
 
-        // Get statistics
+        
         $statistics = $this->laporanOPDAdminModel->getLaporanOPDStatistics();
 
-        // Format statistics for view
+        
         $stats = [
             'total' => $statistics['total']['total_laporan'] ?? 0,
             'baru' => 0,
@@ -64,13 +60,11 @@ class LaporanOPDAdminController extends BaseController {
             $stats[$stat['status_laporan']] = $stat['total'];
         }
 
-        // Include view
+        
         include 'views/laporan-admin-opd/index.php';
     }
 
-    /**
-     * Menampilkan detail laporan OPD
-     */
+    
     public function detail() {
         $this->requireAdmin();
 
@@ -78,22 +72,20 @@ class LaporanOPDAdminController extends BaseController {
 
         if ($id === 0) {
             $_SESSION['error'] = "ID laporan tidak valid.";
-            $this->redirect('index.php?controller=laporanOPDAdmin&action=index');
+            $this->redirect(route('laporanOPDAdmin', 'index'));
         }
 
         $laporan = $this->laporanOPDAdminModel->getLaporanOPDById($id);
 
         if (!$laporan) {
             $_SESSION['error'] = "Laporan tidak ditemukan.";
-            $this->redirect('index.php?controller=laporanOPDAdmin&action=index');
+            $this->redirect(route('laporanOPDAdmin', 'index'));
         }
 
         include 'views/laporan-admin-opd/detail.php';
     }
 
-    /**
-     * Menampilkan halaman edit laporan OPD
-     */
+    
     public function edit() {
         $this->requireAdmin();
 
@@ -101,17 +93,17 @@ class LaporanOPDAdminController extends BaseController {
 
         if ($id === 0) {
             $_SESSION['error'] = "ID laporan tidak valid.";
-            $this->redirect('index.php?controller=laporanOPDAdmin&action=index');
+            $this->redirect(route('laporanOPDAdmin', 'index'));
         }
 
         $laporan = $this->laporanOPDAdminModel->getLaporanOPDById($id);
 
         if (!$laporan) {
             $_SESSION['error'] = "Laporan tidak ditemukan.";
-            $this->redirect('index.php?controller=laporanOPDAdmin&action=index');
+            $this->redirect(route('laporanOPDAdmin', 'index'));
         }
 
-        // Handle form submission
+        
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = [
                 'nama_opd' => trim($_POST['nama_opd']),
@@ -120,7 +112,7 @@ class LaporanOPDAdminController extends BaseController {
                 'status_laporan' => $_POST['status_laporan']
             ];
 
-            // Handle file upload
+            
             if (isset($_FILES['upload_file']) && $_FILES['upload_file']['error'] === UPLOAD_ERR_OK) {
                 $uploadResult = $this->handleFileUpload($_FILES['upload_file']);
                 if ($uploadResult['success']) {
@@ -136,7 +128,7 @@ class LaporanOPDAdminController extends BaseController {
 
             if ($result['success']) {
                 $_SESSION['success'] = $result['message'];
-                $this->redirect('index.php?controller=laporanOPDAdmin&action=index');
+                $this->redirect(route('laporanOPDAdmin', 'index'));
             } else {
                 $_SESSION['error'] = $result['message'];
             }
@@ -145,14 +137,12 @@ class LaporanOPDAdminController extends BaseController {
         include 'views/laporan-admin-opd/edit.php';
     }
 
-    /**
-     * Update status laporan
-     */
+    
     public function updateStatus() {
         $this->requireAdmin();
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect('index.php?controller=laporanOPDAdmin&action=index');
+            $this->redirect(route('laporanOPDAdmin', 'index'));
         }
 
         $id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
@@ -170,7 +160,7 @@ class LaporanOPDAdminController extends BaseController {
                 exit;
             } else {
                 $_SESSION['error'] = "Data tidak valid.";
-                $this->redirect('index.php?controller=laporanOPDAdmin&action=index');
+                $this->redirect(route('laporanOPDAdmin', 'index'));
             }
         }
 
@@ -182,7 +172,7 @@ class LaporanOPDAdminController extends BaseController {
             $_SESSION['error'] = $result['message'];
         }
 
-        $redirectUrl = $_POST['redirect_url'] ?? 'index.php?controller=laporanOPDAdmin&action=index';
+        $redirectUrl = $_POST['redirect_url'] ?? route('laporanOPDAdmin', 'index');
 
         if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
             header('Content-Type: application/json');
@@ -197,9 +187,7 @@ class LaporanOPDAdminController extends BaseController {
         }
     }
 
-    /**
-     * Hapus laporan OPD
-     */
+    
     public function delete() {
         $this->requireAdmin();
 
@@ -217,7 +205,7 @@ class LaporanOPDAdminController extends BaseController {
                 exit;
             } else {
                 $_SESSION['error'] = "ID laporan tidak valid.";
-                $this->redirect('index.php?controller=laporanOPDAdmin&action=index');
+                $this->redirect(route('laporanOPDAdmin', 'index'));
             }
         }
 
@@ -237,13 +225,11 @@ class LaporanOPDAdminController extends BaseController {
             ]);
             exit;
         } else {
-            $this->redirect('index.php?controller=laporanOPDAdmin&action=index');
+            $this->redirect(route('laporanOPDAdmin', 'index'));
         }
     }
 
-    /**
-     * Export data laporan OPD
-     */
+    
     public function export() {
         $this->requireAdmin();
 
@@ -253,15 +239,13 @@ class LaporanOPDAdminController extends BaseController {
             $this->exportCSV();
         } else {
             $_SESSION['error'] = "Format export tidak didukung.";
-            header('Location: index.php?controller=laporanOPDAdmin&action=index');
+            $this->redirect(route('laporanOPDAdmin', 'index'));
         }
     }
 
-    /**
-     * Export ke CSV
-     */
+    
     private function exportCSV() {
-        $data = $this->laporanOPDAdminModel->exportLaporanOPD(); // Get all data without pagination
+        $data = $this->laporanOPDAdminModel->exportLaporanOPD(); 
         $laporans = $data;
 
         header('Content-Type: text/csv');
@@ -269,10 +253,10 @@ class LaporanOPDAdminController extends BaseController {
 
         $output = fopen('php://output', 'w');
 
-        // CSV Header
+        
         fputcsv($output, ['ID', 'Nama OPD', 'Nama Kegiatan', 'Uraian', 'Tujuan', 'Status', 'Tanggal', 'User', 'File']);
 
-        // CSV Data
+        
         foreach ($laporans as $laporan) {
             fputcsv($output, [
                 $laporan['id_laporan_opd'],
@@ -291,15 +275,13 @@ class LaporanOPDAdminController extends BaseController {
         exit;
     }
 
-    /**
-     * Handle file upload
-     */
+    
     private function handleFileUpload($file) {
         $allowedTypes = ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx'];
-        $maxSize = 5 * 1024 * 1024; // 5MB
+        $maxSize = 5 * 1024 * 1024; 
         $uploadDir = __DIR__ . '/../uploads/laporan_opd/';
 
-        // Create directory if not exists
+        
         if (!file_exists($uploadDir)) {
             mkdir($uploadDir, 0777, true);
         }

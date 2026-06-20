@@ -9,9 +9,7 @@ class DesaController extends BaseController {
         $this->wilayahModel = new WilayahModel();
     }
 
-    /**
-     * Require role admin untuk mengakses halaman
-     */
+    
     private function requireAdmin() {
         $this->requireLogin();
 
@@ -26,19 +24,16 @@ class DesaController extends BaseController {
                 echo json_encode($response);
                 exit;
             } else {
-                header('Location: index.php?controller=dashboard&action=' . $_SESSION['role']);
-                exit;
+                $this->redirectToDashboard();
             }
         }
     }
 
-    /**
-     * Menampilkan halaman utama desa
-     */
+    
     public function index() {
         $this->requireAdmin();
 
-        // Parameters untuk pagination dan search
+        
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
         $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
         $search = $_GET['search'] ?? '';
@@ -55,9 +50,7 @@ class DesaController extends BaseController {
         include 'views/wilayah/index-desa.php';
     }
 
-    /**
-     * Menampilkan form tambah/edit desa
-     */
+    
     public function form() {
         $this->requireAdmin();
 
@@ -69,16 +62,14 @@ class DesaController extends BaseController {
             $desa = $this->wilayahModel->getDesaById($id_desa);
             if (!$desa) {
                 $_SESSION['error'] = 'Desa tidak ditemukan';
-                $this->redirect('../views/wilayah/index-desa.php');
+                $this->redirect(route('desa', 'index'));
             }
         }
 
         include 'views/wilayah/form-desa.php';
     }
 
-    /**
-     * Menyimpan desa (tambah/edit)
-     */
+    
     public function save() {
         $this->requireAdmin();
 
@@ -89,7 +80,7 @@ class DesaController extends BaseController {
                 'nama_desa' => trim($_POST['nama_desa'] ?? '')
             ];
 
-            // Validasi
+            
             if (empty($data['nama_desa'])) {
                 $response = [
                     'success' => false,
@@ -102,7 +93,7 @@ class DesaController extends BaseController {
                 ];
             } else {
                 if ($id_desa) {
-                    // Update
+                    
                     $result = $this->wilayahModel->updateDesa($id_desa, $data);
                     $message = $result ? 'Desa berhasil diperbarui' : 'Gagal memperbarui desa';
                     $response = [
@@ -110,7 +101,7 @@ class DesaController extends BaseController {
                         'message' => $message
                     ];
                 } else {
-                    // Insert
+                    
                     $result = $this->wilayahModel->insertDesa($data);
                     $message = $result ? 'Desa berhasil ditambahkan' : 'Gagal menambahkan desa';
                     $response = [
@@ -126,14 +117,12 @@ class DesaController extends BaseController {
                 exit;
             } else {
                 $_SESSION[$response['success'] ? 'success' : 'error'] = $response['message'];
-                $this->redirect('../views/wilayah/index-desa.php');
+                $this->redirect(route('desa', 'index'));
             }
         }
     }
 
-    /**
-     * Menghapus desa
-     */
+    
     public function delete() {
         $this->requireAdmin();
 
@@ -157,13 +146,11 @@ class DesaController extends BaseController {
             exit;
         } else {
             $_SESSION[$response['success'] ? 'success' : 'error'] = $response['message'];
-            $this->redirect('../views/wilayah/index-desa.php');
+            $this->redirect(route('desa', 'index'));
         }
     }
 
-    /**
-     * Get kecamatan options for AJAX
-     */
+    
     public function getKecamatanOptions() {
         $this->requireAdmin();
 
@@ -178,9 +165,7 @@ class DesaController extends BaseController {
         }
     }
 
-    /**
-     * Get desa by kecamatan for AJAX
-     */
+    
     public function getDesaByKecamatan() {
         $this->requireLogin();
         
@@ -213,8 +198,8 @@ class DesaController extends BaseController {
             }
             exit;
         } else {
-            // For non-AJAX request, redirect to index
-            $this->redirect('index.php?controller=desa&action=index');
+            
+            $this->redirect(route('desa', 'index'));
         }
     }
 }

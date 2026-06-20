@@ -23,7 +23,7 @@
           </div>
 
           <div class="row">
-            <!-- Form Section -->
+            
             <div class="col-lg-8">
               <div class="card shadow-sm">
                 <div class="card-header bg-white border-0 py-3">
@@ -41,7 +41,7 @@
                   <form id="messageForm" onsubmit="sendMessage(event)">
                     <input type="hidden" name="id" id="messageId" value="<?php echo $message['id_wagateway'] ?? ''; ?>">
 
-                    <!-- Recipient Section -->
+                    
                     <div class="form-section mb-4">
                       <h6 class="section-title mb-3">
                         <i class="fas fa-user-plus text-primary me-2"></i>
@@ -85,7 +85,7 @@
                     </div>
 
                     
-                    <!-- Message Section -->
+                    
                     <div class="form-section mb-4">
                       <h6 class="section-title mb-3">
                         <i class="fas fa-comment-dots text-primary me-2"></i>
@@ -120,10 +120,10 @@
                     </div>
 
                     
-                    <!-- Action Buttons -->
+                    
                     <div class="form-section">
                       <div class="d-flex justify-content-between align-items-center">
-                        <a href="index.php?controller=waGateway" class="btn btn-secondary">
+                        <a href="<?= route('waGateway', 'index') ?>" class="btn btn-secondary">
                           <i class="fas fa-arrow-left me-2"></i> Kembali
                         </a>
                         <div class="d-flex gap-2">
@@ -142,7 +142,7 @@
               </div>
             </div>
 
-            <!-- Preview Section -->
+            
             <div class="col-lg-4">
               <div class="card shadow-sm sticky-top" style="top: 20px;">
                 <div class="card-header bg-white border-0 py-3">
@@ -174,7 +174,7 @@
     </div>
   </div>
 
-  <!-- Contact Selection Modal -->
+  
   <div class="modal fade" id="contactModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
@@ -223,7 +223,7 @@
     </div>
   </div>
 
-  <!-- Emoji Picker Modal -->
+  
   <div class="modal fade" id="emojiModal" tabindex="-1">
     <div class="modal-dialog modal-sm">
       <div class="modal-content">
@@ -248,7 +248,7 @@
   </div>
 
   <?php
-  // Helper function untuk format tanggal Indonesia
+  
   function formatDateIndo($date) {
       $days = array('Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu');
       $months = array('', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember');
@@ -266,269 +266,8 @@
 
   <?php include 'views/layouts/admin-script.php'; ?>
 
-  <!-- Custom JavaScript -->
-  <script>
-    
-    
-    // Update character and SMS count
-    function updateCharacterCount() {
-      const pesan = document.getElementById('pesan').value;
-      const charCount = document.getElementById('charCount');
-      const smsCount = document.getElementById('smsCount');
-      const charCountDisplay = charCount.parentElement;
-
-      const length = pesan.length;
-      const smsLength = 160; // Standard SMS length
-      const maxLength = 1600; // Maximum 10 SMS
-
-      charCount.textContent = length;
-      smsCount.textContent = Math.ceil(length / smsLength);
-
-      // Color coding based on character count
-      charCountDisplay.classList.remove('char-count-safe', 'char-count-warning', 'char-count-danger');
-
-      if (length <= smsLength) {
-        charCountDisplay.classList.add('char-count-safe');
-      } else if (length <= maxLength * 0.8) {
-        charCountDisplay.classList.add('char-count-warning');
-      } else {
-        charCountDisplay.classList.add('char-count-danger');
-      }
-
-      updatePreview();
-    }
-
-    // Update preview
-    function updatePreview() {
-      const pesan = document.getElementById('pesan');
-      const previewContent = document.getElementById('previewContent');
-      const previewTime = document.getElementById('previewTime');
-
-      if (!pesan || !previewContent) return;
-
-      const pesanValue = pesan.value;
-
-      if (pesanValue.trim()) {
-        previewContent.innerHTML = nl2br(htmlspecialchars(pesanValue));
-      } else {
-        previewContent.innerHTML = 'Ketik pesan untuk melihat preview...';
-      }
-
-      // Always show "Sekarang" since we send immediately
-      if (previewTime) {
-        previewTime.textContent = 'Sekarang';
-      }
-
-      // Animate the preview bubble
-      const chatBubble = previewContent.closest('.chat-bubble');
-      if (chatBubble) {
-        chatBubble.style.transform = 'scale(0.98)';
-        setTimeout(() => {
-          chatBubble.style.transform = 'scale(1)';
-        }, 100);
-      }
-    }
-
-    // Show contact modal
-    function showContactModal() {
-      const modal = new bootstrap.Modal(document.getElementById('contactModal'));
-      modal.show();
-    }
-
-    // Select contact
-    function selectContact(phone, name) {
-      document.getElementById('no_tujuan').value = phone;
-
-      // Close modal
-      const modal = bootstrap.Modal.getInstance(document.getElementById('contactModal'));
-      modal.hide();
-
-      // Show notification
-      showNotification('success', `Kontak "${name}" dipilih`);
-    }
-
-    // Search contacts
-    function searchContacts() {
-      const searchTerm = document.getElementById('contactSearch').value.toLowerCase();
-      const contactItems = document.querySelectorAll('.contact-item');
-
-      contactItems.forEach(item => {
-        const text = item.textContent.toLowerCase();
-        if (text.includes(searchTerm)) {
-          item.style.display = 'block';
-        } else {
-          item.style.display = 'none';
-        }
-      });
-    }
-
-    // Add emoji
-    function addEmoji() {
-      const modal = new bootstrap.Modal(document.getElementById('emojiModal'));
-      modal.show();
-    }
-
-    // Insert emoji
-    function insertEmoji(emoji) {
-      const pesanField = document.getElementById('pesan');
-      const start = pesanField.selectionStart;
-      const end = pesanField.selectionEnd;
-
-      pesanField.value = pesanField.value.substring(0, start) + emoji + pesanField.value.substring(end);
-      pesanField.selectionStart = pesanField.selectionEnd = start + emoji.length;
-
-      updateCharacterCount();
-
-      // Close modal
-      const modal = bootstrap.Modal.getInstance(document.getElementById('emojiModal'));
-      modal.hide();
-    }
-
-    // Add variable
-    function addVariable() {
-      const pesanField = document.getElementById('pesan');
-      const start = pesanField.selectionStart;
-
-      pesanField.value = pesanField.value.substring(0, start) + '{nama}' + pesanField.value.substring(start);
-      pesanField.selectionStart = pesanField.selectionEnd = start + 6; // Length of {nama}
-
-      updateCharacterCount();
-    }
-
-    // Send message
-    function sendMessage(event) {
-      event.preventDefault();
-
-      const form = document.getElementById('messageForm');
-      const formData = new FormData(form);
-      const submitBtn = document.getElementById('submitBtn');
-      const submitBtnText = document.getElementById('submitBtnText');
-
-      // Show loading state
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Mengirim...';
-
-      // Convert FormData to URLSearchParams
-      const params = new URLSearchParams();
-      for (const [key, value] of formData.entries()) {
-        params.append(key, value);
-      }
-
-      fetch('index.php?controller=waGateway&action=send', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: params.toString()
-      })
-      .then(response => response.json())
-      .then(result => {
-        if (result.success) {
-          showNotification('success', result.message);
-
-          // Redirect after delay
-          setTimeout(() => {
-            window.location.href = 'index.php?controller=waGateway';
-          }, 1500);
-        } else {
-          showNotification('danger', result.message);
-        }
-      })
-      .catch(error => {
-        showNotification('danger', 'Error: ' + error.message);
-      })
-      .finally(() => {
-        // Reset button state
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> <span id="submitBtnText">' + submitBtnText.textContent + '</span>';
-      });
-    }
-
-    // Show notification
-    function showNotification(type, message) {
-      // Remove existing alerts
-      const existingAlerts = document.querySelectorAll('.alert');
-      existingAlerts.forEach(alert => alert.remove());
-
-      // Create new alert
-      const alertDiv = document.createElement('div');
-      alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
-      alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
-      alertDiv.innerHTML = `
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      `;
-
-      document.body.appendChild(alertDiv);
-
-      // Auto remove after 5 seconds
-      setTimeout(() => {
-        if (alertDiv.parentNode) {
-          alertDiv.remove();
-        }
-      }, 5000);
-    }
-
-    // nl2br function for JavaScript
-    function nl2br(str) {
-      return str.replace(/\\n/g, '<br>');
-    }
-
-    // htmlspecialchars function for JavaScript
-    function htmlspecialchars(str) {
-      if (typeof str !== 'string') return str;
-      return str
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-    }
-
-    // Phone number validation
-    document.getElementById('no_tujuan').addEventListener('input', function(e) {
-      let value = e.target.value;
-
-      // Allow only numbers, +, and spaces
-      value = value.replace(/[^0-9+\s]/g, '');
-
-      // Format: If starts with 0, keep as is. If starts with 62, add + at the beginning
-      if (value.startsWith('62') && !value.startsWith('+62')) {
-        value = '+' + value;
-      }
-
-      e.target.value = value;
-
-      // Validate format
-      const phoneRegex = /^(^\+62|62|^08)[0-9]{9,13}$/;
-      if (value.length > 0 && !phoneRegex.test(value.replace(/\s/g, ''))) {
-        e.target.classList.add('is-invalid');
-      } else {
-        e.target.classList.remove('is-invalid');
-      }
-    });
-
-    // Initialize form on load
-    document.addEventListener('DOMContentLoaded', function() {
-      updateCharacterCount();
-      updatePreview(); // Initialize preview on page load
-
-      
-      // Message textarea change handler for real-time preview
-      const pesanTextarea = document.getElementById('pesan');
-      if (pesanTextarea) {
-        pesanTextarea.addEventListener('input', function(e) {
-          updatePreview();
-        });
-      }
-
-      // Focus on first empty field
-      const firstEmpty = document.querySelector('input:not([readonly]):not([disabled]):not([value])');
-      if (firstEmpty) {
-        firstEmpty.focus();
-      }
-    });
-  </script>
+  
+  <script></script>
 
   <style>
     /* General Form Styling */

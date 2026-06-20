@@ -1,7 +1,6 @@
 <?php include('views/layouts/admin-header.php'); ?>
 
 <style>
-  /* Custom toast positioning */
   .toast-container {
     position: fixed;
     top: 20px;
@@ -25,7 +24,6 @@
     border: 1px solid #ef4444;
   }
 
-  /* Ensure toast is above other elements */
   .position-fixed {
     z-index: 1055 !important;
   }
@@ -42,17 +40,15 @@
           <div class="row">
             <div class="col-sm-12">
 
-              <!-- Header -->
               <div class="page-header d-flex justify-content-between align-items-center mb-4">
                 <div>
                   <h2 class="page-title"><?php echo $kecamatan ? 'Edit Kecamatan' : 'Tambah Kecamatan'; ?></h2>
                 </div>
-                <a href="../views/wilayah/index-kecamatan.php" class="btn btn-secondary">
+                <a href="<?= route('kecamatan', 'index') ?>" class="btn btn-secondary">
                   <i class="mdi mdi-arrow-left me-2"></i> Kembali
                 </a>
               </div>
 
-              <!-- Form Card -->
               <div class="card">
                 <div class="card-header">
                   <h5 class="card-title mb-0">
@@ -61,7 +57,7 @@
                   </h5>
                 </div>
                 <div class="card-body">
-                  <form id="kecamatanForm" method="POST" action="index.php?controller=kecamatan&action=save">
+                  <form id="kecamatanForm" method="POST" action="<?= route('kecamatan', 'save') ?>">
                     <input type="hidden" name="id_kecamatan" value="<?php echo $kecamatan ? $kecamatan['id_kecamatan'] : ''; ?>">
 
                     <div class="row mb-3">
@@ -91,7 +87,7 @@
                           <i class="mdi mdi-content-save me-2"></i>
                           <?php echo $kecamatan ? 'Update' : 'Simpan'; ?>
                         </button>
-                        <a href="index.php?controller=wilayah&action=index&tab=kecamatan"
+                        <a href="<?= route('kecamatan', 'index') ?>"
                           class="btn btn-secondary">
                           <i class="mdi mdi-close-circle me-2"></i> Batal
                         </a>
@@ -109,14 +105,10 @@
   </div>
   <?php include 'views/layouts/admin-script.php'; ?>
 
-
-  <!-- Custom Scripts -->
   <script>
-    // Simple notification function
     function showNotification(message, type = 'success') {
       console.log('Showing notification:', message, type);
 
-      // Create a simple toast notification
       const toastContainer = document.createElement('div');
       toastContainer.style.cssText = `
         position: fixed;
@@ -143,7 +135,6 @@
         <button style="background: none; border: none; color: white; cursor: pointer; font-size: 20px; margin-left: 10px;" onclick="this.parentElement.remove()">×</button>
       `;
 
-      // Add animation
       const style = document.createElement('style');
       style.textContent = `
         @keyframes slideIn {
@@ -171,7 +162,6 @@
 
       document.body.appendChild(toastContainer);
 
-      // Auto remove after 5 seconds
       setTimeout(() => {
         toastContainer.style.animation = 'slideOut 0.3s ease-in';
         setTimeout(() => {
@@ -184,18 +174,15 @@
       console.log('Custom toast shown');
     }
 
-    // Form validation and submission
     document.getElementById('kecamatanForm').addEventListener('submit', function(e) {
       e.preventDefault();
 
       const form = e.target;
       const namaKecamatan = form.nama_kecamatan.value.trim();
 
-      // Reset validation states
       form.classList.remove('was-validated');
       form.nama_kecamatan.classList.remove('is-invalid');
 
-      // Validate
       let isValid = true;
 
       if (!namaKecamatan) {
@@ -204,16 +191,13 @@
       }
 
       if (isValid) {
-        // Show loading
         const submitBtn = form.querySelector('button[type="submit"]');
         const originalText = submitBtn.innerHTML;
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Menyimpan...';
 
-        // Create form data
         const formData = new FormData(form);
 
-        // Send via AJAX
         fetch(form.action, {
             method: 'POST',
             body: formData,
@@ -229,11 +213,11 @@
             return response.json();
           })
           .then(data => {
-            console.log('Response data:', data); // Debug log
+            console.log('Response data:', data);
             if (data.success) {
               showNotification(data.message, 'success');
               setTimeout(() => {
-                window.location.href = '../views/wilayah/index-kecamatan.php';
+                window.location.href = '<?= route('kecamatan', 'index') ?>';
               }, 1500);
             } else {
               showNotification(data.message, 'error');
@@ -252,15 +236,12 @@
       }
     });
 
-    // Capitalize input
     document.getElementById('nama_kecamatan').addEventListener('input', function(e) {
       let value = e.target.value;
-      // Capitalize first letter of each word
       value = value.replace(/\b\w/g, l => l.toUpperCase());
       e.target.value = value;
     });
 
-    // Show toast on page load if there are session messages
     <?php if (isset($_SESSION['error'])): ?>
       showNotification('<?php echo addslashes($_SESSION['error']); ?>', 'error');
       <?php unset($_SESSION['error']); ?>

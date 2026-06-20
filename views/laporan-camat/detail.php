@@ -6,7 +6,7 @@ include 'views/layouts/simple-header.php';
 
 <div class="fullscreen-container">
     <div class="fullscreen-content">
-        <!-- Page Header -->
+        
         <div class="page-header">
             <div class="header-content">
                 <h1 class="page-title">
@@ -16,7 +16,7 @@ include 'views/layouts/simple-header.php';
             </div>
         </div>
 
-        <!-- Status Card -->
+        
         <div class="status-card">
             <div class="status-content">
                 <div class="status-badge <?php echo getStatusClass($laporan['status_laporan']); ?>">
@@ -38,10 +38,10 @@ include 'views/layouts/simple-header.php';
             </div>
         </div>
 
-        <!-- Detail Container -->
+        
         <div class="detail-container">
             <div class="detail-grid">
-                <!-- Informasi Pelapor -->
+                
                 <div class="detail-section">
                     <h2 class="section-title">
                         <i class="fas fa-user"></i>
@@ -58,7 +58,7 @@ include 'views/layouts/simple-header.php';
                     </div>
                 </div>
 
-                <!-- Informasi Wilayah -->
+                
                 <div class="detail-section">
                     <h2 class="section-title">
                         <i class="fas fa-map-marker-alt"></i>
@@ -83,7 +83,7 @@ include 'views/layouts/simple-header.php';
                 </div>
             </div>
 
-            <!-- Informasi Kejadian -->
+            
             <div class="detail-section full-width">
                 <h2 class="section-title">
                     <i class="fas fa-calendar-alt"></i>
@@ -107,7 +107,7 @@ include 'views/layouts/simple-header.php';
                 </div>
             </div>
 
-            <!-- Uraian Laporan -->
+            
             <div class="detail-section full-width">
                 <h2 class="section-title">
                     <i class="fas fa-file-alt"></i>
@@ -116,7 +116,7 @@ include 'views/layouts/simple-header.php';
                 <?php echo nl2br(htmlspecialchars($laporan['uraian_laporan'])); ?>
             </div>
 
-            <!-- Lampiran File & Aksi -->
+            
             <div class="detail-section full-width">
                 <div class="section-header">
                     <h2 class="section-title">
@@ -141,7 +141,7 @@ include 'views/layouts/simple-header.php';
                                 </div>
                             </div>
                             <div class="file-actions">
-                                <a href="index.php?controller=laporanCamat&action=download&id=<?php echo $laporan['id_laporan_camat']; ?>"
+                                <a href="<?= route('laporanCamat', 'download') ?>?id=<?php echo $laporan['id_laporan_camat']; ?>"
                                     class="btn btn-primary btn-sm"
                                     target="_blank">
                                     <i class="fas fa-download"></i>
@@ -162,21 +162,21 @@ include 'views/layouts/simple-header.php';
 
                 </div>
                 <div style="text-align: right; padding-top: 10px;">
-                    <a href="index.php?controller=laporanCamat&action=index"
+                    <a href="<?= route('laporanCamat', 'index') ?>"
                         class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i>
                         Kembali
                     </a>
 
-                    <!-- Action Buttons -->
+                    
                     <?php if ($_SESSION['role'] === 'camat' && $laporan['status_laporan'] === 'baru' && $laporan['id_user'] == $_SESSION['user_id']): ?>
-                        <a href="index.php?controller=laporanCamat&action=edit&id=<?php echo $laporan['id_laporan_camat']; ?>" class="btn btn-warning">
+                        <a href="<?= route('laporanCamat', 'edit') ?>?id=<?php echo $laporan['id_laporan_camat']; ?>" class="btn btn-warning">
                             <i class="fas fa-edit"></i> Edit
                         </a>
                     <?php endif; ?>
 
                     <?php if ($_SESSION['role'] === 'admin'): ?>
-                        <form method="POST" action="index.php?controller=laporanCamat&action=updateStatus&id=<?php echo $laporan['id_laporan_camat']; ?>" style="display: inline;">
+                        <form method="POST" action="<?= route('laporanCamat', 'updateStatus') ?>?id=<?php echo $laporan['id_laporan_camat']; ?>" style="display: inline;">
                             <select name="status" class="form-select d-inline w-auto me-2" required>
                                 <option value="">Ubah Status</option>
                                 <option value="baru" <?php echo $laporan['status_laporan'] === 'baru' ? 'selected' : ''; ?>>Baru</option>
@@ -194,7 +194,7 @@ include 'views/layouts/simple-header.php';
         </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
+    
     <div id="deleteModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -206,7 +206,7 @@ include 'views/layouts/simple-header.php';
                 <p class="text-danger">Tindakan ini tidak dapat dibatalkan.</p>
             </div>
             <div class="modal-footer">
-                <form id="deleteForm" method="POST" action="index.php?controller=laporanCamat&action=delete" style="display: inline;">
+                <form id="deleteForm" method="POST" action="<?= route('laporanCamat', 'delete') ?>" style="display: inline;">
                     <input type="hidden" name="id" id="deleteId">
                     <button type="submit" class="btn btn-danger">Hapus</button>
                 </form>
@@ -215,7 +215,7 @@ include 'views/layouts/simple-header.php';
         </div>
     </div>
 
-    <!-- File Preview Modal -->
+    
     <div id="previewModal" class="modal">
         <div class="modal-content modal-large">
             <div class="modal-header">
@@ -238,7 +238,7 @@ include 'views/layouts/simple-header.php';
     </div>
 
     <?php
-    // Helper functions for detail view
+    
     function getStatusClass($status)
     {
         switch ($status) {
@@ -306,7 +306,7 @@ include 'views/layouts/simple-header.php';
         $extension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
 
         $types = [
-            // Documents
+            
             'pdf' => 'PDF Document',
             'doc' => 'Word Document',
             'docx' => 'Word Document',
@@ -314,7 +314,7 @@ include 'views/layouts/simple-header.php';
             'xlsx' => 'Excel Spreadsheet',
             'ppt' => 'PowerPoint',
             'pptx' => 'PowerPoint',
-            // Images
+            
             'jpg' => 'JPEG Image',
             'jpeg' => 'JPEG Image',
             'png' => 'PNG Image',
@@ -322,7 +322,7 @@ include 'views/layouts/simple-header.php';
             'bmp' => 'Bitmap Image',
             'webp' => 'WebP Image',
             'svg' => 'SVG Image',
-            // Videos
+            
             'mp4' => 'MP4 Video',
             'avi' => 'AVI Video',
             'mov' => 'QuickTime Video',
@@ -345,7 +345,7 @@ include 'views/layouts/simple-header.php';
         $extension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
 
         $icons = [
-            // Documents
+            
             'pdf' => 'fa-file-pdf',
             'doc' => 'fa-file-word',
             'docx' => 'fa-file-word',
@@ -353,7 +353,7 @@ include 'views/layouts/simple-header.php';
             'xlsx' => 'fa-file-excel',
             'ppt' => 'fa-file-powerpoint',
             'pptx' => 'fa-file-powerpoint',
-            // Images
+            
             'jpg' => 'fa-file-image',
             'jpeg' => 'fa-file-image',
             'png' => 'fa-file-image',
@@ -361,7 +361,7 @@ include 'views/layouts/simple-header.php';
             'bmp' => 'fa-file-image',
             'webp' => 'fa-file-image',
             'svg' => 'fa-file-image',
-            // Videos
+            
             'mp4' => 'fa-file-video',
             'avi' => 'fa-file-video',
             'mov' => 'fa-file-video',
@@ -921,7 +921,7 @@ include 'views/layouts/simple-header.php';
     </style>
 
     <script>
-        // Delete confirmation
+        
         function confirmDelete(id) {
             document.getElementById('deleteId').value = id;
             document.getElementById('deleteModal').style.display = 'block';
@@ -931,7 +931,7 @@ include 'views/layouts/simple-header.php';
             document.getElementById('deleteModal').style.display = 'none';
         }
 
-        // File preview
+        
         function previewFile() {
             const filePath = '<?php echo $laporan['upload_file'] ?? ''; ?>';
             const fileName = '<?php echo basename($laporan['upload_file'] ?? ''); ?>';
@@ -945,21 +945,21 @@ include 'views/layouts/simple-header.php';
             const previewFrame = document.getElementById('previewFrame');
             const downloadBtn = document.getElementById('downloadBtn');
 
-            // Set iframe source
+            
             previewFrame.src = filePath;
-            downloadBtn.href = 'index.php?controller=laporanCamat&action=download&id=<?php echo $laporan['id_laporan_camat']; ?>';
+            downloadBtn.href = '<?= route('laporanCamat', 'download') ?>?id=<?php echo $laporan['id_laporan_camat']; ?>';
 
-            // Show modal
+            
             previewModal.style.display = 'block';
         }
 
         function closePreviewModal() {
             document.getElementById('previewModal').style.display = 'none';
-            // Clear iframe source to stop loading
+            
             document.getElementById('previewFrame').src = '';
         }
 
-        // Close modal when clicking outside
+        
         window.onclick = function(event) {
             const deleteModal = document.getElementById('deleteModal');
             const previewModal = document.getElementById('previewModal');
@@ -973,15 +973,15 @@ include 'views/layouts/simple-header.php';
             }
         }
 
-        // Show notifications
+        
         document.addEventListener('DOMContentLoaded', function() {
-            // Success message
+            
             <?php if (isset($_SESSION['success'])): ?>
                 showNotification('<?php echo addslashes($_SESSION['success']); ?>', 'success');
                 <?php unset($_SESSION['success']); ?>
             <?php endif; ?>
 
-            // Error message
+            
             <?php if (isset($_SESSION['error'])): ?>
                 showNotification('<?php echo addslashes($_SESSION['error']); ?>', 'error');
                 <?php unset($_SESSION['error']); ?>
@@ -989,11 +989,11 @@ include 'views/layouts/simple-header.php';
         });
 
         function showNotification(message, type) {
-            // Remove existing notifications
+            
             const existingNotifications = document.querySelectorAll('.notification');
             existingNotifications.forEach(n => n.remove());
 
-            // Create notification element
+            
             const notification = document.createElement('div');
             notification.className = `notification notification-${type}`;
             notification.innerHTML = `
@@ -1002,10 +1002,10 @@ include 'views/layouts/simple-header.php';
         <button onclick="this.parentElement.remove()">&times;</button>
     `;
 
-            // Add to page
+            
             document.body.appendChild(notification);
 
-            // Auto remove after 5 seconds
+            
             setTimeout(() => {
                 if (notification.parentElement) {
                     notification.remove();
@@ -1013,7 +1013,7 @@ include 'views/layouts/simple-header.php';
             }, 5000);
         }
 
-        // Print functionality
+        
         function printLaporan() {
             window.print();
         }

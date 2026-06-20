@@ -32,13 +32,13 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // Tambahkan kelas 'collapse-init' ke semua elemen collapse saat halaman dimuat
+      
       const collapseElements = document.querySelectorAll('.sidebar .nav .collapse');
       collapseElements.forEach(function(element) {
         element.classList.add('collapse-init');
       });
       
-      // Hapus state 'show' dari semua elemen collapse saat halaman dimuat
+      
       setTimeout(function() {
         const showElements = document.querySelectorAll('.sidebar .nav .show');
         showElements.forEach(function(element) {
@@ -48,7 +48,7 @@
     });
   </script>
 
-  <!-- Bootstrap JavaScript -->
+  
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   
   <style>

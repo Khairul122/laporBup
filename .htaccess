@@ -68,3 +68,11 @@ RewriteRule ^ - [F,L]
 # Limit ukuran request body (mitigasi upload abuse / sebagian DDOS)
 # ---------------------------------------------------------------------
 LimitRequestBody 10485760
+
+# ---------------------------------------------------------------------
+# Front Controller Rewrite (Semantic URLs)
+# ---------------------------------------------------------------------
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [L,QSA]
+

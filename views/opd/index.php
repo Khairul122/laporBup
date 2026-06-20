@@ -10,27 +10,25 @@
         <div class="content-wrapper">
           <div class="row">
             <div class="col-sm-12">
-              <!-- Header Section -->
+              
               <div class="d-flex align-items-center justify-content-between mb-4">
                 <div>
                   <h3 class="page-title mb-1">Daftar OPD</h3>
                 </div>
                 <div>
-                  <a href="index.php?controller=opd&action=create" class="btn btn-primary">
+                  <a href="<?= route('opd', 'create') ?>" class="btn btn-primary">
                     <i class="fas fa-plus"></i> Tambah OPD
                   </a>
                 </div>
               </div>
 
-              <!-- Toast Notifications Container -->
+              
               <div id="toastContainer" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
 
-              <!-- Search and Filter -->
+              
               <div class="card border-0 shadow-sm mb-4">
                 <div class="card-body p-4">
-                  <form method="GET" action="index.php">
-                    <input type="hidden" name="controller" value="opd">
-                    <input type="hidden" name="action" value="index">
+                  <form method="GET" action="<?= route('opd', 'index') ?>">
                     <div class="row g-3">
                       <div class="col-md-9">
                         <div class="input-group">
@@ -46,7 +44,7 @@
                 </div>
               </div>
 
-              <!-- OPD Table -->
+              
               <div class="card border-0 shadow-sm">
                 <div class="card-body">
                   <?php if (empty($opds)): ?>
@@ -54,7 +52,7 @@
                       <i class="fas fa-building text-muted" style="font-size: 3rem;"></i>
                       <h5 class="mt-3 text-muted">Belum ada OPD</h5>
                       <p class="text-muted">Tambahkan OPD pertama Anda</p>
-                      <a href="index.php?controller=opd&action=create" class="btn btn-primary">
+                      <a href="<?= route('opd', 'create') ?>" class="btn btn-primary">
                         <i class="fas fa-plus"></i> Tambah OPD
                       </a>
                     </div>
@@ -78,7 +76,7 @@
                             <td><?php echo htmlspecialchars($opd['nama_opd']); ?></td>
                             <td>
                               <div class="btn-group btn-group-sm">
-                                <a href="index.php?controller=opd&action=edit&id=<?php echo $opd['id_opd']; ?>" 
+                                <a href="<?= route('opd', 'edit') ?>?id=<?php echo $opd['id_opd']; ?>" 
                                    class="btn btn-outline-primary" title="Edit">
                                   <i class="fas fa-edit"></i>
                                 </a>
@@ -95,13 +93,13 @@
                       </table>
                     </div>
 
-                    <!-- Pagination -->
+                    
                     <?php if ($total_pages > 1): ?>
                     <nav aria-label="OPD pagination" class="mt-4">
                       <ul class="pagination justify-content-center">
                         <?php if ($page > 1): ?>
                           <li class="page-item">
-                            <a class="page-link" href="?controller=opd&action=index&page=<?php echo $page - 1; ?><?php echo isset($_GET['search']) && $_GET['search'] ? '&search=' . urlencode($_GET['search']) : ''; ?>">Sebelumnya</a>
+                            <a class="page-link" href="<?= route('opd', 'index') ?>?page=<?php echo $page - 1; ?><?php echo isset($_GET['search']) && $_GET['search'] ? '&search=' . urlencode($_GET['search']) : ''; ?>">Sebelumnya</a>
                           </li>
                         <?php endif; ?>
 
@@ -112,13 +110,13 @@
 
                         <?php for ($i = $start; $i <= $end; $i++): ?>
                           <li class="page-item <?php echo $i === $page ? 'active' : ''; ?>">
-                            <a class="page-link" href="?controller=opd&action=index&page=<?php echo $i; ?><?php echo isset($_GET['search']) && $_GET['search'] ? '&search=' . urlencode($_GET['search']) : ''; ?>"><?php echo $i; ?></a>
+                            <a class="page-link" href="<?= route('opd', 'index') ?>?page=<?php echo $i; ?><?php echo isset($_GET['search']) && $_GET['search'] ? '&search=' . urlencode($_GET['search']) : ''; ?>"><?php echo $i; ?></a>
                           </li>
                         <?php endfor; ?>
 
                         <?php if ($page < $total_pages): ?>
                           <li class="page-item">
-                            <a class="page-link" href="?controller=opd&action=index&page=<?php echo $page + 1; ?><?php echo isset($_GET['search']) && $_GET['search'] ? '&search=' . urlencode($_GET['search']) : ''; ?>">Selanjutnya</a>
+                            <a class="page-link" href="<?= route('opd', 'index') ?>?page=<?php echo $page + 1; ?><?php echo isset($_GET['search']) && $_GET['search'] ? '&search=' . urlencode($_GET['search']) : ''; ?>">Selanjutnya</a>
                           </li>
                         <?php endif; ?>
                       </ul>
@@ -135,7 +133,7 @@
   </div>
   <?php include 'views/layouts/admin-script.php'; ?>
 
-  <!-- Toast Notification Script -->
+  
   <script>
   function showToast(message, type = 'success') {
     const toastContainer = document.getElementById('toastContainer');
@@ -166,7 +164,7 @@
 
     toastContainer.appendChild(toast);
 
-    // Auto remove after 5 seconds
+    
     setTimeout(() => {
       removeToast(toastId);
     }, 5000);
@@ -182,7 +180,7 @@
     }
   }
 
-  // Show toast notifications on page load
+  
   document.addEventListener('DOMContentLoaded', function() {
     <?php if (isset($_SESSION['success'])): ?>
       showToast("<?php echo addslashes($_SESSION['success']); unset($_SESSION['success']); ?>", 'success');
@@ -193,7 +191,7 @@
     <?php endif; ?>
   });
 
-  // Add CSS animations
+  
   const style = document.createElement('style');
   style.textContent = `
     @keyframes slideInRight {
@@ -221,7 +219,7 @@
   document.head.appendChild(style);
   </script>
 
-  <!-- Delete Confirmation Modal -->
+  
   <div class="modal fade" id="deleteModal" tabindex="-1">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -245,7 +243,7 @@
   document.addEventListener('DOMContentLoaded', function() {
     let deleteId = null;
 
-    // Set up delete button event listeners
+    
     document.querySelectorAll('.delete-btn').forEach(button => {
       button.addEventListener('click', function() {
         deleteId = this.getAttribute('data-id');
@@ -254,16 +252,16 @@
       });
     });
 
-    // Confirm delete action
+    
     document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
       if (deleteId) {
-        // Close modal
+        
         const modal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
         modal.hide();
 
-        // Send AJAX delete request
-        fetch('index.php?controller=opd&action=delete&id=' + deleteId, {
-          method: 'DELETE',
+        
+        fetch('<?= route('opd', 'delete') ?>?id=' + deleteId, {
+          method: 'POST',
           headers: {
             'X-Requested-With': 'XMLHttpRequest'
           }
@@ -271,27 +269,27 @@
         .then(response => response.json())
         .then(data => {
           if (data.success) {
-            // Show success toast
+            
             showToast(data.message, 'success');
 
-            // Remove the row from table
+            
             const row = document.querySelector(`[data-id="${deleteId}"]`).closest('tr');
             if (row) {
               row.style.animation = 'fadeOut 0.3s ease-out';
               setTimeout(() => {
                 row.remove();
 
-                // Check if table is empty
+                
                 const tbody = document.querySelector('tbody');
                 if (tbody && tbody.children.length === 0) {
-                  // Show empty state
+                  
                   const tableContainer = document.querySelector('.table-responsive');
                   tableContainer.innerHTML = `
                     <div class="text-center py-5">
                       <i class="fas fa-building text-muted" style="font-size: 3rem;"></i>
                       <h5 class="mt-3 text-muted">Belum ada OPD</h5>
                       <p class="text-muted">Tambahkan OPD pertama Anda</p>
-                      <a href="index.php?controller=opd&action=create" class="btn btn-primary">
+                      <a href="<?= route('opd', 'create') ?>" class="btn btn-primary">
                         <i class="fas fa-plus"></i> Tambah OPD
                       </a>
                     </div>
@@ -300,7 +298,7 @@
               }, 300);
             }
           } else {
-            // Show error toast
+            
             showToast(data.message, 'error');
           }
         })
@@ -312,7 +310,7 @@
     });
   });
 
-  // Add fade out animation
+  
   const style = document.createElement('style');
   style.textContent = `
     @keyframes fadeOut {

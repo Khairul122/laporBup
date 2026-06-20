@@ -6,7 +6,7 @@ include 'views/layouts/simple-header.php';
 
 <div class="fullscreen-container">
     <div class="fullscreen-content">
-    <!-- Header Section -->
+    
     <div class="page-header">
         <div class="header-content">
             <h1 class="page-title">
@@ -14,7 +14,7 @@ include 'views/layouts/simple-header.php';
                 <?php echo htmlspecialchars($title); ?>
             </h1>
             <div class="page-actions">
-                <a href="index.php?controller=laporanOPD&action=create" class="btn btn-primary">
+                <a href="<?= route('laporanOPD', 'create') ?>" class="btn btn-primary">
                     <i class="fas fa-plus"></i>
                     Buat Laporan Baru
                 </a>
@@ -23,12 +23,10 @@ include 'views/layouts/simple-header.php';
     </div>
 
     
-    <!-- Search and Filter -->
+    
     <div class="search-filter-container">
         <div class="search-section">
-            <form method="GET" action="index.php" class="search-form">
-                <input type="hidden" name="controller" value="laporanOPD">
-                <input type="hidden" name="action" value="index">
+            <form method="GET" action="<?= route('laporanOPD', 'index') ?>" class="search-form">
 
                 <div class="search-input-group">
                     <input type="text"
@@ -55,7 +53,7 @@ include 'views/layouts/simple-header.php';
                         </option>
                     </select>
 
-                    <button type="button" class="reset-btn" onclick="window.location.href='index.php?controller=laporanOPD&action=index'">
+                    <button type="button" class="reset-btn" onclick="window.location.href='<?= route('laporanOPD', 'index') ?>'">
                         <i class="fas fa-times"></i>
                         Reset
                     </button>
@@ -64,7 +62,7 @@ include 'views/layouts/simple-header.php';
         </div>
     </div>
 
-    <!-- Laporan Table -->
+    
     <div class="table-container">
         <?php if (empty($laporan)): ?>
             <div class="empty-state">
@@ -73,7 +71,7 @@ include 'views/layouts/simple-header.php';
                 </div>
                 <h3>Belum Ada Laporan</h3>
                 <p>Anda belum memiliki laporan. Mulai buat laporan pertama Anda.</p>
-                <a href="index.php?controller=laporanOPD&action=create" class="btn btn-primary">
+                <a href="<?= route('laporanOPD', 'create') ?>" class="btn btn-primary">
                     <i class="fas fa-plus"></i>
                     Buat Laporan Baru
                 </a>
@@ -154,14 +152,14 @@ include 'views/layouts/simple-header.php';
                             </td>
                             <td>
                                 <div class="action-buttons">
-                                    <a href="index.php?controller=laporanOPD&action=detail&id=<?php echo $item['id_laporan_opd']; ?>"
+                                    <a href="<?= route('laporanOPD', 'detail') ?>?id=<?php echo $item['id_laporan_opd']; ?>"
                                        class="btn-action btn-view"
                                        title="Lihat Detail">
                                         <i class="fas fa-eye"></i>
                                     </a>
 
                                     <?php if ($item['status_laporan'] === 'baru'): ?>
-                                        <a href="index.php?controller=laporanOPD&action=edit&id=<?php echo $item['id_laporan_opd']; ?>"
+                                        <a href="<?= route('laporanOPD', 'edit') ?>?id=<?php echo $item['id_laporan_opd']; ?>"
                                            class="btn-action btn-edit"
                                            title="Edit Laporan">
                                             <i class="fas fa-edit"></i>
@@ -190,7 +188,6 @@ include 'views/layouts/simple-header.php';
     </div>
 </div>
 
-<!-- Delete Confirmation Modal -->
 <div id="deleteModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -243,7 +240,6 @@ include 'views/layouts/simple-header.php';
 .page-title i {
     color: var(--primary-blue);
 }
-
 
 /* Search and Filter */
 .search-filter-container {
@@ -454,7 +450,6 @@ include 'views/layouts/simple-header.php';
     color: white;
     transform: scale(1.1);
 }
-
 
 .btn-delete {
     background: #ffebee;
@@ -692,10 +687,10 @@ include 'views/layouts/simple-header.php';
 </style>
 
 <script>
-// Delete confirmation
+
 function confirmDelete(id) {
     document.getElementById('deleteId').value = id;
-    document.getElementById('deleteForm').action = 'index.php?controller=laporanOPD&action=delete';
+    document.getElementById('deleteForm').action = '<?= route('laporanOPD', 'delete') ?>';
     document.getElementById('deleteModal').style.display = 'block';
 }
 
@@ -703,7 +698,6 @@ function closeModal() {
     document.getElementById('deleteModal').style.display = 'none';
 }
 
-// Close modal when clicking outside
 window.onclick = function(event) {
     const modal = document.getElementById('deleteModal');
     if (event.target === modal) {
@@ -711,15 +705,14 @@ window.onclick = function(event) {
     }
 }
 
-// Show notifications
 document.addEventListener('DOMContentLoaded', function() {
-    // Success message
+    
     <?php if (isset($_SESSION['success'])): ?>
         showNotification('<?php echo addslashes($_SESSION['success']); ?>', 'success');
         <?php unset($_SESSION['success']); ?>
     <?php endif; ?>
 
-    // Error message
+    
     <?php if (isset($_SESSION['error'])): ?>
         showNotification('<?php echo addslashes($_SESSION['error']); ?>', 'error');
         <?php unset($_SESSION['error']); ?>
@@ -727,7 +720,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function showNotification(message, type) {
-    // Create notification element
+    
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
     notification.innerHTML = `
@@ -736,10 +729,10 @@ function showNotification(message, type) {
         <button onclick="this.parentElement.remove()">&times;</button>
     `;
 
-    // Add to page
+    
     document.body.appendChild(notification);
 
-    // Auto remove after 5 seconds
+    
     setTimeout(() => {
         if (notification.parentElement) {
             notification.remove();

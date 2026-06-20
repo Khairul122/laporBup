@@ -9,9 +9,7 @@ class LaporanCamatAdminController extends BaseController {
         $this->laporanCamatAdminModel = new LaporanCamatAdminModel();
     }
 
-    /**
-     * Require role admin untuk mengakses halaman
-     */
+    
     private function requireAdmin() {
         $this->requireLogin();
 
@@ -26,14 +24,12 @@ class LaporanCamatAdminController extends BaseController {
                 echo json_encode($response);
                 exit;
             } else {
-                $this->redirect('index.php?controller=dashboard&action=admin');
+                $this->redirect(route('dashboard', 'admin'));
             }
         }
     }
 
-    /**
-     * Menampilkan halaman daftar laporan Camat
-     */
+    
     public function index() {
   
         $this->requireAdmin();
@@ -46,17 +42,17 @@ class LaporanCamatAdminController extends BaseController {
         $tujuan = $_GET['tujuan'] ?? '';
 
   
-        // Get data laporan Camat
+        
         $result = $this->laporanCamatAdminModel->getAllLaporanCamat($page, $limit, $search, $status, $tujuan);
         $laporans = $result['data'];
         $totalLaporan = $result['total'];
         $totalPages = $result['total_pages'];
 
     
-        // Get statistics
+        
         $statistics = $this->laporanCamatAdminModel->getLaporanCamatStatistics();
 
-        // Format statistics for view
+        
         $stats = [
             'total' => $statistics['total']['total_laporan'] ?? 0,
             'baru' => 0,
@@ -68,17 +64,15 @@ class LaporanCamatAdminController extends BaseController {
             $stats[$stat['status_laporan']] = $stat['total'];
         }
 
-        // Get tujuan options for filter
+        
         $tujuanOptions = $this->laporanCamatAdminModel->getTujuanOptions();
 
       
-        // Include view
+        
         include 'views/laporan-admin-camat/index.php';
     }
 
-    /**
-     * Menampilkan detail laporan Camat
-     */
+    
     public function detail() {
         $this->requireAdmin();
 
@@ -86,22 +80,20 @@ class LaporanCamatAdminController extends BaseController {
 
         if ($id === 0) {
             $_SESSION['error'] = "ID laporan tidak valid.";
-            $this->redirect('index.php?controller=laporanCamatAdmin&action=index');
+            $this->redirect(route('laporanCamatAdmin', 'index'));
         }
 
         $laporan = $this->laporanCamatAdminModel->getLaporanCamatById($id);
 
         if (!$laporan) {
             $_SESSION['error'] = "Laporan tidak ditemukan.";
-            $this->redirect('index.php?controller=laporanCamatAdmin&action=index');
+            $this->redirect(route('laporanCamatAdmin', 'index'));
         }
 
         include 'views/laporan-admin-camat/detail.php';
     }
 
-    /**
-     * Menampilkan halaman edit laporan Camat
-     */
+    
     public function edit() {
         $this->requireAdmin();
 
@@ -109,17 +101,17 @@ class LaporanCamatAdminController extends BaseController {
 
         if ($id === 0) {
             $_SESSION['error'] = "ID laporan tidak valid.";
-            $this->redirect('index.php?controller=laporanCamatAdmin&action=index');
+            $this->redirect(route('laporanCamatAdmin', 'index'));
         }
 
         $laporan = $this->laporanCamatAdminModel->getLaporanCamatById($id);
 
         if (!$laporan) {
             $_SESSION['error'] = "Laporan tidak ditemukan.";
-            $this->redirect('index.php?controller=laporanCamatAdmin&action=index');
+            $this->redirect(route('laporanCamatAdmin', 'index'));
         }
 
-        // Handle form submission
+        
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = [
                 'nama_kecamatan' => trim($_POST['nama_kecamatan']),
@@ -128,7 +120,7 @@ class LaporanCamatAdminController extends BaseController {
                 'status_laporan' => $_POST['status_laporan']
             ];
 
-            // Handle file upload
+            
             if (isset($_FILES['upload_file']) && $_FILES['upload_file']['error'] === UPLOAD_ERR_OK) {
                 $uploadResult = $this->handleFileUpload($_FILES['upload_file']);
                 if ($uploadResult['success']) {
@@ -144,7 +136,7 @@ class LaporanCamatAdminController extends BaseController {
 
             if ($result['success']) {
                 $_SESSION['success'] = $result['message'];
-                $this->redirect('index.php?controller=laporanCamatAdmin&action=index');
+                $this->redirect(route('laporanCamatAdmin', 'index'));
             } else {
                 $_SESSION['error'] = $result['message'];
             }
@@ -153,14 +145,12 @@ class LaporanCamatAdminController extends BaseController {
         include 'views/laporan-admin-camat/edit.php';
     }
 
-    /**
-     * Update status laporan
-     */
+    
     public function updateStatus() {
         $this->requireAdmin();
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect('index.php?controller=laporanCamatAdmin&action=index');
+            $this->redirect(route('laporanCamatAdmin', 'index'));
         }
 
         $id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
@@ -178,7 +168,7 @@ class LaporanCamatAdminController extends BaseController {
                 exit;
             } else {
                 $_SESSION['error'] = "Data tidak valid.";
-                $this->redirect('index.php?controller=laporanCamatAdmin&action=index');
+                $this->redirect(route('laporanCamatAdmin', 'index'));
             }
         }
 
@@ -190,7 +180,7 @@ class LaporanCamatAdminController extends BaseController {
             $_SESSION['error'] = $result['message'];
         }
 
-        $redirectUrl = $_POST['redirect_url'] ?? 'index.php?controller=laporanCamatAdmin&action=index';
+        $redirectUrl = $_POST['redirect_url'] ?? route('laporanCamatAdmin', 'index');
 
         if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
             header('Content-Type: application/json');
@@ -205,9 +195,7 @@ class LaporanCamatAdminController extends BaseController {
         }
     }
 
-    /**
-     * Hapus laporan Camat
-     */
+    
     public function delete() {
         $this->requireAdmin();
 
@@ -225,7 +213,7 @@ class LaporanCamatAdminController extends BaseController {
                 exit;
             } else {
                 $_SESSION['error'] = "ID laporan tidak valid.";
-                $this->redirect('index.php?controller=laporanCamatAdmin&action=index');
+                $this->redirect(route('laporanCamatAdmin', 'index'));
             }
         }
 
@@ -245,13 +233,11 @@ class LaporanCamatAdminController extends BaseController {
             ]);
             exit;
         } else {
-            $this->redirect('index.php?controller=laporanCamatAdmin&action=index');
+            $this->redirect(route('laporanCamatAdmin', 'index'));
         }
     }
 
-    /**
-     * Export data laporan Camat
-     */
+    
     public function export() {
         $this->requireAdmin();
 
@@ -261,15 +247,13 @@ class LaporanCamatAdminController extends BaseController {
             $this->exportCSV();
         } else {
             $_SESSION['error'] = "Format export tidak didukung.";
-            header('Location: index.php?controller=laporanCamatAdmin&action=index');
+            $this->redirect(route('laporanCamatAdmin', 'index'));
         }
     }
 
-    /**
-     * Export ke CSV
-     */
+    
     private function exportCSV() {
-        $data = $this->laporanCamatAdminModel->exportLaporanCamat(); // Get all data without pagination
+        $data = $this->laporanCamatAdminModel->exportLaporanCamat(); 
         $laporans = $data;
 
         header('Content-Type: text/csv');
@@ -277,10 +261,10 @@ class LaporanCamatAdminController extends BaseController {
 
         $output = fopen('php://output', 'w');
 
-        // CSV Header
+        
         fputcsv($output, ['ID', 'Nama Kecamatan', 'Nama Kegiatan', 'Uraian', 'Tujuan', 'Status', 'Tanggal', 'User', 'File']);
 
-        // CSV Data
+        
         foreach ($laporans as $laporan) {
             fputcsv($output, [
                 $laporan['id_laporan_camat'],
@@ -299,15 +283,13 @@ class LaporanCamatAdminController extends BaseController {
         exit;
     }
 
-    /**
-     * Handle file upload
-     */
+    
     private function handleFileUpload($file) {
         $allowedTypes = ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx'];
-        $maxSize = 5 * 1024 * 1024; // 5MB
+        $maxSize = 5 * 1024 * 1024; 
         $uploadDir = __DIR__ . '/../uploads/laporan_camat/';
 
-        // Create directory if not exists
+        
         if (!file_exists($uploadDir)) {
             mkdir($uploadDir, 0777, true);
         }

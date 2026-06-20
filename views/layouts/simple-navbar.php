@@ -1,14 +1,12 @@
 <?php
-// Load profile based on user role
+
 require_once __DIR__ . '/../../models/ProfileModel.php';
 $profileModel = new ProfileModel();
 $current_role = $_SESSION['role'] ?? 'user';
 
-// Get profile for the current user's role
 $profiles = $profileModel->getProfilesByRole($current_role);
 $profile = !empty($profiles) ? $profiles[0] : null;
 
-// Fallback profile data if no profile exists for the role
 $profile_nama_aplikasi = $profile ? $profile['nama_aplikasi'] : '';
 $profile_logo = $profile ? $profile['logo'] : null;
 ?>
@@ -32,7 +30,7 @@ $profile_logo = $profile ? $profile['logo'] : null;
         ?>
         <a href="<?= route('dashboard', $current_role) ?>">Beranda</a>
         <a href="<?= route(($current_role === 'opd') ? 'laporanOPD' : 'laporanCamat', 'index') ?>">Laporan</a>
-        <!-- User Info & Logout -->
+        
         <div class="user-section">
             <a href="<?= route('auth', 'logout') ?>">
                 <span>Keluar</span>

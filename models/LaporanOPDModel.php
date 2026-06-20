@@ -4,9 +4,7 @@ require_once __DIR__ . '/../config/koneksi.php';
 require_once __DIR__ . '/BaseModel.php';
 
 class LaporanOPDModel extends BaseModel {
-    /**
-     * Get all laporan OPD untuk user yang sedang login
-     */
+    
     public function getAllLaporanByUser($userId) {
         $query = "SELECT lo.*, u.username, u.jabatan
                   FROM laporan_opd lo
@@ -27,27 +25,16 @@ class LaporanOPDModel extends BaseModel {
         return $laporan;
     }
 
-    /**
-     * Get all laporan OPD (untuk admin)
-     */
     public function getAllLaporan() {
         $query = "SELECT lo.*, u.username, u.jabatan
                   FROM laporan_opd lo
                   JOIN users u ON lo.id_user = u.id_user
                   ORDER BY lo.created_at DESC";
 
-        $result = query($query);
-        $laporan = [];
-        while ($row = $result->fetch_assoc()) {
-            $laporan[] = $row;
-        }
-
-        return $laporan;
+        return $this->fetchAll($query);
     }
 
-    /**
-     * Get laporan OPD by ID
-     */
+    
     public function getLaporanById($id) {
         $query = "SELECT lo.*, u.username, u.jabatan, u.email
                   FROM laporan_opd lo
@@ -62,9 +49,7 @@ class LaporanOPDModel extends BaseModel {
         return $result->fetch_assoc();
     }
 
-    /**
-     * Create new laporan OPD
-     */
+    
     public function createLaporan($data) {
         $query = "INSERT INTO laporan_opd (id_user, nama_opd, nama_kegiatan, uraian_laporan, tujuan, upload_file, status_laporan)
                   VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -83,9 +68,7 @@ class LaporanOPDModel extends BaseModel {
         return $stmt->execute();
     }
 
-    /**
-     * Update laporan OPD
-     */
+    
     public function updateLaporan($id, $data) {
         $query = "UPDATE laporan_opd
                   SET nama_opd = ?, nama_kegiatan = ?, uraian_laporan = ?, tujuan = ?, upload_file = ?, status_laporan = ?
@@ -106,9 +89,7 @@ class LaporanOPDModel extends BaseModel {
         return $stmt->execute();
     }
 
-    /**
-     * Update status laporan (untuk admin)
-     */
+    
     public function updateStatus($id, $status) {
         $query = "UPDATE laporan_opd SET status_laporan = ? WHERE id_laporan_opd = ?";
 
@@ -118,9 +99,7 @@ class LaporanOPDModel extends BaseModel {
         return $stmt->execute();
     }
 
-    /**
-     * Delete laporan OPD
-     */
+    
     public function deleteLaporan($id, $userId) {
         $query = "DELETE FROM laporan_opd WHERE id_laporan_opd = ? AND id_user = ?";
 
@@ -130,9 +109,7 @@ class LaporanOPDModel extends BaseModel {
         return $stmt->execute();
     }
 
-    /**
-     * Get laporan statistics untuk user
-     */
+    
     public function getLaporanStatsByUser($userId) {
         $query = "SELECT
                     SUM(CASE WHEN status_laporan = 'baru' THEN 1 ELSE 0 END) as total_baru,
@@ -150,9 +127,7 @@ class LaporanOPDModel extends BaseModel {
         return $result->fetch_assoc();
     }
 
-    /**
-     * Search laporan OPD
-     */
+    
     public function searchLaporan($keyword, $userId = null) {
         $query = "SELECT lo.*, u.username, u.jabatan
                   FROM laporan_opd lo
@@ -186,9 +161,7 @@ class LaporanOPDModel extends BaseModel {
         return $laporan;
     }
 
-    /**
-     * Get laporan by status
-     */
+    
     public function getLaporanByStatus($status, $userId = null) {
         $query = "SELECT lo.*, u.username, u.jabatan
                   FROM laporan_opd lo
@@ -220,9 +193,7 @@ class LaporanOPDModel extends BaseModel {
         return $laporan;
     }
 
-    /**
-     * Get recent laporan untuk dashboard
-     */
+    
     public function getRecentLaporan($userId = null, $limit = 5) {
         $query = "SELECT lo.*, u.username, u.jabatan
                   FROM laporan_opd lo
@@ -253,26 +224,24 @@ class LaporanOPDModel extends BaseModel {
         return $laporan;
     }
 
-    /**
-     * Handle file upload
-     */
-    public function handleFileUpload($file, $maxSize = 52428800) { // 50MB
+    
+    public function handleFileUpload($file, $maxSize = 52428800) { 
         if (!isset($file) || $file['error'] !== UPLOAD_ERR_OK) {
             return null;
         }
 
-        // Check file size
+        
         if ($file['size'] > $maxSize) {
             return null;
         }
 
-        // Allowed file types
+        
         $allowedTypes = [
-            // Documents
+            
             'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx',
-            // Images
+            
             'jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg',
-            // Videos
+            
             'mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv', 'webm', '3gp'
         ];
         $fileExtension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
@@ -281,16 +250,16 @@ class LaporanOPDModel extends BaseModel {
             return null;
         }
 
-        // Generate unique filename
+        
         $newFileName = 'laporan_opd_' . time() . '_' . uniqid() . '.' . $fileExtension;
         $uploadPath = 'uploads/laporan_opd/';
 
-        // Create directory if not exists
+        
         if (!is_dir($uploadPath)) {
             mkdir($uploadPath, 0777, true);
         }
 
-        // Move uploaded file
+        
         if (move_uploaded_file($file['tmp_name'], $uploadPath . $newFileName)) {
             return $uploadPath . $newFileName;
         }
@@ -298,9 +267,7 @@ class LaporanOPDModel extends BaseModel {
         return null;
     }
 
-    /**
-     * Delete file
-     */
+    
     public function deleteFile($filePath) {
         if (file_exists($filePath)) {
             return unlink($filePath);

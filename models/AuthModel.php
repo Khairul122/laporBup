@@ -4,12 +4,7 @@ require_once __DIR__ . '/../config/koneksi.php';
 require_once __DIR__ . '/BaseModel.php';
 
 class AuthModel extends BaseModel {
-    /**
-     * Login user
-     * @param string $username
-     * @param string $password
-     * @return array|false
-     */
+    
     public function login($username, $password) {
         try {
             $user = $this->fetchOne(
@@ -19,9 +14,9 @@ class AuthModel extends BaseModel {
             );
 
             if ($user) {
-                // Verifikasi password
+                
                 if (password_verify($password, $user['password'])) {
-                    // Update last login
+                    
                     $this->updateLastLogin($user['id_user']);
                     return $user;
                 }
@@ -29,16 +24,13 @@ class AuthModel extends BaseModel {
 
             return false;
         } catch (Exception $e) {
-            // Log error tapi jangan throw exception
+            
             error_log("Login error: " . $e->getMessage());
             return false;
         }
     }
 
-    /**
-     * Update last login time
-     * @param int $userId
-     */
+    
     private function updateLastLogin($userId) {
         try {
             $this->query(
@@ -64,11 +56,7 @@ class AuthModel extends BaseModel {
         }
     }
 
-    /**
-     * Get user by ID
-     * @param int $userId
-     * @return array|false
-     */
+    
     public function getUserById($userId) {
         $user = $this->fetchOne(
             "SELECT id_user, username, email, jabatan, role, created_at FROM users WHERE id_user = ? LIMIT 1",
@@ -79,20 +67,8 @@ class AuthModel extends BaseModel {
         return $user ?: false;
     }
 
-    /**
-     * Get all users (for admin)
-     * @return array
-     */
     public function getAllUsers() {
         $query = "SELECT id_user, username, email, jabatan, role, created_at FROM users ORDER BY created_at DESC";
-        $result = query($query);
-
-        $users = [];
-        while ($row = $result->fetch_assoc()) {
-            $users[] = $row;
-        }
-
-        return $users;
+        return $this->fetchAll($query);
     }
-
-    }
+}

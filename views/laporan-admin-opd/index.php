@@ -2,30 +2,30 @@
 
 <body class="with-welcome-text">
   <div class="container-scroller">
-    <!-- Navbar -->
+    
     <?php include 'views/layouts/admin-navbar.php'; ?>
 
     <div class="container-fluid page-body-wrapper">
-      <!-- Settings Panel -->
+      
       <?php include 'views/layouts/admin-setting-panel.php'; ?>
 
-      <!-- Sidebar -->
+      
       <?php include 'views/layouts/admin-sidebar.php'; ?>
 
-      <!-- Main Panel -->
+      
       <div class="main-panel">
         <div class="content-wrapper">
           <div class="row">
             <div class="col-12">
 
-              <!-- Header Section -->
+              
               <div class="page-header d-flex justify-content-between align-items-center mb-4">
                 <div>
                   <h2 class="page-title">Manajemen Laporan OPD</h2>
                 </div>
               </div>
 
-              <!-- Statistics Cards -->
+              
               <div class="row mb-4">
                 <div class="col-xl-3 col-md-6 mb-3">
                   <div class="card">
@@ -100,12 +100,10 @@
                 </div>
               </div>
 
-              <!-- Filter & Search Section -->
+              
               <div class="card mb-4">
                 <div class="card-body">
-                  <form method="GET" id="filterForm">
-                    <input type="hidden" name="controller" value="laporanOPDAdmin">
-                    <input type="hidden" name="action" value="index">
+                  <form method="GET" action="<?= route('laporanOPDAdmin', 'index') ?>" id="filterForm">
                     <div class="row g-3">
                       <div class="col-md-4">
                         <label class="form-label">Cari Laporan</label>
@@ -139,7 +137,7 @@
                       <div class="col-md-4">
                         <label class="form-label">&nbsp;</label>
                         <div class="btn-group w-100">
-                          <a href="index.php?controller=laporanOPDAdmin&action=index" class="btn btn-outline-secondary">
+                          <a href="<?= route('laporanOPDAdmin', 'index') ?>" class="btn btn-outline-secondary">
                             <i class="mdi mdi-refresh"></i> Reset
                           </a>
                         </div>
@@ -149,7 +147,7 @@
                 </div>
               </div>
 
-              <!-- Data Table Section -->
+              
               <div class="card">
                 <div class="card-header">
                   <h5 class="card-title mb-0">
@@ -186,7 +184,7 @@
                           <?php
                           $no = ($page - 1) * $limit + 1;
                           foreach ($laporans as $laporan):
-                            // Format tanggal Indonesia
+                            
                             $hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
                             $bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
                                       'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
@@ -245,12 +243,12 @@
                               </td>
                               <td class="text-center">
                                 <div class="btn-group btn-group-sm">
-                                  <a href="index.php?controller=laporanOPDAdmin&action=detail&id=<?php echo $laporan['id_laporan_opd'] ?? ''; ?>"
+                                  <a href="<?= route('laporanOPDAdmin', 'detail') ?>?id=<?php echo $laporan['id_laporan_opd'] ?? ''; ?>"
                                      class="btn btn-outline-info" title="Detail">
                                     <i class="mdi mdi-eye"></i>
                                   </a>
 
-                                  <a href="index.php?controller=laporanOPDAdmin&action=edit&id=<?php echo $laporan['id_laporan_opd'] ?? ''; ?>"
+                                  <a href="<?= route('laporanOPDAdmin', 'edit') ?>?id=<?php echo $laporan['id_laporan_opd'] ?? ''; ?>"
                                      class="btn btn-outline-warning" title="Edit">
                                     <i class="mdi mdi-pencil"></i>
                                   </a>
@@ -265,7 +263,7 @@
                                     <i class="mdi mdi-flag"></i>
                                   </button>
 
-                                  <form method="POST" action="index.php?controller=laporanOPDAdmin&action=delete&id=<?php echo $laporan['id_laporan_opd'] ?? ''; ?>"
+                                  <form method="POST" action="<?= route('laporanOPDAdmin', 'delete') ?>?id=<?php echo $laporan['id_laporan_opd'] ?? ''; ?>"
                                         onsubmit="return confirm('Apakah Anda yakin ingin menghapus laporan ini?');"
                                         style="display: inline;">
                                     <button type="submit" class="btn btn-outline-danger" title="Hapus">
@@ -281,7 +279,7 @@
                     </table>
                   </div>
 
-                  <!-- Pagination -->
+                  
                   <?php if ($totalPages > 1): ?>
                     <div class="card-footer">
                       <nav>
@@ -292,7 +290,7 @@
                           parse_str($urlParts['query'] ?? '', $queryParams);
                           unset($queryParams['page']);
 
-                          // Previous button
+                          
                           if ($page > 1):
                             $queryParams['page'] = $page - 1;
                             $prevUrl = $urlParts['path'] . '?' . http_build_query($queryParams);
@@ -305,7 +303,7 @@
                           <?php endif; ?>
 
                           <?php
-                          // Page numbers
+                          
                           $startPage = max(1, $page - 2);
                           $endPage = min($totalPages, $page + 2);
 
@@ -346,7 +344,7 @@
                             </li>
                           <?php endif; ?>
 
-                          <!-- Next button -->
+                          
                           <?php if ($page < $totalPages): ?>
                             <?php $queryParams['page'] = $page + 1; ?>
                             <?php $nextUrl = $urlParts['path'] . '?' . http_build_query($queryParams); ?>
@@ -369,7 +367,7 @@
     </div>
   </div>
 
-  <!-- Status Change Modal -->
+  
   <div class="modal fade" id="statusModal" tabindex="-1">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -377,7 +375,7 @@
           <h5 class="modal-title">Ubah Status Laporan</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
-        <form method="POST" action="index.php?controller=laporanOPDAdmin&action=updateStatus">
+        <form method="POST" action="<?= route('laporanOPDAdmin', 'updateStatus') ?>">
           <div class="modal-body">
             <input type="hidden" name="id" id="modalLaporanId">
             <input type="hidden" name="redirect_url" value="<?php echo $_SERVER['REQUEST_URI']; ?>">
@@ -508,7 +506,7 @@
   </style>
 
   <script>
-    // Modal status change
+    
     const statusModal = document.getElementById('statusModal');
     if (statusModal) {
       statusModal.addEventListener('show.bs.modal', function (event) {
@@ -518,34 +516,34 @@
 
         document.getElementById('modalLaporanId').value = laporanId;
 
-        // Set current status
+        
         document.querySelectorAll('input[name="status"]').forEach(radio => {
           radio.checked = radio.value === currentStatus;
         });
       });
     }
 
-    // Clear filters
+    
     function clearFilters() {
-      window.location.href = 'index.php?controller=laporanOPDAdmin&action=index';
+      window.location.href = '<?= route('laporanOPDAdmin', 'index') ?>';
     }
 
-    // Refresh data
+    
     function refreshData() {
       location.reload();
     }
 
-    // View detail
+    
     function viewDetail(id) {
-      window.location.href = `index.php?controller=laporanOPDAdmin&action=detail&id=${id}`;
+      window.location.href = `<?= route('laporanOPDAdmin', 'detail') ?>?id=${id}`;
     }
 
-    // Edit laporan
+    
     function editLaporan(id) {
-      window.location.href = `index.php?controller=laporanOPDAdmin&action=edit&id=${id}`;
+      window.location.href = `<?= route('laporanOPDAdmin', 'edit') ?>?id=${id}`;
     }
 
-    // Auto-refresh data setiap 30 detik
+    
     let refreshInterval;
 
     function startAutoRefresh() {
@@ -560,22 +558,22 @@
       }
     }
 
-    // Stop auto-refresh saat user sedang berinteraksi
+    
     document.addEventListener('mousemove', stopAutoRefresh);
     document.addEventListener('keypress', stopAutoRefresh);
 
-    // Mulai auto-refresh
+    
     startAutoRefresh();
 
-    // Keyboard shortcuts
+    
     document.addEventListener('keydown', function(e) {
-      // Ctrl/Cmd + K for search focus
+      
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
         e.preventDefault();
         document.querySelector('input[name="search"]')?.focus();
       }
 
-      // Escape to clear search
+      
       if (e.key === 'Escape') {
         const searchInput = document.querySelector('input[name="search"]');
         if (searchInput) {
@@ -585,7 +583,7 @@
       }
     });
 
-    // Toast notification for success messages
+    
     function showToast(message, type = 'success') {
       const toastHtml = `
         <div class="toast align-items-center text-white bg-${type} border-0" role="alert">
@@ -611,7 +609,7 @@
       }, 5000);
     }
 
-    // Show success messages as toast if exist
+    
     <?php if (isset($_SESSION['success'])): ?>
       showToast('<?php echo $_SESSION['success']; ?>', 'success');
       <?php unset($_SESSION['success']); ?>

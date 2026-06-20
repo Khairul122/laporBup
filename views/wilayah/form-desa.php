@@ -11,17 +11,15 @@
           <div class="row">
             <div class="col-sm-12">
 
-              <!-- Header -->
               <div class="page-header d-flex justify-content-between align-items-center mb-4">
                 <div>
                   <h2 class="page-title"><?php echo $desa ? 'Edit Desa' : 'Tambah Desa'; ?></h2>
                 </div>
-                <a href="../views/wilayah/index-desa.php" class="btn btn-secondary">
+                <a href="<?= route('desa', 'index') ?>" class="btn btn-secondary">
                   <i class="mdi mdi-arrow-left me-2"></i> Kembali
                 </a>
               </div>
 
-              <!-- Form Card -->
               <div class="card">
                 <div class="card-header">
                   <h5 class="card-title mb-0">
@@ -30,7 +28,7 @@
                   </h5>
                 </div>
                 <div class="card-body">
-                  <form id="desaForm" method="POST" action="index.php?controller=desa&action=save">
+                  <form id="desaForm" method="POST" action="<?= route('desa', 'save') ?>">
                     <input type="hidden" name="id_desa" value="<?php echo $desa ? $desa['id_desa'] : ''; ?>">
 
                     <div class="row mb-3">
@@ -82,7 +80,7 @@
                           <i class="mdi mdi-content-save me-2"></i>
                           <?php echo $desa ? 'Update' : 'Simpan'; ?>
                         </button>
-                        <a href="index.php?controller=wilayah&action=index&tab=desa"
+                        <a href="<?= route('desa', 'index') ?>"
                            class="btn btn-secondary">
                           <i class="mdi mdi-close-circle me-2"></i> Batal
                         </a>
@@ -100,13 +98,10 @@
   </div>
   <?php include 'views/layouts/admin-script.php'; ?>
 
-  <!-- Custom Scripts -->
   <script>
-    // Simple notification function
     function showNotification(message, type = 'success') {
       console.log('Showing notification:', message, type);
 
-      // Create a simple toast notification
       const toastContainer = document.createElement('div');
       toastContainer.style.cssText = `
         position: fixed;
@@ -133,7 +128,6 @@
         <button style="background: none; border: none; color: white; cursor: pointer; font-size: 20px; margin-left: 10px;" onclick="this.parentElement.remove()">×</button>
       `;
 
-      // Add animation
       const style = document.createElement('style');
       style.textContent = `
         @keyframes slideIn {
@@ -161,7 +155,6 @@
 
       document.body.appendChild(toastContainer);
 
-      // Auto remove after 5 seconds
       setTimeout(() => {
         toastContainer.style.animation = 'slideOut 0.3s ease-in';
         setTimeout(() => {
@@ -174,7 +167,6 @@
       console.log('Custom toast shown');
     }
 
-    // Form validation and submission
     document.getElementById('desaForm').addEventListener('submit', function(e) {
       e.preventDefault();
 
@@ -182,12 +174,10 @@
       const idKecamatan = form.id_kecamatan.value;
       const namaDesa = form.nama_desa.value.trim();
 
-      // Reset validation states
       form.classList.remove('was-validated');
       form.id_kecamatan.classList.remove('is-invalid');
       form.nama_desa.classList.remove('is-invalid');
 
-      // Validate
       let isValid = true;
 
       if (!idKecamatan) {
@@ -201,16 +191,13 @@
       }
 
       if (isValid) {
-        // Show loading
         const submitBtn = form.querySelector('button[type="submit"]');
         const originalText = submitBtn.innerHTML;
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Menyimpan...';
 
-        // Create form data
         const formData = new FormData(form);
 
-        // Send via AJAX
         fetch(form.action, {
           method: 'POST',
           body: formData,
@@ -223,7 +210,7 @@
           if (data.success) {
             showNotification(data.message, 'success');
             setTimeout(() => {
-              window.location.href = '../views/wilayah/index-desa.php';
+              window.location.href = '<?= route('desa', 'index') ?>';
             }, 1500);
           } else {
             showNotification(data.message, 'error');
@@ -242,15 +229,12 @@
       }
     });
 
-    // Capitalize input
     document.getElementById('nama_desa').addEventListener('input', function(e) {
       let value = e.target.value;
-      // Capitalize first letter of each word
       value = value.replace(/\b\w/g, l => l.toUpperCase());
       e.target.value = value;
     });
 
-    // Show toast on page load if there are session messages
     <?php if (isset($_SESSION['error'])): ?>
       showNotification('<?php echo addslashes($_SESSION['error']); ?>', 'error');
       <?php unset($_SESSION['error']); ?>

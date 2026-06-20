@@ -4,13 +4,11 @@ require_once __DIR__ . '/../config/koneksi.php';
 require_once __DIR__ . '/BaseModel.php';
 
 class LaporanOPDAdminModel extends BaseModel {
-    /**
-     * Get all laporan OPD with pagination and filtering
-     */
+    
     public function getAllLaporanOPD($page = 1, $limit = 10, $search = '', $status = '') {
         $offset = ($page - 1) * $limit;
 
-        // Build WHERE conditions
+        
         $whereClause = "";
 
         if (!empty($search)) {
@@ -27,7 +25,7 @@ class LaporanOPDAdminModel extends BaseModel {
             }
         }
 
-        // Get total data
+        
         $countQuery = "SELECT COUNT(*) as total
                       FROM laporan_opd lo
                       LEFT JOIN users u ON lo.id_user = u.id_user" . $whereClause;
@@ -39,7 +37,7 @@ class LaporanOPDAdminModel extends BaseModel {
             $totalData = $totalRow['total'];
         }
 
-        // Get data with pagination
+        
         $query = "SELECT
                     lo.id_laporan_opd,
                     lo.id_user,
@@ -76,9 +74,7 @@ class LaporanOPDAdminModel extends BaseModel {
         ];
     }
 
-    /**
-     * Get single laporan OPD by ID
-     */
+    
     public function getLaporanOPDById($id) {
         $id = (int)$id;
         $query = "SELECT
@@ -93,9 +89,7 @@ class LaporanOPDAdminModel extends BaseModel {
         return $result ? $result->fetch_assoc() : null;
     }
 
-    /**
-     * Create new laporan OPD
-     */
+    
     public function createLaporanOPD($data) {
         $nama_opd = escapeString($data['nama_opd']);
         $nama_kegiatan = escapeString($data['nama_kegiatan']);
@@ -125,9 +119,7 @@ class LaporanOPDAdminModel extends BaseModel {
         }
     }
 
-    /**
-     * Update laporan OPD
-     */
+    
     public function updateLaporanOPD($id, $data) {
         $id = (int)$id;
         $setClause = [];
@@ -168,20 +160,18 @@ class LaporanOPDAdminModel extends BaseModel {
         }
     }
 
-    /**
-     * Delete laporan OPD
-     */
+    
     public function deleteLaporanOPD($id) {
         $id = (int)$id;
 
-        // Get file path before deleting
+        
         $laporan = $this->getLaporanOPDById($id);
 
         $query = "DELETE FROM laporan_opd WHERE id_laporan_opd = $id";
         $result = $this->db->query($query);
 
         if ($result) {
-            // Delete file if exists
+            
             if ($laporan && $laporan['upload_file']) {
                 $filePath = __DIR__ . '/../' . $laporan['upload_file'];
                 if (file_exists($filePath)) {
@@ -201,9 +191,7 @@ class LaporanOPDAdminModel extends BaseModel {
         }
     }
 
-    /**
-     * Update status laporan
-     */
+    
     public function updateStatus($id, $status) {
         $id = (int)$id;
         $status = escapeString($status);
@@ -224,16 +212,14 @@ class LaporanOPDAdminModel extends BaseModel {
         }
     }
 
-    /**
-     * Get statistics for dashboard
-     */
+    
     public function getLaporanOPDStatistics() {
-        // Total laporan
+        
         $query = "SELECT COUNT(*) as total_laporan FROM laporan_opd";
         $result = $this->db->query($query);
         $total = $result ? $result->fetch_assoc() : ['total_laporan' => 0];
 
-        // Statistik by status
+        
         $query = "SELECT status_laporan, COUNT(*) as total
                   FROM laporan_opd
                   GROUP BY status_laporan";
@@ -251,9 +237,7 @@ class LaporanOPDAdminModel extends BaseModel {
         ];
     }
 
-    /**
-     * Get recent laporan OPD for dashboard
-     */
+    
     public function getRecentLaporanOPD($limit = 5) {
         $limit = (int)$limit;
         $query = "SELECT lo.*, u.username
@@ -272,9 +256,7 @@ class LaporanOPDAdminModel extends BaseModel {
         return $data;
     }
 
-    /**
-     * Search laporan OPD
-     */
+    
     public function searchLaporanOPD($keyword, $limit = 50) {
         $keyword = escapeString($keyword);
         $limit = (int)$limit;
@@ -296,9 +278,7 @@ class LaporanOPDAdminModel extends BaseModel {
         return $data;
     }
 
-    /**
-     * Get laporan OPD by date range
-     */
+    
     public function getLaporanOPDByDateRange($startDate, $endDate, $status = '') {
         $startDate = escapeString($startDate);
         $endDate = escapeString($endDate);
@@ -326,9 +306,7 @@ class LaporanOPDAdminModel extends BaseModel {
         return $data;
     }
 
-    /**
-     * Export laporan OPD (all data)
-     */
+    
     public function exportLaporanOPD() {
         $query = "SELECT lo.*, u.username, u.jabatan
                   FROM laporan_opd lo
@@ -345,9 +323,7 @@ class LaporanOPDAdminModel extends BaseModel {
         return $data;
     }
 
-    /**
-     * Get monthly statistics for the current year
-     */
+    
     public function getMonthlyStatistics() {
         $query = "SELECT
                     MONTH(created_at) as month,
@@ -368,9 +344,7 @@ class LaporanOPDAdminModel extends BaseModel {
         return $data;
     }
 
-    /**
-     * Get laporan OPD by user
-     */
+    
     public function getLaporanOPDByUser($userId, $limit = 10, $offset = 0) {
         $userId = (int)$userId;
         $limit = (int)$limit;
@@ -393,9 +367,7 @@ class LaporanOPDAdminModel extends BaseModel {
         return $data;
     }
 
-    /**
-     * Get count of laporan OPD by user
-     */
+    
     public function getCountLaporanOPDByUser($userId) {
         $userId = (int)$userId;
         $query = "SELECT COUNT(*) as total FROM laporan_opd WHERE id_user = $userId";
@@ -403,9 +375,7 @@ class LaporanOPDAdminModel extends BaseModel {
         return $result ? $result->fetch_assoc()['total'] : 0;
     }
 
-    /**
-     * Get laporan OPD statistics by OPD
-     */
+    
     public function getStatisticsByOPD() {
         $query = "SELECT
                     nama_opd,
@@ -427,9 +397,7 @@ class LaporanOPDAdminModel extends BaseModel {
         return $data;
     }
 
-    /**
-     * Get overdue laporan OPD (belum selesai setelah 7 hari)
-     */
+    
     public function getOverdueLaporanOPD($days = 7) {
         $days = (int)$days;
         $query = "SELECT lo.*, u.username, u.jabatan
@@ -449,9 +417,7 @@ class LaporanOPDAdminModel extends BaseModel {
         return $data;
     }
 
-    /**
-     * Bulk update status laporan
-     */
+    
     public function bulkUpdateStatus($ids, $status) {
         if (empty($ids)) {
             return [
@@ -484,9 +450,7 @@ class LaporanOPDAdminModel extends BaseModel {
         }
     }
 
-    /**
-     * Get laporan OPD untuk notifikasi
-     */
+    
     public function getLaporanOPDForNotification() {
         $query = "SELECT lo.*, u.username
                   FROM laporan_opd lo

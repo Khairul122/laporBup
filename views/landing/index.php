@@ -6,15 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Selamat Datang - Sistem Layanan Pelaporan</title>
 
-    <!-- Bootstrap 5 CSS -->
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Font Awesome -->
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <!-- Google Fonts - Poppins -->
+    
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
@@ -222,7 +222,6 @@
             z-index: 1000;
         }
 
-
         .app-name {
             color: var(--primary-orange);
             font-weight: 600;
@@ -293,16 +292,16 @@
 
 <body>
     <div class="main-container">
-        <!-- Header -->
+        
         <div class="welcome-header">
             <h1 class="welcome-title">Sistem Layanan Pelaporan</h1>
             <p class="welcome-subtitle">Pemerintah Kabupaten Mandailing Natal</p>
         </div>
 
-        <!-- Login Cards -->
+        
         <div class="login-cards">
-            <!-- Admin Login -->
-            <div class="login-card admin" onclick="location.href='index.php?controller=auth&action=admin'">
+            
+            <div class="login-card admin" onclick="location.href='<?= route('auth', 'admin') ?>'">
                 <div class="login-icon">
                     <i class="fas fa-user-shield"></i>
                 </div>
@@ -314,8 +313,8 @@
                 </button>
             </div>
 
-            <!-- Camat Login -->
-            <div class="login-card camat" onclick="location.href='index.php?controller=auth&action=camat'">
+            
+            <div class="login-card camat" onclick="location.href='<?= route('auth', 'camat') ?>'">
                 <div class="login-icon">
                     <i class="fas fa-landmark"></i>
                 </div>
@@ -327,8 +326,8 @@
                 </button>
             </div>
 
-            <!-- OPD Login -->
-            <div class="login-card opd" onclick="location.href='index.php?controller=auth&action=opd'">
+            
+            <div class="login-card opd" onclick="location.href='<?= route('auth', 'opd') ?>'">
                 <div class="login-icon">
                     <i class="fas fa-building"></i>
                 </div>
@@ -341,13 +340,13 @@
             </div>
         </div>
 
-        <!-- Footer -->
+        
         <div class="footer-info">
             <p>&copy; <?php echo date('Y'); ?> Pemerintah Kabupaten Mandailing Natal</p>
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 

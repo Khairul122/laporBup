@@ -38,7 +38,7 @@ include 'views/layouts/admin-header.php';
                   </p>
                 </div>
                 <div>
-                  <a href="index.php?controller=laporan&action=index&tab=<?php echo htmlspecialchars($_GET['type']); ?>" class="btn btn-secondary me-2">
+                  <a href="<?= route('laporan', 'index') ?>?tab=<?php echo htmlspecialchars($_GET['type']); ?>" class="btn btn-secondary me-2">
                     <i class="fas fa-arrow-left"></i> Kembali
                   </a>
                 </div>
@@ -205,7 +205,7 @@ include 'views/layouts/admin-header.php';
         document.getElementById('previewJabatan').textContent = jabatan || 'Plt. KEPALA DINAS KOMUNIKASI DAN INFORMATIKA<br>KABUPATEN MANDAILING NATAL';
         document.getElementById('previewNIP').textContent = 'NIP. ' + (nip || '19730417 199903 1 003');
         
-        // Update pangkat in preview - find the <em> element in the preview area
+        
         const previewPangkatElement = document.querySelector('.border.rounded.p-4.bg-white em');
         if (previewPangkatElement) {
           previewPangkatElement.textContent = pangkat || 'PEMBINA UTAMA MUDA';
@@ -222,7 +222,7 @@ include 'views/layouts/admin-header.php';
         const formData = new FormData(form);
         saveBtn.disabled = true;
         saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Menyimpan...';
-        fetch('index.php?controller=laporan&action=uploadTandaTangan', {
+        fetch('<?= route('laporan', 'uploadTandaTangan') ?>', {
             method: 'POST',
             body: formData
           })
@@ -257,7 +257,7 @@ include 'views/layouts/admin-header.php';
       generatePDFBtn.addEventListener('click', function() {
         const id = <?php echo json_encode($_GET['id']); ?>;
         const type = <?php echo json_encode($_GET['type']); ?>;
-        window.open(`index.php?controller=laporan&action=generatePDFWithSignature&id=${id}&type=${type}`, '_blank');
+        window.open(`<?= route('laporan', 'generatePDFWithSignature') ?>?id=${id}&type=${type}`, '_blank');
       });
 
       function showToast(message, type = 'success') {

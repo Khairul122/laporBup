@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Sistem </title>
 
-    <!-- Bootstrap CSS -->
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
+    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <!-- AOS Animation -->
+    
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
     <style>
@@ -484,12 +484,12 @@
     </style>
 </head>
 <body>
-    <!-- Animated Background -->
+    
     <div class="bg-animation"></div>
 
-    <!-- Main Login Container -->
+    
     <div class="login-container" data-aos="fade-up" data-aos-duration="800">
-        <!-- Left Panel - Info Section -->
+        
         <div class="left-panel">
             <h1>Selamat Datang</h1>
             <p>Sistem Informasi  - Platform pelaporan digital untuk pemerintahan daerah</p>
@@ -519,23 +519,23 @@
             </div>
         </div>
 
-        <!-- Right Panel - Login Form -->
+        
         <div class="right-panel">
             <div class="form-header">
                 <h2>Masuk ke Akun Anda</h2>
                 <p>Silakan login untuk mengakses sistem</p>
             </div>
 
-            <!-- Login Info Card -->
+            
             <div class="login-info">
                 <h6><i class="bi bi-info-circle"></i> Informasi Login</h6>
                 <p>Gunakan username dan password yang telah diberikan oleh admin untuk mengakses sistem.</p>
             </div>
 
-            <!-- Alert Container -->
+            
             <div id="alertContainer" class="alert"></div>
 
-            <!-- Login Form -->
+            
             <form id="loginFormElement">
                 <div class="form-floating">
                     <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
@@ -566,7 +566,7 @@
                 </button>
             </form>
 
-            <!-- Footer -->
+            
             <div class="auth-footer">
                 <p>&copy; 2024 Sistem . Dikelola oleh <strong>Dinas Kominfo</strong></p>
                 <p><a href="#">Kebijakan Privasi</a> | <a href="#">Bantuan</a></p>
@@ -574,20 +574,20 @@
         </div>
     </div>
 
-    <!-- Loading Overlay -->
+    
     <div class="spinner-overlay" id="loadingOverlay">
         <div class="spinner"></div>
     </div>
 
-    <!-- Scripts -->
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
     <script>
-        // Initialize AOS
+        
         AOS.init();
 
-        // Toggle Password Visibility
+        
         function togglePassword(fieldId) {
             const field = document.getElementById(fieldId);
             const icon = document.getElementById(fieldId + 'Toggle');
@@ -607,14 +607,14 @@
                 toggleBtn.setAttribute('title', 'Tampilkan password');
             }
 
-            // Add subtle animation
+            
             toggleBtn.style.transform = 'translateY(-50%) scale(1.1)';
             setTimeout(() => {
                 toggleBtn.style.transform = 'translateY(-50%) scale(1)';
             }, 200);
         }
 
-        // Show Alert
+        
         function showAlert(message, type) {
             const alertContainer = document.getElementById('alertContainer');
             alertContainer.className = `alert alert-${type}`;
@@ -624,19 +624,19 @@
             `;
             alertContainer.style.display = 'block';
 
-            // Auto hide after 5 seconds
+            
             setTimeout(() => {
                 alertContainer.style.display = 'none';
             }, 5000);
         }
 
-        // Show Loading
+        
         function showLoading(show) {
             const overlay = document.getElementById('loadingOverlay');
             overlay.style.display = show ? 'flex' : 'none';
         }
 
-        // Set Button Loading
+        
         function setButtonLoading(buttonId, loading) {
             const button = document.getElementById(buttonId);
             if (loading) {
@@ -650,7 +650,7 @@
             }
         }
 
-        // Handle Login Form
+        
         document.getElementById('loginFormElement').addEventListener('submit', async function(e) {
             e.preventDefault();
 
@@ -660,7 +660,7 @@
             setButtonLoading('loginBtn', true);
 
             try {
-                const response = await fetch('?action=login', {
+                const response = await fetch('<?= route('auth', 'login') ?>', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
@@ -668,7 +668,7 @@
                     body: new URLSearchParams(data)
                 });
 
-                // Check if response is JSON
+                
                 const contentType = response.headers.get('content-type');
                 if (!contentType || !contentType.includes('application/json')) {
                     throw new Error('Server mengembalikan response yang tidak valid');
@@ -683,7 +683,7 @@
                     }, 1500);
                 } else {
                     showAlert(result.message, 'danger');
-                    // Shake animation for invalid login
+                    
                     const passwordField = document.getElementById('password');
                     passwordField.style.animation = 'shake 0.5s';
                     setTimeout(() => {
@@ -698,7 +698,7 @@
             }
         });
 
-        // Add shake animation for errors
+        
         const shakeStyle = document.createElement('style');
         shakeStyle.textContent = `
             @keyframes shake {
@@ -709,11 +709,11 @@
         `;
         document.head.appendChild(shakeStyle);
 
-        // Remember Me Functionality
+        
         const rememberMeCheckbox = document.getElementById('rememberMe');
         const usernameInput = document.getElementById('username');
 
-        // Load saved username if remember me was checked
+        
         window.addEventListener('load', function() {
             const savedUsername = localStorage.getItem('rememberedUsername');
             const rememberMe = localStorage.getItem('rememberMe') === 'true';
@@ -724,7 +724,7 @@
             }
         });
 
-        // Save username when remember me is checked
+        
         rememberMeCheckbox.addEventListener('change', function() {
             if (this.checked) {
                 localStorage.setItem('rememberedUsername', usernameInput.value);
@@ -735,14 +735,14 @@
             }
         });
 
-        // Update saved username when typing
+        
         usernameInput.addEventListener('input', function() {
             if (rememberMeCheckbox.checked) {
                 localStorage.setItem('rememberedUsername', this.value);
             }
         });
 
-        // Enter key handling
+        
         document.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 const activeElement = document.activeElement;
@@ -754,7 +754,7 @@
             }
         });
 
-        // Auto-focus on username field when page loads
+        
         window.addEventListener('load', function() {
             document.getElementById('username').focus();
         });

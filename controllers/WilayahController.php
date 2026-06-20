@@ -9,44 +9,13 @@ class WilayahController extends BaseController {
         $this->wilayahModel = new WilayahModel();
     }
 
-    /**
-     * Require role admin untuk mengakses halaman
-     */
-    private function requireAdmin() {
-        $this->requireLogin();
-
-        if ($_SESSION['role'] !== 'admin') {
-            $response = [
-                'success' => false,
-                'message' => 'Anda tidak memiliki akses ke halaman ini'
-            ];
-
-            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-                header('Content-Type: application/json');
-                echo json_encode($response);
-                exit;
-            } else {
-                header('Location: index.php?controller=dashboard&action=' . $_SESSION['role']);
-                exit;
-            }
-        }
-    }
-
-    /**
-     * Menampilkan halaman utama wilayah (legacy)
-     */
     public function index() {
-        // Redirect to kecamatan by default
-        $this->redirect('index.php?controller=wilayah&action=index-kecamatan');
+        $this->redirect(route('wilayah', 'indexKecamatan'));
     }
 
-    /**
-     * Menampilkan halaman utama kecamatan
-     */
     public function indexKecamatan() {
-        $this->requireAdmin();
+        $this->requireRole('admin');
 
-        // Parameters untuk pagination dan search
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
         $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
         $search = $_GET['search'] ?? '';
@@ -61,13 +30,9 @@ class WilayahController extends BaseController {
         include 'views/wilayah/index-kecamatan.php';
     }
 
-    /**
-     * Menampilkan halaman utama desa
-     */
     public function indexDesa() {
-        $this->requireAdmin();
+        $this->requireRole('admin');
 
-        // Parameters untuk pagination dan search
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
         $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
         $search = $_GET['search'] ?? '';
@@ -84,11 +49,8 @@ class WilayahController extends BaseController {
         include 'views/wilayah/index-desa.php';
     }
 
-    /**
-     * Menampilkan form tambah/edit kecamatan
-     */
     public function formKecamatan() {
-        $this->requireAdmin();
+        $this->requireRole('admin');
 
         $id_kecamatan = $_GET['id'] ?? null;
         $kecamatan = null;
@@ -97,18 +59,15 @@ class WilayahController extends BaseController {
             $kecamatan = $this->wilayahModel->getKecamatanById($id_kecamatan);
             if (!$kecamatan) {
                 $_SESSION['error'] = 'Kecamatan tidak ditemukan';
-                $this->redirect('index.php?controller=wilayah&action=index&tab=kecamatan');
+                $this->redirect(route('wilayah', 'indexKecamatan'));
             }
         }
 
         include 'views/wilayah/form-kecamatan.php';
     }
 
-    /**
-     * Menampilkan form tambah/edit desa
-     */
     public function formDesa() {
-        $this->requireAdmin();
+        $this->requireRole('admin');
 
         $id_desa = $_GET['id'] ?? null;
         $desa = null;
@@ -118,18 +77,15 @@ class WilayahController extends BaseController {
             $desa = $this->wilayahModel->getDesaById($id_desa);
             if (!$desa) {
                 $_SESSION['error'] = 'Desa tidak ditemukan';
-                $this->redirect('index.php?controller=wilayah&action=index&tab=desa');
+                $this->redirect(route('wilayah', 'indexDesa'));
             }
         }
 
         include 'views/wilayah/form-desa.php';
     }
 
-    /**
-     * Menyimpan kecamatan (tambah/edit)
-     */
     public function saveKecamatan() {
-        $this->requireAdmin();
+        $this->requireRole('admin');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id_kecamatan = $_POST['id_kecamatan'] ?? null;
@@ -137,7 +93,6 @@ class WilayahController extends BaseController {
                 'nama_kecamatan' => trim($_POST['nama_kecamatan'] ?? '')
             ];
 
-            // Validasi
             if (empty($data['nama_kecamatan'])) {
                 $response = [
                     'success' => false,
@@ -145,7 +100,6 @@ class WilayahController extends BaseController {
                 ];
             } else {
                 if ($id_kecamatan) {
-                    // Update
                     $result = $this->wilayahModel->updateKecamatan($id_kecamatan, $data);
                     $message = $result ? 'Kecamatan berhasil diperbarui' : 'Gagal memperbarui kecamatan';
                     $response = [
@@ -153,7 +107,6 @@ class WilayahController extends BaseController {
                         'message' => $message
                     ];
                 } else {
-                    // Insert
                     $result = $this->wilayahModel->insertKecamatan($data);
                     $message = $result ? 'Kecamatan berhasil ditambahkan' : 'Gagal menambahkan kecamatan';
                     $response = [
@@ -163,22 +116,17 @@ class WilayahController extends BaseController {
                 }
             }
 
-            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-                header('Content-Type: application/json');
-                echo json_encode($response);
-                exit;
+            if ($this->isAjaxRequest()) {
+                $this->json($response);
             } else {
                 $_SESSION[$response['success'] ? 'success' : 'error'] = $response['message'];
-                $this->redirect('index.php?controller=wilayah&action=index&tab=kecamatan');
+                $this->redirect(route('wilayah', 'indexKecamatan'));
             }
         }
     }
 
-    /**
-     * Menyimpan desa (tambah/edit)
-     */
     public function saveDesa() {
-        $this->requireAdmin();
+        $this->requireRole('admin');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id_desa = $_POST['id_desa'] ?? null;
@@ -187,7 +135,6 @@ class WilayahController extends BaseController {
                 'nama_desa' => trim($_POST['nama_desa'] ?? '')
             ];
 
-            // Validasi
             if (empty($data['nama_desa'])) {
                 $response = [
                     'success' => false,
@@ -200,7 +147,6 @@ class WilayahController extends BaseController {
                 ];
             } else {
                 if ($id_desa) {
-                    // Update
                     $result = $this->wilayahModel->updateDesa($id_desa, $data);
                     $message = $result ? 'Desa berhasil diperbarui' : 'Gagal memperbarui desa';
                     $response = [
@@ -208,7 +154,6 @@ class WilayahController extends BaseController {
                         'message' => $message
                     ];
                 } else {
-                    // Insert
                     $result = $this->wilayahModel->insertDesa($data);
                     $message = $result ? 'Desa berhasil ditambahkan' : 'Gagal menambahkan desa';
                     $response = [
@@ -218,22 +163,17 @@ class WilayahController extends BaseController {
                 }
             }
 
-            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-                header('Content-Type: application/json');
-                echo json_encode($response);
-                exit;
+            if ($this->isAjaxRequest()) {
+                $this->json($response);
             } else {
                 $_SESSION[$response['success'] ? 'success' : 'error'] = $response['message'];
-                $this->redirect('index.php?controller=wilayah&action=index&tab=desa');
+                $this->redirect(route('wilayah', 'indexDesa'));
             }
         }
     }
 
-    /**
-     * Menghapus kecamatan
-     */
     public function deleteKecamatan() {
-        $this->requireAdmin();
+        $this->requireRole('admin');
 
         $id_kecamatan = $_POST['id'] ?? null;
         if ($id_kecamatan) {
@@ -249,21 +189,16 @@ class WilayahController extends BaseController {
             ];
         }
 
-        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-            header('Content-Type: application/json');
-            echo json_encode($response);
-            exit;
+        if ($this->isAjaxRequest()) {
+            $this->json($response);
         } else {
             $_SESSION[$response['success'] ? 'success' : 'error'] = $response['message'];
-            $this->redirect('index.php?controller=wilayah&action=index&tab=kecamatan');
+            $this->redirect(route('wilayah', 'indexKecamatan'));
         }
     }
 
-    /**
-     * Menghapus desa
-     */
     public function deleteDesa() {
-        $this->requireAdmin();
+        $this->requireRole('admin');
 
         $id_desa = $_POST['id'] ?? null;
         if ($id_desa) {
@@ -279,72 +214,49 @@ class WilayahController extends BaseController {
             ];
         }
 
-        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-            header('Content-Type: application/json');
-            echo json_encode($response);
-            exit;
+        if ($this->isAjaxRequest()) {
+            $this->json($response);
         } else {
             $_SESSION[$response['success'] ? 'success' : 'error'] = $response['message'];
-            $this->redirect('index.php?controller=wilayah&action=index&tab=desa');
+            $this->redirect(route('wilayah', 'indexDesa'));
         }
     }
 
-    /**
-     * Get kecamatan options for AJAX
-     */
     public function getKecamatanOptions() {
-        $this->requireAdmin();
+        $this->requireRole('admin');
 
-        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-            $options = $this->wilayahModel->getKecamatanOptions();
-            header('Content-Type: application/json');
-            echo json_encode([
-                'success' => true,
-                'data' => $options
-            ]);
-            exit;
-        }
+        $options = $this->wilayahModel->getKecamatanOptions();
+        $this->json([
+            'success' => true,
+            'data' => $options
+        ]);
     }
 
-    /**
-     * Get kecamatan stats for delete confirmation
-     */
     public function getKecamatanStats() {
-        $this->requireAdmin();
+        $this->requireRole('admin');
 
         $id_kecamatan = $_GET['id'] ?? null;
 
         if (!$id_kecamatan) {
-            header('Content-Type: application/json');
-            echo json_encode([
+            $this->json([
                 'success' => false,
                 'message' => 'ID kecamatan tidak valid'
             ]);
-            exit;
         }
 
-        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-            // Get related desa
-            $query = "SELECT id_desa, nama_desa FROM desa WHERE id_kecamatan = " . (int)$id_kecamatan . " ORDER BY nama_desa ASC";
-            $result = $this->db->query($query);
+        $desa = $this->wilayahModel->getRelatedDesa((int)$id_kecamatan);
 
-            $relatedDesaList = [];
-            $relatedDesaCount = 0;
+        $relatedDesaList = [];
+        $relatedDesaCount = count($desa);
 
-            if ($result) {
-                while ($row = $result->fetch_assoc()) {
-                    $relatedDesaList[] = "- " . htmlspecialchars($row['nama_desa']);
-                    $relatedDesaCount++;
-                }
-            }
-
-            header('Content-Type: application/json');
-            echo json_encode([
-                'success' => true,
-                'relatedDesaCount' => $relatedDesaCount,
-                'relatedDesaList' => $relatedDesaList
-            ]);
-            exit;
+        foreach ($desa as $row) {
+            $relatedDesaList[] = "- " . htmlspecialchars($row['nama_desa']);
         }
+
+        $this->json([
+            'success' => true,
+            'relatedDesaCount' => $relatedDesaCount,
+            'relatedDesaList' => $relatedDesaList
+        ]);
     }
 }

@@ -11,7 +11,7 @@
           <div class="row">
             <div class="col-sm-12">
 
-              <!-- Welcome Section -->
+              
               <div class="welcome-content mb-4">
                 <div class="d-flex align-items-center justify-content-between">
                   <div class="welcome-text">
@@ -22,7 +22,7 @@
                 </div>
               </div>
 
-              <!-- Dashboard Cards Status Laporan -->
+              
               <div class="row mb-4">
                 <div class="col-md-3 col-sm-6 mb-3">
                   <div class="card border-0 shadow-sm h-100">
@@ -86,7 +86,7 @@
                 </div>
               </div>
 
-              <!-- Dashboard Cards Laporan Camat & OPD -->
+              
               <div class="row mb-4">
                 <div class="col-md-6 col-sm-6 mb-3">
                   <div class="card border-0 shadow-sm h-100">
@@ -120,7 +120,7 @@
                 </div>
               </div>
 
-              <!-- Simple Chart Section -->
+              
               <div class="row mb-4">
                 <div class="col-md-12 mb-3">
                   <div class="card border-0 shadow-sm h-100">
@@ -139,7 +139,7 @@
                 </div>
               </div>
 
-              <!-- Recent Reports Table -->
+              
               <div class="row mb-4">
                 <div class="col-12">
                   <div class="card border-0 shadow-sm">
@@ -226,17 +226,17 @@
   </div>
   <?php include 'views/layouts/admin-script.php'; ?>
 
-  <!-- Chart.js -->
+  
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <script>
-      // Chart Data
+      
       const monthlyData = <?php echo json_encode($data['statistik_per_bulan'] ?? []); ?>;
       const chartData = <?php echo json_encode($charts ?? []); ?>;
 
-      // Initialize charts only if data exists
+      
       document.addEventListener('DOMContentLoaded', function() {
-          // Monthly Chart
+          
           <?php if (!empty($data['statistik_per_bulan'])): ?>
           const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
           const monthlyChart = new Chart(monthlyCtx, {

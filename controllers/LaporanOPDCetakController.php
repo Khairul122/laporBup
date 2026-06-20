@@ -10,9 +10,7 @@ class LaporanOPDCetakController extends BaseController {
         $this->laporanModel = new LaporanModel();
     }
 
-    /**
-     * Require role admin untuk mengakses halaman
-     */
+    
     private function requireAdmin() {
         $this->requireLogin();
 
@@ -27,19 +25,16 @@ class LaporanOPDCetakController extends BaseController {
                 echo json_encode($response);
                 exit;
             } else {
-                header('Location: index.php?controller=dashboard&action=' . $_SESSION['role']);
-                exit;
+                $this->redirectToDashboard();
             }
         }
     }
 
-    /**
-     * Menampilkan halaman cetak laporan OPD
-     */
+    
     public function index() {
         $this->requireAdmin();
 
-        // Parameters untuk filtering
+        
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
         $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
         $search = $_GET['search'] ?? '';
@@ -48,16 +43,16 @@ class LaporanOPDCetakController extends BaseController {
         $bulan = $_GET['bulan'] ?? '';
         $tahun = $_GET['tahun'] ?? '';
 
-        // Get data OPD
+        
         $result = $this->laporanModel->getLaporanOPD($page, $limit, $search, $status);
         $laporans = $result['data'];
         $totalLaporan = $result['total'];
         $totalPages = $result['total_pages'];
 
-        // Get statistics
+        
         $statistics = $this->laporanModel->getOPDStatistics();
 
-        // Format statistics untuk view
+        
         $stats = [
             'total' => $statistics['total']['total_laporan'] ?? 0,
             'baru' => 0,
@@ -69,13 +64,11 @@ class LaporanOPDCetakController extends BaseController {
             $stats[$stat['status_laporan']] = $stat['total'];
         }
 
-        // Include view
+        
         include 'views/laporan-opd-cetak/index.php';
     }
 
-    /**
-     * Generate PDF report untuk OPD
-     */
+    
     public function generatePDF() {
         $this->requireAdmin();
 
@@ -84,17 +77,15 @@ class LaporanOPDCetakController extends BaseController {
         $tahun = $_GET['tahun'] ?? '';
         $status = $_GET['status'] ?? '';
 
-        // Get OPD data
+        
         $data = $this->laporanModel->getLaporanOPDForPDF($hari, $bulan, $tahun, $status);
         $title = 'Laporan OPD';
 
-        // Generate PDF
+        
         $this->generatePDFFile($data, $title, 'opd', $hari, $bulan, $tahun, $status);
     }
 
-    /**
-     * Generate Excel report untuk OPD
-     */
+    
     public function generateExcel() {
         $this->requireAdmin();
 
@@ -103,42 +94,40 @@ class LaporanOPDCetakController extends BaseController {
         $tahun = $_GET['tahun'] ?? '';
         $status = $_GET['status'] ?? '';
 
-        // Get OPD data
+        
         $data = $this->laporanModel->getLaporanOPDForExcel($hari, $bulan, $tahun, $status);
         $title = 'Laporan OPD';
 
-        // Generate Excel
+        
         $this->generateExcelFile($data, $title, 'opd', $hari, $bulan, $tahun, $status);
     }
 
-    /**
-     * Generate PDF file menggunakan TCPDF
-     */
+    
     private function generatePDFFile($data, $title, $role, $hari, $bulan, $tahun, $status) {
-        // Create new PDF document
+        
         $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 
-        // Set document information
+        
         $pdf->SetCreator('SILAP GAWAT');
         $pdf->SetAuthor('Admin');
         $pdf->SetTitle($title);
 
-        // Set header and footer
+        
         $pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
         $pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
 
-        // Set margins
+        
         $pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
         $pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
         $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
 
-        // Add a page
+        
         $pdf->AddPage();
 
-        // Set font
+        
         $pdf->SetFont('helvetica', '', 12);
 
-        // Build title and filter information
+        
         $html = '<h1 align="center">' . $title . '</h1>';
 
         if ($hari || $bulan || $tahun || $status) {
@@ -173,7 +162,7 @@ class LaporanOPDCetakController extends BaseController {
             </thead>
             <tbody>';
 
-        // Add data rows
+        
         $no = 1;
         foreach ($data as $row) {
             $html .= '<tr>
@@ -189,23 +178,21 @@ class LaporanOPDCetakController extends BaseController {
         $html .= '</tbody>
         </table>';
 
-        // Output the HTML content
+        
         $pdf->writeHTML($html, true, false, true, false, '');
 
-        // Close and output PDF document
+        
         $filename = $title . '_' . date('Y-m-d_H-i-s') . '.pdf';
         $pdf->Output($filename, 'D');
         exit;
     }
 
-    /**
-     * Generate Excel file menggunakan PhpSpreadsheet
-     */
+    
     private function generateExcelFile($data, $title, $role, $hari, $bulan, $tahun, $status) {
-        // Create new Spreadsheet object
+        
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
 
-        // Set document properties
+        
         $spreadsheet->getProperties()
             ->setCreator('SILAP GAWAT')
             ->setLastModifiedBy('Admin')
@@ -213,15 +200,15 @@ class LaporanOPDCetakController extends BaseController {
             ->setSubject($title)
             ->setDescription('Laporan ' . ucfirst($role));
 
-        // Add sheet data
+        
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle($title);
 
-        // Set headers
+        
         $headers = ['No', 'Nama OPD', 'Nama Kegiatan', 'Uraian Laporan', 'Status', 'Tanggal'];
         $sheet->fromArray($headers, NULL, 'A1');
 
-        // Style header row
+        
         $headerStyle = [
             'font' => ['bold' => true],
             'fill' => [
@@ -232,7 +219,7 @@ class LaporanOPDCetakController extends BaseController {
         ];
         $sheet->getStyle('A1:' . $sheet->getHighestColumn() . '1')->applyFromArray($headerStyle);
 
-        // Add data
+        
         $row = 2;
         $no = 1;
         foreach ($data as $item) {
@@ -249,15 +236,15 @@ class LaporanOPDCetakController extends BaseController {
             $row++;
         }
 
-        // Auto-size columns
+        
         foreach (range('A', $sheet->getHighestColumn()) as $columnID) {
             $sheet->getColumnDimension($columnID)->setAutoSize(true);
         }
 
-        // Create Excel file
+        
         $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
 
-        // Set headers for download
+        
         $filename = $title . '_' . date('Y-m-d_H-i-s') . '.xlsx';
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="' . $filename . '"');

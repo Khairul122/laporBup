@@ -2,10 +2,6 @@
 
 require_once __DIR__ . '/../config/koneksi.php';
 
-/**
- * Base model: menyediakan koneksi database dan helper query
- * prepared-statement generik agar tidak diduplikasi di setiap model.
- */
 class BaseModel {
     protected $db;
 
@@ -13,13 +9,7 @@ class BaseModel {
         $this->db = getKoneksi();
     }
 
-    /**
-     * Jalankan prepared statement dan kembalikan mysqli_stmt yang sudah dieksekusi.
-     * @param string $sql
-     * @param string $types contoh: "iss" untuk int, string, string
-     * @param array $params
-     * @return mysqli_stmt
-     */
+    
     protected function query($sql, $types = '', $params = []) {
         $stmt = $this->db->prepare($sql);
         if ($stmt === false) {
@@ -32,9 +22,7 @@ class BaseModel {
         return $stmt;
     }
 
-    /**
-     * Ambil semua baris hasil query sebagai array asosiatif.
-     */
+    
     protected function fetchAll($sql, $types = '', $params = []) {
         $stmt = $this->query($sql, $types, $params);
         $result = $stmt->get_result();
@@ -43,9 +31,7 @@ class BaseModel {
         return $rows;
     }
 
-    /**
-     * Ambil satu baris hasil query sebagai array asosiatif, atau null jika tidak ada.
-     */
+    
     protected function fetchOne($sql, $types = '', $params = []) {
         $stmt = $this->query($sql, $types, $params);
         $result = $stmt->get_result();
@@ -54,10 +40,7 @@ class BaseModel {
         return $row ?: null;
     }
 
-    /**
-     * Helper pagination sederhana.
-     * @return array{data: array, total: int, page: int, limit: int, total_pages: int}
-     */
+    
     protected function paginate($baseQuery, $countQuery, $types, $params, $page = 1, $limit = 10) {
         $page = max(1, (int) $page);
         $limit = max(1, (int) $limit);

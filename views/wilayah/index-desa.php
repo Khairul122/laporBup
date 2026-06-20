@@ -11,19 +11,19 @@
           <div class="row">
             <div class="col-sm-12">
 
-              <!-- Header Section -->
+              
               <div class="page-header d-flex justify-content-between align-items-center mb-4">
                 <div>
                   <h2 class="page-title">Manajemen Desa</h2>
                 </div>
                 <div>
-                  <a href="index.php?controller=desa&action=form" class="btn btn-primary">
+                  <a href="<?= route('desa', 'form') ?>" class="btn btn-primary">
                     <i class="mdi mdi-plus-circle me-2"></i> Tambah Desa
                   </a>
                 </div>
               </div>
 
-              <!-- Statistics Card -->
+              
               <div class="row mb-4">
                 <div class="col-md-4">
                   <div class="card bg-success text-white">
@@ -42,12 +42,10 @@
                 </div>
               </div>
 
-              <!-- Search and Filter Card -->
+              
               <div class="card mb-4">
                 <div class="card-body">
-                  <form method="GET" class="row g-3">
-                    <input type="hidden" name="controller" value="desa">
-                    <input type="hidden" name="action" value="index">
+                  <form method="GET" action="<?= route('desa', 'index') ?>" class="row g-3">
                     <div class="col-md-4">
                       <input type="text" class="form-control" name="search"
                              placeholder="Cari nama desa..." value="<?php echo htmlspecialchars($search); ?>">
@@ -72,7 +70,7 @@
                 </div>
               </div>
 
-              <!-- Main Table Card -->
+              
               <div class="card">
                 <div class="card-header">
                   <h5 class="card-title mb-0">
@@ -106,7 +104,7 @@
                               <td><?php echo htmlspecialchars($desa['nama_kecamatan']); ?></td>
                               <td class="text-center">
                                 <div class="btn-group" role="group">
-                                  <a href="index.php?controller=desa&action=form&id=<?php echo $desa['id_desa']; ?>"
+                                  <a href="<?= route('desa', 'form') ?>?id=<?php echo $desa['id_desa']; ?>"
                                      class="btn btn-sm btn-warning"
                                      title="Edit">
                                     <i class="mdi mdi-pencil"></i>
@@ -125,13 +123,13 @@
                     </table>
                   </div>
 
-                  <!-- Pagination -->
+                  
                   <?php if ($totalPages > 1): ?>
                     <nav aria-label="Page navigation" class="mt-4">
                       <ul class="pagination justify-content-center">
                         <?php if ($currentPage > 1): ?>
                           <li class="page-item">
-                            <a class="page-link" href="?controller=desa&action=index&page=<?php echo $currentPage - 1; ?>&search=<?php echo urlencode($search); ?>&kecamatan_filter=<?php echo urlencode($_GET['kecamatan_filter'] ?? ''); ?>">
+                            <a class="page-link" href="<?= route('desa', 'index') ?>?page=<?php echo $currentPage - 1; ?>&search=<?php echo urlencode($search); ?>&kecamatan_filter=<?php echo urlencode($_GET['kecamatan_filter'] ?? ''); ?>">
                               <i class="mdi mdi-chevron-left"></i> Previous
                             </a>
                           </li>
@@ -139,13 +137,13 @@
 
                         <?php for ($i = 1; $i <= $totalPages; $i++): ?>
                           <li class="page-item <?php echo $i == $currentPage ? 'active' : ''; ?>">
-                            <a class="page-link" href="?controller=desa&action=index&page=<?php echo $i; ?>&search=<?php echo urlencode($search); ?>&kecamatan_filter=<?php echo urlencode($_GET['kecamatan_filter'] ?? ''); ?>"><?php echo $i; ?></a>
+                            <a class="page-link" href="<?= route('desa', 'index') ?>?page=<?php echo $i; ?>&search=<?php echo urlencode($search); ?>&kecamatan_filter=<?php echo urlencode($_GET['kecamatan_filter'] ?? ''); ?>"><?php echo $i; ?></a>
                           </li>
                         <?php endfor; ?>
 
                         <?php if ($currentPage < $totalPages): ?>
                           <li class="page-item">
-                            <a class="page-link" href="?controller=desa&action=index&page=<?php echo $currentPage + 1; ?>&search=<?php echo urlencode($search); ?>&kecamatan_filter=<?php echo urlencode($_GET['kecamatan_filter'] ?? ''); ?>">
+                            <a class="page-link" href="<?= route('desa', 'index') ?>?page=<?php echo $currentPage + 1; ?>&search=<?php echo urlencode($search); ?>&kecamatan_filter=<?php echo urlencode($_GET['kecamatan_filter'] ?? ''); ?>">
                               Next <i class="mdi mdi-chevron-right"></i>
                             </a>
                           </li>
@@ -164,13 +162,13 @@
   </div>
   <?php include 'views/layouts/admin-script.php'; ?>
 
-  <!-- Custom Scripts -->
+  
   <script>
-    // Simple notification function
+    
     function showNotification(message, type = 'success') {
       console.log('Showing notification:', message, type);
 
-      // Create a simple toast notification
+      
       const toastContainer = document.createElement('div');
       toastContainer.style.cssText = `
         position: fixed;
@@ -197,7 +195,7 @@
         <button style="background: none; border: none; color: white; cursor: pointer; font-size: 20px; margin-left: 10px;" onclick="this.parentElement.remove()">×</button>
       `;
 
-      // Add animation
+      
       const style = document.createElement('style');
       style.textContent = `
         @keyframes slideIn {
@@ -213,7 +211,7 @@
 
       document.body.appendChild(toastContainer);
 
-      // Auto remove after 5 seconds
+      
       setTimeout(() => {
         toastContainer.style.animation = 'slideOut 0.3s ease-in';
         setTimeout(() => {
@@ -224,10 +222,10 @@
       }, 5000);
     }
 
-    // Delete desa
+    
     function deleteDesa(id) {
       if (confirm('Apakah Anda yakin ingin menghapus desa ini?')) {
-        fetch('index.php?controller=desa&action=delete', {
+        fetch('<?= route('desa', 'delete') ?>', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -253,7 +251,7 @@
       }
     }
 
-    // Show toast on page load if there are session messages
+    
     <?php if (isset($_SESSION['error'])): ?>
       showNotification('<?php echo addslashes($_SESSION['error']); ?>', 'error');
       <?php unset($_SESSION['error']); ?>

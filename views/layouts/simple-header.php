@@ -1,18 +1,14 @@
 <?php
-// views/template/header.php
-// Ambil role dari session untuk dinamisasi
+
 $user_role = $_SESSION['role'] ?? 'user';
 
-// Load profile for dynamic title
 require_once __DIR__ . '/../../models/ProfileModel.php';
 $profileModel = new ProfileModel();
 $profiles = $profileModel->getProfilesByRole($user_role);
 $profile = !empty($profiles) ? $profiles[0] : null;
 
-// Fallback profile data if no profile exists for the role
 $profile_nama_aplikasi = $profile ? $profile['nama_aplikasi'] : '';
 
-// Set title with dynamic profile name
 $title = isset($title) ? $title : 'Dashboard - ' . $profile_nama_aplikasi;
 ?>
 
@@ -23,15 +19,15 @@ $title = isset($title) ? $title : 'Dashboard - ' . $profile_nama_aplikasi;
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title><?php echo htmlspecialchars($title); ?></title>
 
-    <!-- Bootstrap 5 CSS -->
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Font Awesome -->
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
           integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
           crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <!-- Google Fonts - Poppins & Inter -->
+    
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>

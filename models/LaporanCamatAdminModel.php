@@ -4,13 +4,11 @@ require_once __DIR__ . '/../config/koneksi.php';
 require_once __DIR__ . '/BaseModel.php';
 
 class LaporanCamatAdminModel extends BaseModel {
-    /**
-     * Get all laporan camat with pagination and filtering
-     */
+    
     public function getAllLaporanCamat($page = 1, $limit = 10, $search = '', $status = '', $tujuan = '') {
         $offset = ($page - 1) * $limit;
 
-        // Build WHERE conditions
+        
         $whereClause = "";
         $params = [];
 
@@ -37,7 +35,7 @@ class LaporanCamatAdminModel extends BaseModel {
             }
         }
 
-        // Main query to get data
+        
         $query = "SELECT lc.*, u.username, u.jabatan, '' as nama_kegiatan
                   FROM laporan_camat lc
                   LEFT JOIN users u ON lc.id_user = u.id_user
@@ -48,7 +46,7 @@ class LaporanCamatAdminModel extends BaseModel {
     
         $result = $this->db->query($query);
 
-        // Check for query errors
+        
         if (!$result) {
             error_log("LaporanCamatModel - MySQL error: " . $this->db->errno . " - " . $this->db->error);
             return [
@@ -69,7 +67,7 @@ class LaporanCamatAdminModel extends BaseModel {
         }
 
         
-        // Get total count for pagination
+        
         $countQuery = "SELECT COUNT(*) as total FROM laporan_camat lc
                        LEFT JOIN users u ON lc.id_user = u.id_user
                        $whereClause";
@@ -90,9 +88,7 @@ class LaporanCamatAdminModel extends BaseModel {
         ];
     }
 
-    /**
-     * Get single laporan camat by ID
-     */
+    
     public function getLaporanCamatById($id) {
         $id = (int)$id;
         $query = "SELECT lc.*, u.username, u.jabatan, '' as nama_kegiatan
@@ -104,9 +100,7 @@ class LaporanCamatAdminModel extends BaseModel {
         return $result ? $result->fetch_assoc() : null;
     }
 
-    /**
-     * Create new laporan camat
-     */
+    
     public function createLaporanCamat($data) {
         $nama_kecamatan = escapeString($data['nama_kecamatan']);
         $nama_kegiatan = escapeString($data['nama_kegiatan']);
@@ -136,9 +130,7 @@ class LaporanCamatAdminModel extends BaseModel {
         }
     }
 
-    /**
-     * Update laporan camat
-     */
+    
     public function updateLaporanCamat($id, $data) {
         $id = (int)$id;
         $setClause = [];
@@ -179,20 +171,18 @@ class LaporanCamatAdminModel extends BaseModel {
         }
     }
 
-    /**
-     * Delete laporan camat
-     */
+    
     public function deleteLaporanCamat($id) {
         $id = (int)$id;
 
-        // Get file path before deleting
+        
         $laporan = $this->getLaporanCamatById($id);
 
         $query = "DELETE FROM laporan_camat WHERE id_laporan_camat = $id";
         $result = $this->db->query($query);
 
         if ($result) {
-            // Delete file if exists
+            
             if ($laporan && $laporan['upload_file']) {
                 $filePath = __DIR__ . '/../' . $laporan['upload_file'];
                 if (file_exists($filePath)) {
@@ -212,9 +202,7 @@ class LaporanCamatAdminModel extends BaseModel {
         }
     }
 
-    /**
-     * Update status laporan
-     */
+    
     public function updateStatus($id, $status) {
         $id = (int)$id;
         $status = escapeString($status);
@@ -235,16 +223,14 @@ class LaporanCamatAdminModel extends BaseModel {
         }
     }
 
-    /**
-     * Get statistics for dashboard
-     */
+    
     public function getLaporanCamatStatistics() {
-        // Total laporan
+        
         $query = "SELECT COUNT(*) as total_laporan FROM laporan_camat";
         $result = $this->db->query($query);
         $total = $result ? $result->fetch_assoc() : ['total_laporan' => 0];
 
-        // Statistik by status
+        
         $query = "SELECT status_laporan, COUNT(*) as total
                   FROM laporan_camat
                   GROUP BY status_laporan";
@@ -262,9 +248,7 @@ class LaporanCamatAdminModel extends BaseModel {
         ];
     }
 
-    /**
-     * Get recent laporan camat for dashboard
-     */
+    
     public function getRecentLaporanCamat($limit = 5) {
         $limit = (int)$limit;
         $query = "SELECT lc.*, u.username, u.jabatan, '' as nama_kegiatan
@@ -283,9 +267,7 @@ class LaporanCamatAdminModel extends BaseModel {
         return $data;
     }
 
-    /**
-     * Search laporan camat
-     */
+    
     public function searchLaporanCamat($keyword, $limit = 50) {
         $keyword = escapeString($keyword);
         $limit = (int)$limit;
@@ -307,9 +289,7 @@ class LaporanCamatAdminModel extends BaseModel {
         return $data;
     }
 
-    /**
-     * Get laporan camat by date range
-     */
+    
     public function getLaporanCamatByDateRange($startDate, $endDate, $status = '') {
         $startDate = escapeString($startDate);
         $endDate = escapeString($endDate);
@@ -337,9 +317,7 @@ class LaporanCamatAdminModel extends BaseModel {
         return $data;
     }
 
-    /**
-     * Export laporan camat (all data)
-     */
+    
     public function exportLaporanCamat() {
         $query = "SELECT lc.*, u.username, u.jabatan, '' as nama_kegiatan
                   FROM laporan_camat lc
@@ -356,9 +334,7 @@ class LaporanCamatAdminModel extends BaseModel {
         return $data;
     }
 
-    /**
-     * Get monthly statistics for the current year
-     */
+    
     public function getMonthlyStatistics() {
         $query = "SELECT
                     MONTH(created_at) as month,
@@ -379,9 +355,7 @@ class LaporanCamatAdminModel extends BaseModel {
         return $data;
     }
 
-    /**
-     * Get laporan camat by user
-     */
+    
     public function getLaporanCamatByUser($userId, $limit = 10, $offset = 0) {
         $userId = (int)$userId;
         $limit = (int)$limit;
@@ -404,9 +378,7 @@ class LaporanCamatAdminModel extends BaseModel {
         return $data;
     }
 
-    /**
-     * Get count of laporan camat by user
-     */
+    
     public function getCountLaporanCamatByUser($userId) {
         $userId = (int)$userId;
         $query = "SELECT COUNT(*) as total FROM laporan_camat WHERE id_user = $userId";
@@ -414,9 +386,7 @@ class LaporanCamatAdminModel extends BaseModel {
         return $result ? $result->fetch_assoc()['total'] : 0;
     }
 
-    /**
-     * Get laporan camat statistics by kecamatan
-     */
+    
     public function getStatisticsByKecamatan() {
         $query = "SELECT
                     nama_kecamatan,
@@ -438,9 +408,7 @@ class LaporanCamatAdminModel extends BaseModel {
         return $data;
     }
 
-    /**
-     * Get overdue laporan camat (belum selesai setelah 7 hari)
-     */
+    
     public function getOverdueLaporanCamat($days = 7) {
         $days = (int)$days;
         $query = "SELECT lc.*, u.username, u.jabatan, '' as nama_kegiatan
@@ -460,9 +428,7 @@ class LaporanCamatAdminModel extends BaseModel {
         return $data;
     }
 
-    /**
-     * Bulk update status laporan
-     */
+    
     public function bulkUpdateStatus($ids, $status) {
         if (empty($ids)) {
             return [
@@ -495,9 +461,7 @@ class LaporanCamatAdminModel extends BaseModel {
         }
     }
 
-    /**
-     * Get laporan camat untuk notifikasi
-     */
+    
     public function getLaporanCamatForNotification() {
         $query = "SELECT lc.*, u.username
                   FROM laporan_camat lc
@@ -516,9 +480,7 @@ class LaporanCamatAdminModel extends BaseModel {
         return $data;
     }
 
-    /**
-     * Get tujuan options for filter
-     */
+    
     public function getTujuanOptions() {
         $query = "SELECT DISTINCT tujuan
                   FROM laporan_camat

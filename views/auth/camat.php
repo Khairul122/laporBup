@@ -5,15 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($appData['title']); ?></title>
 
-    <!-- Bootstrap 5 CSS -->
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Font Awesome -->
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
           integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
           crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <!-- Google Fonts - Poppins -->
+    
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
@@ -567,21 +567,21 @@
 </head>
 <body>
     <div class="split-container">
-        <!-- Left Side - Login Form -->
+        
         <div class="login-section">
             <div class="login-form-container">
-                <!-- Login Header -->
+                
                 <div class="login-header">
                     <h2>Selamat Datang</h2>
                     <p>Silakan masuk ke akun Camat Anda</p>
                 </div>
 
-                <!-- Login Card -->
+                
                 <div class="login-card">
-                    <!-- Alert Container -->
+                    
                     <div id="alertContainer"></div>
 
-                    <!-- Login Form -->
+                    
                     <form id="loginForm">
                         <div class="form-group">
                             <label for="username" class="form-label">
@@ -618,13 +618,13 @@
                         </button>
                     </form>
 
-                    <!-- Back Link -->
+                    
                    
                 </div>
             </div>
         </div>
 
-        <!-- Right Side - Branding -->
+        
         <div class="branding-section">
             <div class="branding-content">
                 <div class="logo-icon">
@@ -637,11 +637,11 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // Toggle password visibility
+        
         function togglePassword() {
             const passwordInput = document.getElementById('password');
             const passwordIcon = document.getElementById('passwordIcon');
@@ -657,7 +657,7 @@
             }
         }
 
-        // Toast notification system
+        
         let toastContainer = null;
 
         function getToastContainer() {
@@ -705,7 +705,7 @@
 
             container.appendChild(toast);
 
-            // Auto remove after duration
+            
             setTimeout(() => {
                 removeToast(toast.querySelector('.toast-close'));
             }, duration);
@@ -723,9 +723,9 @@
             }
         }
 
-        // Legacy showAlert function (untuk compatibility)
+        
         function showAlert(message, type = 'danger') {
-            // Convert old alert types to new toast types
+            
             let toastType = 'error';
             let title = 'Error';
 
@@ -733,11 +733,11 @@
                 toastType = 'success';
                 title = 'Berhasil';
             } else if (type === 'warning') {
-                toastType = 'error'; // Semua yang bukan success jadi error
+                toastType = 'error'; 
                 title = 'Gagal';
             }
 
-            // Jika message mengandung HTML, tampilkan versi sederhana
+            
             if (message.includes('<strong>') || message.includes('<a href')) {
                 message = message.replace(/<[^>]*>/g, '').trim();
             }
@@ -745,7 +745,7 @@
             showToast(title, message, toastType);
         }
 
-        // Set loading state
+        
         function setLoading(loading) {
             const loginBtn = document.getElementById('loginBtn');
             const loginText = document.getElementById('loginText');
@@ -765,14 +765,14 @@
             }
         }
 
-        // Handle form submission
+        
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
 
-            // Basic validation
+            
             if (!username) {
                 showToast('Validasi Error', 'Username harus diisi', 'error');
                 return;
@@ -789,9 +789,9 @@
                 const formData = new FormData();
                 formData.append('username', username);
                 formData.append('password', password);
-                formData.append('login_role', 'camat'); // Role dari halaman ini
+                formData.append('login_role', 'camat'); 
 
-                const response = await fetch('index.php?controller=auth&action=login', {
+                const response = await fetch('<?= route('auth', 'login') ?>', {
                     method: 'POST',
                     body: formData
                 });
@@ -805,7 +805,7 @@
                     }, 1500);
                 } else {
                     if (result.role_mismatch) {
-                        // Role mismatch - tampilkan pesan error saja tanpa memberi tahu role sebenarnya
+                        
                         showToast('Login Gagal', result.message || 'Username atau password salah', 'error');
                     } else {
                         showToast('Login Gagal', result.message || 'Username atau password salah', 'error');
@@ -819,7 +819,7 @@
             }
         });
 
-        // Focus on username field when page loads
+        
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('username').focus();
         });

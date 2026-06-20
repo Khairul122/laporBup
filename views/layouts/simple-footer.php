@@ -9,13 +9,12 @@
     </div>
 </footer>
 
-<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    // Tambahkan efek interaktif
+    
     document.addEventListener('DOMContentLoaded', function() {
-        // Tambahkan efek hover ke semua card
+        
         const cards = document.querySelectorAll('.menu-item, .info-card, .menu-card');
         cards.forEach(card => {
             card.addEventListener('mouseenter', function() {

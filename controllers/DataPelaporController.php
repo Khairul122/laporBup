@@ -9,33 +9,8 @@ class DataPelaporController extends BaseController {
         $this->dataPelaporModel = new DataPelaporModel();
     }
 
-    /**
-     * Require role admin untuk mengakses halaman
-     */
-    private function requireAdmin() {
-        $this->requireLogin();
-
-        if ($_SESSION['role'] !== 'admin') {
-            $response = [
-                'success' => false,
-                'message' => 'Anda tidak memiliki akses ke halaman ini'
-            ];
-
-            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-                header('Content-Type: application/json');
-                echo json_encode($response);
-                exit;
-            } else {
-                $this->redirect('index.php?controller=dashboard&action=admin');
-            }
-        }
-    }
-
-    /**
-     * Menampilkan halaman daftar data pelapor
-     */
     public function index() {
-        $this->requireAdmin();
+        $this->requireRole('admin');
 
         $user = $this->getCurrentUser();
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -49,20 +24,14 @@ class DataPelaporController extends BaseController {
             $role = '';
         }
 
-        // Get data pelapor
         $result = $this->dataPelaporModel->getAllDataPelapor($page, $limit, $search, $role);
-
-        // Get statistics
         $statistics = $this->dataPelaporModel->getPelaporStatistics();
 
         require_once 'views/data-pelapor/index.php';
     }
 
-    /**
-     * Menampilkan halaman form tambah/edit data pelapor
-     */
     public function form() {
-        $this->requireAdmin();
+        $this->requireRole('admin');
 
         $user = $this->getCurrentUser();
         $id = $_GET['id'] ?? null;
@@ -72,164 +41,141 @@ class DataPelaporController extends BaseController {
             $dataPelapor = $this->dataPelaporModel->getDataPelaporById($id);
             if (!$dataPelapor) {
                 $_SESSION['error'] = 'Data pelapor tidak ditemukan';
-                $this->redirect('index.php?controller=dataPelapor');
+                $this->redirect(route('dataPelapor', 'index'));
             }
         }
 
         require_once 'views/data-pelapor/form.php';
     }
 
-    /**
-     * Menyimpan data pelapor (create/update)
-     */
     public function save() {
-        $this->requireAdmin();
+        $this->requireRole('admin');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             try {
-                // Validasi input
-                $errors = [];
-
-                $username = trim($_POST['username'] ?? '');
-                $email = trim($_POST['email'] ?? '');
-                $jabatan = trim($_POST['jabatan'] ?? '');
-                $role = $_POST['role'] ?? '';
-                $no_telp = trim($_POST['no_telp'] ?? '');
-                $password = $_POST['password'] ?? '';
-                $confirmPassword = $_POST['confirm_password'] ?? '';
-                $id = $_POST['id'] ?? null;
-
-                // Validasi required fields
-                if (empty($username)) {
-                    $errors[] = 'Username harus diisi';
-                }
-                if (empty($email)) {
-                    $errors[] = 'Email harus diisi';
-                }
-                if (empty($jabatan)) {
-                    $errors[] = 'Jabatan harus diisi';
-                }
-                if (empty($role) || !in_array($role, ['camat', 'opd'])) {
-                    $errors[] = 'Role harus dipilih (camat atau opd)';
-                }
-
-                // Validasi nomor telepon (opsional)
-                if (!empty($no_telp)) {
-                    // Validasi format nomor telepon Indonesia
-                    if (!preg_match('/^(^\\+62|62|^08)[0-9]{8,13}$/', $no_telp)) {
-                        $errors[] = 'Format nomor telepon tidak valid. Gunakan format: 08xxxxxxxxxx atau +62xxxxxxxxxx';
-                    }
-                }
-
-                // Validasi format
-                if (!empty($email) && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                    $errors[] = 'Format email tidak valid';
-                }
-
-                if (!empty($username) && strlen($username) < 3) {
-                    $errors[] = 'Username minimal 3 karakter';
-                }
-
-                // Validasi password untuk create baru
-                if (!$id) {
-                    if (empty($password)) {
-                        $errors[] = 'Password harus diisi';
-                    } elseif (strlen($password) < 6) {
-                        $errors[] = 'Password minimal 6 karakter';
-                    } elseif ($password !== $confirmPassword) {
-                        $errors[] = 'Konfirmasi password tidak cocok';
-                    }
-                }
-                // Validasi password untuk update (jika diisi)
-                elseif (!empty($password)) {
-                    if (strlen($password) < 6) {
-                        $errors[] = 'Password minimal 6 karakter';
-                    } elseif ($password !== $confirmPassword) {
-                        $errors[] = 'Konfirmasi password tidak cocok';
-                    }
-                }
+                $id = !empty($_POST['id']) ? (int)$_POST['id'] : null;
+                $errors = $this->validatePelaporInput($_POST, $id);
 
                 if (!empty($errors)) {
-                    $response = [
+                    $this->json([
                         'success' => false,
                         'message' => implode('<br>', $errors)
-                    ];
-                } else {
-                    $data = [
-                        'username' => $username,
-                        'email' => $email,
-                        'jabatan' => $jabatan,
-                        'role' => $role,
-                        'no_telp' => $no_telp
-                    ];
-
-                    // Tambahkan password hanya jika diisi
-                    if (!empty($password)) {
-                        $data['password'] = $password;
-                    }
-
-                    if ($id) {
-                        // Update
-                        $result = $this->dataPelaporModel->updateDataPelapor($id, $data);
-                        $response = $result;
-                    } else {
-                        // Create
-                        $result = $this->dataPelaporModel->createDataPelapor($data);
-                        $response = $result;
-                    }
+                    ]);
                 }
+
+                $data = [
+                    'username' => trim($_POST['username'] ?? ''),
+                    'email' => trim($_POST['email'] ?? ''),
+                    'jabatan' => trim($_POST['jabatan'] ?? ''),
+                    'role' => $_POST['role'] ?? '',
+                    'no_telp' => trim($_POST['no_telp'] ?? '')
+                ];
+
+                if (!empty($_POST['password'])) {
+                    $data['password'] = $_POST['password'];
+                }
+
+                if ($id) {
+                    $response = $this->dataPelaporModel->updateDataPelapor($id, $data);
+                } else {
+                    $response = $this->dataPelaporModel->createDataPelapor($data);
+                }
+
+                $this->json($response);
+
             } catch (Exception $e) {
-                $response = [
+                $this->json([
                     'success' => false,
                     'message' => 'Error: ' . $e->getMessage()
-                ];
+                ]);
             }
-
-            header('Content-Type: application/json');
-            echo json_encode($response);
-            exit;
         }
     }
 
-    /**
-     * Menghapus data pelapor
-     */
+    private function validatePelaporInput(array $data, ?int $id): array {
+        $errors = [];
+        $username = trim($data['username'] ?? '');
+        $email = trim($data['email'] ?? '');
+        $jabatan = trim($data['jabatan'] ?? '');
+        $role = $data['role'] ?? '';
+        $no_telp = trim($data['no_telp'] ?? '');
+        $password = $data['password'] ?? '';
+        $confirmPassword = $data['confirm_password'] ?? '';
+
+        if (empty($username)) {
+            $errors[] = 'Username harus diisi';
+        }
+        if (empty($email)) {
+            $errors[] = 'Email harus diisi';
+        }
+        if (empty($jabatan)) {
+            $errors[] = 'Jabatan harus diisi';
+        }
+        if (empty($role) || !in_array($role, ['camat', 'opd'])) {
+            $errors[] = 'Role harus dipilih (camat atau opd)';
+        }
+
+        if (!empty($no_telp)) {
+            if (!preg_match('/^(^\+62|62|^08)[0-9]{8,13}$/', $no_telp)) {
+                $errors[] = 'Format nomor telepon tidak valid. Gunakan format: 08xxxxxxxxxx atau +62xxxxxxxxxx';
+            }
+        }
+
+        if (!empty($email) && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $errors[] = 'Format email tidak valid';
+        }
+
+        if (!empty($username) && strlen($username) < 3) {
+            $errors[] = 'Username minimal 3 karakter';
+        }
+
+        if (!$id) {
+            if (empty($password)) {
+                $errors[] = 'Password harus diisi';
+            } elseif (strlen($password) < 6) {
+                $errors[] = 'Password minimal 6 karakter';
+            } elseif ($password !== $confirmPassword) {
+                $errors[] = 'Konfirmasi password tidak cocok';
+            }
+        } elseif (!empty($password)) {
+            if (strlen($password) < 6) {
+                $errors[] = 'Password minimal 6 karakter';
+            } elseif ($password !== $confirmPassword) {
+                $errors[] = 'Konfirmasi password tidak cocok';
+            }
+        }
+
+        return $errors;
+    }
+
     public function delete() {
-        $this->requireAdmin();
+        $this->requireRole('admin');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             try {
                 $id = $_POST['id'] ?? null;
 
                 if (!$id) {
-                    $response = [
+                    $this->json([
                         'success' => false,
                         'message' => 'ID pelapor tidak valid'
-                    ];
-                } else {
-                    $result = $this->dataPelaporModel->deleteDataPelapor($id);
-                    $response = $result;
+                    ]);
                 }
+
+                $response = $this->dataPelaporModel->deleteDataPelapor($id);
+                $this->json($response);
+
             } catch (Exception $e) {
-                $response = [
+                $this->json([
                     'success' => false,
                     'message' => 'Error: ' . $e->getMessage()
-                ];
+                ]);
             }
-
-            header('Content-Type: application/json');
-            echo json_encode($response);
-            exit;
         }
     }
 
-    /**
-     * API endpoint untuk mendapatkan data pelapor (JSON)
-     */
     public function getDataPelapor() {
-        $this->requireAdmin();
-
-        header('Content-Type: application/json');
+        $this->requireRole('admin');
 
         try {
             $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -241,83 +187,63 @@ class DataPelaporController extends BaseController {
             }
 
             $result = $this->dataPelaporModel->getAllDataPelapor($page, $limit, $search, $role);
-
-            echo json_encode([
+            $this->json([
                 'success' => true,
                 'data' => $result
             ]);
         } catch (Exception $e) {
-            echo json_encode([
+            $this->json([
                 'success' => false,
                 'message' => 'Error: ' . $e->getMessage()
             ]);
         }
-        exit;
     }
 
-    /**
-     * API endpoint untuk search pelapor (autocomplete)
-     */
     public function searchPelapor() {
-        $this->requireAdmin();
-
-        header('Content-Type: application/json');
+        $this->requireRole('admin');
 
         try {
             $keyword = $_GET['q'] ?? '';
 
             if (strlen($keyword) < 2) {
-                echo json_encode([
+                $this->json([
                     'success' => true,
                     'data' => []
                 ]);
-                exit;
             }
 
             $data = $this->dataPelaporModel->searchDataPelapor($keyword);
-
-            echo json_encode([
+            $this->json([
                 'success' => true,
                 'data' => $data
             ]);
         } catch (Exception $e) {
-            echo json_encode([
+            $this->json([
                 'success' => false,
                 'message' => 'Error: ' . $e->getMessage()
             ]);
         }
-        exit;
     }
 
-    /**
-     * API endpoint untuk statistik pelapor
-     */
     public function getStatistics() {
-        $this->requireAdmin();
-
-        header('Content-Type: application/json');
+        $this->requireRole('admin');
 
         try {
             $statistics = $this->dataPelaporModel->getPelaporStatistics();
-
-            echo json_encode([
+            $this->json([
                 'success' => true,
                 'data' => $statistics
             ]);
         } catch (Exception $e) {
-            echo json_encode([
+            $this->json([
                 'success' => false,
                 'message' => 'Error: ' . $e->getMessage()
             ]);
         }
-        exit;
     }
 
-    /**
-     * Export data pelapor ke CSV
-     */
     public function export() {
-        $this->requireAdmin();
+        $this->requireRole('admin');
 
         try {
             $role = $_GET['role'] ?? '';
@@ -328,10 +254,8 @@ class DataPelaporController extends BaseController {
 
             $output = fopen('php://output', 'w');
 
-            // Header
             fputcsv($output, ['ID', 'Username', 'Email', 'No. Telepon', 'Jabatan', 'Role', 'Total Laporan', 'Tanggal Dibuat']);
 
-            // Data
             foreach ($data as $row) {
                 fputcsv($output, [
                     $row['id_user'],
@@ -349,42 +273,7 @@ class DataPelaporController extends BaseController {
             exit;
         } catch (Exception $e) {
             $_SESSION['error'] = 'Error export: ' . $e->getMessage();
-            $this->redirect('index.php?controller=dataPelapor');
+            $this->redirect(route('dataPelapor', 'index'));
         }
     }
-}
-
-// Proses request
-if (isset($_GET['action'])) {
-    $dataPelaporController = new DataPelaporController();
-
-    switch ($_GET['action']) {
-        case 'form':
-            $dataPelaporController->form();
-            break;
-        case 'save':
-            $dataPelaporController->save();
-            break;
-        case 'delete':
-            $dataPelaporController->delete();
-            break;
-        case 'getData':
-            $dataPelaporController->getDataPelapor();
-            break;
-        case 'search':
-            $dataPelaporController->searchPelapor();
-            break;
-        case 'statistics':
-            $dataPelaporController->getStatistics();
-            break;
-        case 'export':
-            $dataPelaporController->export();
-            break;
-        default:
-            $dataPelaporController->index();
-            break;
-    }
-} else {
-    $dataPelaporController = new DataPelaporController();
-    $dataPelaporController->index();
 }

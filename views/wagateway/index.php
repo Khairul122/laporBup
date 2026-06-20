@@ -12,7 +12,7 @@
           <div class="row">
             <div class="col-sm-12">
 
-              <!-- Page Header -->
+              
               <div class="page-header mb-4">
                 <div class="d-flex align-items-center justify-content-between">
                   <div>
@@ -24,7 +24,7 @@
                     <button class="btn btn-success btn-sm me-2" onclick="showBulkModal()">
                       <i class="fas fa-paper-plane"></i> Kirim Massal
                     </button>
-                    <a href="index.php?controller=waGateway&action=form" class="btn btn-primary btn-sm">
+                    <a href="<?= route('waGateway', 'form') ?>" class="btn btn-primary btn-sm">
                       <i class="fas fa-plus-circle"></i> Kirim Pesan
                     </a>
                   </div>
@@ -32,7 +32,7 @@
               </div>
 
               
-              <!-- Search and Filter -->
+              
               <div class="row mb-4">
                 <div class="col-12">
                   <div class="card border-0 shadow-sm">
@@ -96,7 +96,7 @@
                         </div>
                       </form>
 
-                      <!-- Info Bar -->
+                      
                       <div class="row mt-3 pt-3 border-top">
                         <div class="col-md-4">
                           <div class="d-flex align-items-center">
@@ -127,7 +127,7 @@
                 </div>
               </div>
 
-              <!-- Messages Table -->
+              
               <div class="row mb-4">
                 <div class="col-12">
                   <div class="card border-0 shadow-sm">
@@ -236,7 +236,7 @@
                           </table>
                         </div>
 
-                        <!-- Pagination -->
+                        
                         <?php if ($result['total_pages'] > 1): ?>
                           <div class="d-flex justify-content-between align-items-center mt-4">
                             <div class="text-muted">
@@ -296,7 +296,7 @@
                           <i class="fab fa-whatsapp text-muted" style="font-size: 3rem;"></i>
                           <h5 class="mt-3 text-muted">Belum ada pesan</h5>
                           <p class="text-muted">Kirim pesan WhatsApp pertama Anda</p>
-                          <a href="index.php?controller=waGateway&action=form" class="btn btn-success">
+                          <a href="<?= route('waGateway', 'form') ?>" class="btn btn-success">
                             <i class="fas fa-plus-circle"></i> Kirim Pesan
                           </a>
                         </div>
@@ -313,7 +313,7 @@
     </div>
   </div>
 
-  <!-- Bulk Send Modal -->
+  
   <div class="modal fade" id="bulkSendModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
@@ -383,7 +383,7 @@
   </div>
 
   <?php
-  // Helper function untuk format tanggal Indonesia
+  
   function formatDateIndo($date) {
       $days = array('Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu');
       $months = array('', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember');
@@ -401,294 +401,8 @@
 
   <?php include 'views/layouts/admin-script.php'; ?>
 
-  <!-- Custom JavaScript -->
-  <script>
-    // Toggle message preview
-    function toggleMessage(id) {
-      const preview = document.querySelector(`#dataTableBody tr:nth-child(${id}) .message-preview`);
-      const fullMessage = document.getElementById(`fullMessage-${id}`);
-
-      if (fullMessage.classList.contains('d-none')) {
-        preview.classList.add('d-none');
-        fullMessage.classList.remove('d-none');
-      } else {
-        preview.classList.remove('d-none');
-        fullMessage.classList.add('d-none');
-      }
-    }
-
-    // Retry failed message
-    function retryMessage(id) {
-      if (confirm('Apakah Anda yakin ingin mencoba mengirim ulang pesan ini?')) {
-        fetch('index.php?controller=waGateway&action=send', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          body: 'id=' + id + '&retry=true'
-        })
-        .then(response => response.json())
-        .then(result => {
-          if (result.success) {
-            showAlert('success', result.message);
-            location.reload();
-          } else {
-            showAlert('danger', result.message);
-          }
-        })
-        .catch(error => {
-          showAlert('danger', 'Error: ' + error.message);
-        });
-      }
-    }
-
-    // Delete message
-    function deleteMessage(id, phoneNumber) {
-      if (confirm(`Apakah Anda yakin ingin menghapus pesan ke nomor "${phoneNumber}"?`)) {
-        fetch('index.php?controller=waGateway&action=delete', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          body: 'id=' + id
-        })
-        .then(response => response.json())
-        .then(result => {
-          if (result.success) {
-            showAlert('success', result.message);
-            location.reload();
-          } else {
-            showAlert('danger', result.message);
-          }
-        })
-        .catch(error => {
-          showAlert('danger', 'Error: ' + error.message);
-        });
-      }
-    }
-
-    // Export data
-    function exportData() {
-      const status = document.getElementById('statusFilter').value;
-      const date = document.getElementById('dateFilter').value;
-      const url = 'index.php?controller=waGateway&action=export';
-      const params = new URLSearchParams();
-      if (status) params.append('status', status);
-      if (date) params.append('date', date);
-      window.open(url + (params.toString() ? '?' + params.toString() : ''), '_blank');
-    }
-
-    // Reset filter
-    function resetFilter() {
-      document.getElementById('searchInput').value = '';
-      document.getElementById('statusFilter').value = '';
-      document.getElementById('dateFilter').value = '';
-      window.location.href = 'index.php?controller=waGateway';
-    }
-
-    // Show bulk send modal
-    function showBulkModal() {
-      const modal = new bootstrap.Modal(document.getElementById('bulkSendModal'));
-      modal.show();
-    }
-
-    // Toggle all contacts
-    function toggleAllContacts() {
-      const selectAll = document.getElementById('selectAll');
-      const checkboxes = document.querySelectorAll('.contact-checkbox');
-      checkboxes.forEach(checkbox => {
-        checkbox.checked = selectAll.checked;
-      });
-    }
-
-    // Update select all checkbox when individual checkboxes change
-    document.addEventListener('change', function(e) {
-      if (e.target.classList.contains('contact-checkbox')) {
-        const selectAll = document.getElementById('selectAll');
-        const checkboxes = document.querySelectorAll('.contact-checkbox');
-        const checkedBoxes = document.querySelectorAll('.contact-checkbox:checked');
-        selectAll.checked = checkboxes.length === checkedBoxes.length;
-      }
-    });
-
-    // Bulk send form submission
-    document.getElementById('bulkSendForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-
-      const formData = new FormData(this);
-      const submitBtn = document.getElementById('bulkSendBtn');
-
-      // Check if any contacts are selected
-      const selectedContacts = formData.getAll('contacts[]');
-      if (selectedContacts.length === 0) {
-        showAlert('warning', 'Pilih minimal satu kontak untuk dikirimkan pesan.');
-        return;
-      }
-
-      // Show loading state
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Mengirim...';
-
-      // Convert FormData to URLSearchParams
-      const params = new URLSearchParams();
-      for (const [key, value] of formData.entries()) {
-        params.append(key, value);
-      }
-
-      fetch('index.php?controller=waGateway&action=bulkSend', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: params.toString()
-      })
-      .then(response => response.json())
-      .then(result => {
-        if (result.success) {
-          showAlert('success', result.message);
-
-          // Show detailed results
-          if (result.results && result.results.length > 0) {
-            const modal = bootstrap.Modal.getInstance(document.getElementById('bulkSendModal'));
-            modal.hide();
-
-            setTimeout(() => {
-              showBulkResults(result.results, result.success_count, result.failed_count);
-            }, 500);
-          } else {
-            setTimeout(() => location.reload(), 1500);
-          }
-        } else {
-          showAlert('danger', result.message);
-        }
-      })
-      .catch(error => {
-        showAlert('danger', 'Error: ' + error.message);
-      })
-      .finally(() => {
-        // Reset button state
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Kirim ke Semua';
-      });
-    });
-
-    // Show bulk send results
-    function showBulkResults(results, successCount, failedCount) {
-      let resultHtml = `
-        <div class="modal fade" id="resultsModal" tabindex="-1">
-          <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title">
-                  <i class="fas fa-check-circle"></i> Hasil Pengiriman
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-              </div>
-              <div class="modal-body">
-                <div class="alert alert-info">
-                  <i class="fas fa-info-circle"></i>
-                  <strong>Ringkasan:</strong> Sukses: ${successCount}, Gagal: ${failedCount}
-                </div>
-                <div class="table-responsive">
-                  <table class="table table-sm">
-                    <thead>
-                      <tr>
-                        <th>Nama</th>
-                        <th>Nomor</th>
-                        <th>Status</th>
-                       
-                      </tr>
-                    </thead>
-                    <tbody>
-      `;
-
-      results.forEach(result => {
-        const statusClass = result.status === 'success' ? 'success' : 'danger';
-        const statusIcon = result.status === 'success' ? 'check-circle' : 'times-circle';
-        resultHtml += `
-          <tr>
-            <td>${result.name}</td>
-            <td>${result.phone}</td>
-            <td>
-              <span class="badge bg-${statusClass}">
-                <i class="fas fa-${statusIcon}"></i>
-                ${result.status === 'success' ? 'Berhasil' : 'Gagal'}
-              </span>
-            </td>
-          </tr>
-        `;
-      });
-
-      resultHtml += `
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-primary" onclick="location.reload()">
-                  <i class="fas fa-sync"></i> Refresh Halaman
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-
-      // Add modal to body
-      const modalContainer = document.createElement('div');
-      modalContainer.innerHTML = resultHtml;
-      document.body.appendChild(modalContainer);
-
-      // Show modal
-      const modal = new bootstrap.Modal(document.getElementById('resultsModal'));
-      modal.show();
-
-      // Remove modal from DOM when hidden
-      document.getElementById('resultsModal').addEventListener('hidden.bs.modal', function() {
-        modalContainer.remove();
-      });
-    }
-
-    // Show alert
-    function showAlert(type, message) {
-      const alertDiv = document.createElement('div');
-      alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
-      alertDiv.innerHTML = `
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      `;
-
-      document.querySelector('.page-header').after(alertDiv);
-
-      setTimeout(() => {
-        alertDiv.remove();
-      }, 5000);
-    }
-
-    // Search form submission
-    document.getElementById('searchForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-
-      const search = document.getElementById('searchInput').value;
-      const status = document.getElementById('statusFilter').value;
-      const date = document.getElementById('dateFilter').value;
-
-      const params = new URLSearchParams();
-      if (search) params.append('search', search);
-      if (status) params.append('status', status);
-      if (date) params.append('date', date);
-
-      window.location.href = 'index.php?controller=waGateway&' + params.toString();
-    });
-
-    // Auto-refresh data (optional - every 30 seconds)
-    setInterval(() => {
-      // Only refresh if no modal is open
-      if (!document.querySelector('.modal.show')) {
-        // Optional: Implement auto-refresh logic here
-      }
-    }, 30000);
-  </script>
+  
+  <script></script>
 
   <style>
         .message-preview {

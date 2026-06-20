@@ -1,75 +1,15 @@
 <?php
-// Mulai session
+
 session_start();
 
-// Memuat koneksi database
 require_once 'config/koneksi.php';
+require_once 'core/BaseController.php';
+require_once 'core/Router.php';
 
-// Pasang security header dasar
 applySecurityHeaders();
 
-// Base controller (auth guard, render, redirect helper)
-require_once 'core/BaseController.php';
+$router = new Router();
 
-// Menentukan controller dan action default
-$controller = isset($_GET['controller']) ? $_GET['controller'] : 'auth';
-$action = isset($_GET['action']) ? $_GET['action'] : 'index';
+require_once 'core/routes.php';
 
-// Extension point untuk alias controller khusus (camelCase -> ClassName)
-// di luar konvensi default ucfirst($controller) . 'Controller'
-$controllerMap = [];
-
-// Menentukan file controller dan class
-if (isset($controllerMap[$controller])) {
-    $controllerClass = $controllerMap[$controller];
-} else {
-    $controllerClass = ucfirst($controller) . 'Controller';
-}
-$controllerFile = 'controllers/' . $controllerClass . '.php';
-
-// Memeriksa apakah file controller ada
-if (file_exists($controllerFile)) {
-    require_once $controllerFile;
-
-    // Membuat instance controller
-    if (class_exists($controllerClass)) {
-        $controllerInstance = new $controllerClass();
-
-        // Memeriksa apakah method (action) ada di dalam controller
-        if (method_exists($controllerInstance, $action)) {
-            // Get additional parameters from URL or POST
-            $params = [];
-            if (isset($_GET['id'])) {
-                $params[] = $_GET['id'];
-            } elseif (isset($_POST['id'])) {
-                $params[] = $_POST['id'];
-            }
-
-            // Call method with parameters if available
-            if (!empty($params)) {
-                call_user_func_array([$controllerInstance, $action], $params);
-            } else {
-                $controllerInstance->$action();
-            }
-        } else {
-            // Jika action tidak ditemukan, gunakan action default
-            if (method_exists($controllerInstance, 'index')) {
-                $controllerInstance->index();
-            } else {
-                http_response_code(404);
-                $message = "Aksi '$action' tidak ditemukan pada controller '$controllerClass'";
-                require 'views/errors/404.php';
-            }
-        }
-    } else {
-        http_response_code(404);
-        $message = "Controller class '$controllerClass' tidak ditemukan";
-        require 'views/errors/404.php';
-    }
-} else {
-    // Jika controller tidak ditemukan, tampilkan halaman 404
-    http_response_code(404);
-    $message = "Halaman '$controller' tidak ditemukan";
-    require 'views/errors/404.php';
-}
-?>
+$router->dispatch();

@@ -7,7 +7,7 @@ include 'views/layouts/simple-header.php';
 <div class="fullscreen-container">
     <div class="fullscreen-content">
         <div class="content-row">
-            <!-- Informasi Pengguna -->
+            
             <div class="info-card">
                 <h3 class="card-title">Informasi Pengguna</h3>
                 <div class="user-name"><?php echo htmlspecialchars($_SESSION['username'] ?? 'User'); ?></div>
@@ -21,25 +21,25 @@ include 'views/layouts/simple-header.php';
                 </div>
             </div>
 
-            <!-- Menu -->
+            
             <div class="menu-card">
                 <h3 class="card-title">Menu Utama</h3>
                 <div class="menu-grid">
-                    <div class="menu-item" onclick="location.href='index.php?controller=dashboard&action=opd'">
+                    <div class="menu-item" onclick="location.href='<?= route('dashboard', 'opd') ?>'">
                         <div class="menu-icon">
                             <i class="fas fa-tachometer-alt"></i>
                         </div>
                         <div class="menu-text">Dashboard</div>
                     </div>
 
-                    <div class="menu-item" onclick="location.href='index.php?controller=laporanOPD&action=index'">
+                    <div class="menu-item" onclick="location.href='<?= route('laporanOPD', 'index') ?>'">
                         <div class="menu-icon">
                             <i class="fas fa-file-alt"></i>
                         </div>
                         <div class="menu-text">Laporan Saya</div>
                     </div>
 
-                    <div class="menu-item" onclick="location.href='index.php?controller=laporanOPD&action=create'">
+                    <div class="menu-item" onclick="location.href='<?= route('laporanOPD', 'create') ?>'">
                         <div class="menu-icon">
                             <i class="fas fa-plus-circle"></i>
                         </div>

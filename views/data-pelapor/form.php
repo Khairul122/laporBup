@@ -12,7 +12,6 @@
           <div class="row">
             <div class="col-sm-12">
 
-              <!-- Page Header -->
               <div class="page-header mb-4">
                 <div class="d-flex align-items-center">
                   <div>
@@ -22,8 +21,8 @@
                     </h3>
                     <nav aria-label="breadcrumb">
                       <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index.php?controller=dashboard&action=admin">Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="index.php?controller=dataPelapor">Data Pelapor</a></li>
+                        <li class="breadcrumb-item"><a href="<?= route('dashboard', 'admin') ?>">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="<?= route('dataPelapor', 'index') ?>">Data Pelapor</a></li>
                         <li class="breadcrumb-item active"><?php echo $dataPelapor ? 'Edit' : 'Tambah'; ?></li>
                       </ol>
                     </nav>
@@ -31,7 +30,6 @@
                 </div>
               </div>
 
-              <!-- Form Card Full Screen -->
               <div class="row">
                 <div class="col-12">
                   <div class="card border-0 shadow-sm">
@@ -58,7 +56,6 @@
                       <form id="pelaporForm" onsubmit="savePelapor(event)">
                         <input type="hidden" name="id" id="pelaporId" value="<?php echo $dataPelapor['id_user'] ?? ''; ?>">
 
-                        <!-- Username Field -->
                         <div class="form-group mb-4">
                           <label for="username" class="form-label fw-semibold">
                             Username <span class="text-danger">*</span>
@@ -74,7 +71,6 @@
                           <small class="text-muted">Username minimal 3 karakter, hanya huruf, angka, dan underscore</small>
                         </div>
 
-                        <!-- Email Field -->
                         <div class="form-group mb-4">
                           <label for="email" class="form-label fw-semibold">
                             Email <span class="text-danger">*</span>
@@ -90,7 +86,6 @@
                           <small class="text-muted">Email harus valid dan akan digunakan untuk login</small>
                         </div>
 
-                        <!-- Role Field -->
                         <div class="form-group mb-4">
                           <label for="role" class="form-label fw-semibold">
                             Role <span class="text-danger">*</span>
@@ -102,17 +97,16 @@
                             <select class="form-select" id="role" name="role" required onchange="updateFormFields()">
                               <option value="">Pilih Role</option>
                               <option value="camat" <?php echo ($dataPelapor['role'] ?? '') === 'camat' ? 'selected' : ''; ?>>
-                                <i class="fas fa-map-marker-alt"></i> Camat
+                                Camat
                               </option>
                               <option value="opd" <?php echo ($dataPelapor['role'] ?? '') === 'opd' ? 'selected' : ''; ?>>
-                                <i class="fas fa-building"></i> OPD
+                                OPD
                               </option>
                             </select>
                           </div>
                           <small class="text-muted">Pilih role pelapor (Camat atau OPD)</small>
                         </div>
 
-                        <!-- Nomor Telepon Field -->
                         <div class="form-group mb-4">
                           <label for="no_telp" class="form-label fw-semibold">
                             Nomor Telepon <span class="text-muted">(Opsional)</span>
@@ -124,13 +118,12 @@
                             <input type="tel" class="form-control" id="no_telp" name="no_telp"
                                    value="<?php echo htmlspecialchars($dataPelapor['no_telp'] ?? ''); ?>"
                                    placeholder="Contoh: 08123456789 atau +628123456789"
-                                   pattern="(^\\+62|62|^08)[0-9]{8,13}"
+                                   pattern="(^\+62|62|^08)[0-9]{8,13}"
                                    title="Format: 08xxxxxxxxxx atau +62xxxxxxxxxx">
                           </div>
                           <small class="text-muted">Nomor telepon WhatsApp/SMS untuk komunikasi</small>
                         </div>
 
-                        <!-- Jabatan Field -->
                         <div class="form-group mb-4">
                           <label for="jabatan" class="form-label fw-semibold">
                             Jabatan <span class="text-danger">*</span>
@@ -146,7 +139,6 @@
                           <small class="text-muted">Jabatan lengkap pelapor</small>
                         </div>
 
-                        <!-- Password Field -->
                         <div class="form-group mb-4">
                           <label for="password" class="form-label fw-semibold">
                             Password <span class="text-danger <?php echo $dataPelapor ? '' : '*'; ?>"></span>
@@ -165,7 +157,6 @@
                           <small class="text-muted">Password minimal 6 karakter</small>
                         </div>
 
-                        <!-- Confirm Password Field -->
                         <div class="form-group mb-4">
                           <label for="confirm_password" class="form-label fw-semibold">
                             Konfirmasi Password <span class="text-danger <?php echo $dataPelapor ? '' : '*'; ?>"></span>
@@ -184,11 +175,8 @@
                           <small class="text-muted">Konfirmasi password harus sama dengan password</small>
                         </div>
 
-                        
-                        
-                        <!-- Action Buttons -->
                         <div class="d-flex justify-content-between">
-                          <a href="index.php?controller=dataPelapor" class="btn btn-secondary">
+                          <a href="<?= route('dataPelapor', 'index') ?>" class="btn btn-secondary">
                             <i class="fas fa-arrow-left"></i> Kembali
                           </a>
                           <div>
@@ -216,9 +204,7 @@
 
   <?php include 'views/layouts/admin-script.php'; ?>
 
-  <!-- Custom JavaScript -->
   <script>
-    // Toggle password visibility
     function togglePassword(fieldId) {
       const passwordField = document.getElementById(fieldId);
       const eyeIcon = document.getElementById(fieldId + '-eye');
@@ -232,7 +218,6 @@
       }
     }
 
-    // Update form fields based on role
     function updateFormFields() {
       const role = document.getElementById('role').value;
       const jabatanField = document.getElementById('jabatan');
@@ -246,7 +231,6 @@
       }
     }
 
-    // Save pelapor
     function savePelapor(event) {
       event.preventDefault();
 
@@ -255,17 +239,15 @@
       const submitBtn = document.getElementById('submitBtn');
       const submitBtnText = document.getElementById('submitBtnText');
 
-      // Show loading state
       submitBtn.disabled = true;
       submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Menyimpan...';
 
-      // Convert FormData to URLSearchParams
       const params = new URLSearchParams();
       for (const [key, value] of formData.entries()) {
         params.append(key, value);
       }
 
-      fetch('index.php?controller=dataPelapor&action=save', {
+      fetch('<?= route('dataPelapor', 'save') ?>', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -277,9 +259,8 @@
         if (result.success) {
           showNotification('success', result.message);
 
-          // Redirect after delay
           setTimeout(() => {
-            window.location.href = 'index.php?controller=dataPelapor';
+            window.location.href = '<?= route('dataPelapor', 'index') ?>';
           }, 1500);
         } else {
           showNotification('danger', result.message);
@@ -289,19 +270,15 @@
         showNotification('danger', 'Error: ' + error.message);
       })
       .finally(() => {
-        // Reset button state
         submitBtn.disabled = false;
         submitBtn.innerHTML = '<i class="fas fa-save"></i> <span id="submitBtnText">' + submitBtnText.textContent + '</span>';
       });
     }
 
-    // Show notification
     function showNotification(type, message) {
-      // Remove existing alerts
       const existingAlerts = document.querySelectorAll('.alert');
       existingAlerts.forEach(alert => alert.remove());
 
-      // Create new alert
       const alertDiv = document.createElement('div');
       alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
       alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
@@ -312,7 +289,6 @@
 
       document.body.appendChild(alertDiv);
 
-      // Auto remove after 5 seconds
       setTimeout(() => {
         if (alertDiv.parentNode) {
           alertDiv.remove();
@@ -320,14 +296,11 @@
       }, 5000);
     }
 
-    // Real-time validation
     document.getElementById('username').addEventListener('input', function(e) {
       const value = e.target.value;
-      // Allow only letters, numbers, and underscore
       e.target.value = value.replace(/[^a-zA-Z0-9_]/g, '');
     });
 
-    // Password validation
     document.getElementById('password').addEventListener('input', function(e) {
       const password = e.target.value;
       const confirmField = document.getElementById('confirm_password');
@@ -338,7 +311,6 @@
         e.target.classList.remove('is-invalid');
       }
 
-      // Check confirm password match
       if (confirmField.value.length > 0) {
         if (password !== confirmField.value) {
           confirmField.classList.add('is-invalid');
@@ -359,7 +331,6 @@
       }
     });
 
-    // Email validation
     document.getElementById('email').addEventListener('blur', function(e) {
       const email = e.target.value;
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -371,21 +342,17 @@
       }
     });
 
-    // Phone number validation
     document.getElementById('no_telp').addEventListener('input', function(e) {
       let value = e.target.value;
 
-      // Allow only numbers, +, and spaces
       value = value.replace(/[^0-9+\s]/g, '');
 
-      // Format: If starts with 0, keep as is. If starts with 62, add + at the beginning
       if (value.startsWith('62')) {
         value = '+' + value;
       }
 
       e.target.value = value;
 
-      // Validate format
       const phoneRegex = /^(^\+62|62|^08)[0-9]{8,13}$/;
       if (value.length > 0 && !phoneRegex.test(value.replace(/\s/g, ''))) {
         e.target.classList.add('is-invalid');
@@ -394,11 +361,9 @@
       }
     });
 
-    // Initialize form on load
     document.addEventListener('DOMContentLoaded', function() {
       updateFormFields();
 
-      // Focus on first empty field
       const firstEmpty = document.querySelector('input:not([readonly]):not([disabled]):not([value])');
       if (firstEmpty) {
         firstEmpty.focus();

@@ -13,7 +13,7 @@ include 'views/layouts/admin-header.php';
         <div class="content-wrapper">
           <div class="row">
             <div class="col-sm-12">
-              <!-- Header Section -->
+              
               <div class="d-flex align-items-center justify-content-between mb-4">
                 <div>
                   <h3 class="page-title mb-1">
@@ -23,18 +23,16 @@ include 'views/layouts/admin-header.php';
                   <p class="text-muted mb-0">Kelola konfigurasi profile aplikasi untuk setiap role</p>
                 </div>
                 <div>
-                  <a href="index.php?controller=profile&action=create" class="btn btn-primary">
+                  <a href="<?= route('profile', 'create') ?>" class="btn btn-primary">
                     <i class="fas fa-plus"></i> Tambah Profile
                   </a>
                 </div>
               </div>
 
-              <!-- Search and Filter Section -->
+              
               <div class="card border-0 shadow-sm mb-4">
                 <div class="card-body">
-                  <form method="GET" action="index.php" class="row g-3">
-                    <input type="hidden" name="controller" value="profile">
-                    <input type="hidden" name="action" value="index">
+                  <form method="GET" action="<?= route('profile', 'index') ?>" class="row g-3">
 
                     <div class="col-md-5">
                       <label for="search" class="form-label">Cari Profile</label>
@@ -59,7 +57,7 @@ include 'views/layouts/admin-header.php';
                       <button type="submit" class="btn btn-primary me-2">
                         <i class="fas fa-search"></i> Cari
                       </button>
-                      <a href="index.php?controller=profile&action=index" class="btn btn-secondary">
+                      <a href="<?= route('profile', 'index') ?>" class="btn btn-secondary">
                         <i class="fas fa-redo"></i> Reset
                       </a>
                     </div>
@@ -67,7 +65,7 @@ include 'views/layouts/admin-header.php';
                 </div>
               </div>
 
-              <!-- Table Section -->
+              
               <div class="card border-0 shadow-sm">
                 <div class="card-body">
                   <?php if (empty($profiles)): ?>
@@ -75,7 +73,7 @@ include 'views/layouts/admin-header.php';
                       <i class="fas fa-users-cog text-muted" style="font-size: 3rem;"></i>
                       <h5 class="mt-3 text-muted">Belum ada Profile</h5>
                       <p class="text-muted">Tambahkan profile pertama untuk memulai</p>
-                      <a href="index.php?controller=profile&action=create" class="btn btn-primary">
+                      <a href="<?= route('profile', 'create') ?>" class="btn btn-primary">
                         <i class="fas fa-plus"></i> Tambah Profile
                       </a>
                     </div>
@@ -106,7 +104,7 @@ include 'views/layouts/admin-header.php';
                                   ?>
                                   <?php if ($logoExists): ?>
                                     <?php
-                                    // Check if file is readable
+                                    
                                     $isReadable = is_readable($logoPath);
                                     $fileSize = filesize($logoPath);
                                     ?>
@@ -143,7 +141,7 @@ include 'views/layouts/admin-header.php';
                             </td>
                             <td>
                               <div class="btn-group" role="group">
-                                <a href="index.php?controller=profile&action=edit&id=<?php echo $profile['id_profile']; ?>"
+                                <a href="<?= route('profile', 'edit') ?>?id=<?php echo $profile['id_profile']; ?>"
                                    class="btn btn-sm btn-outline-primary"
                                    title="Edit Profile">
                                   <i class="fas fa-edit"></i>
@@ -162,7 +160,7 @@ include 'views/layouts/admin-header.php';
                       </table>
                     </div>
 
-                    <!-- Pagination -->
+                    
                     <?php if ($total_pages > 1): ?>
                       <div class="d-flex justify-content-between align-items-center mt-3">
                         <div class="text-muted">
@@ -172,7 +170,7 @@ include 'views/layouts/admin-header.php';
                           <ul class="pagination pagination-sm mb-0">
                             <?php if ($page > 1): ?>
                               <li class="page-item">
-                                <a class="page-link" href="?controller=profile&action=index&page=<?php echo $page - 1; ?><?php echo !empty($search) ? '&search=' . urlencode($search) : ''; ?><?php echo !empty($role_filter) ? '&role=' . urlencode($role_filter) : ''; ?>">
+                                <a class="page-link" href="<?= route('profile', 'index') ?>?page=<?php echo $page - 1; ?><?php echo !empty($search) ? '&search=' . urlencode($search) : ''; ?><?php echo !empty($role_filter) ? '&role=' . urlencode($role_filter) : ''; ?>">
                                   <i class="fas fa-chevron-left"></i>
                                 </a>
                               </li>
@@ -183,7 +181,7 @@ include 'views/layouts/admin-header.php';
                             $end_page = min($total_pages, $page + 2);
 
                             if ($start_page > 1) {
-                              echo '<li class="page-item"><a class="page-link" href="?controller=profile&action=index&page=1' . (!empty($search) ? '&search=' . urlencode($search) : '') . (!empty($role_filter) ? '&role=' . urlencode($role_filter) : '') . '">1</a></li>';
+                              echo '<li class="page-item"><a class="page-link" href="' . route('profile', 'index') . '?page=1' . (!empty($search) ? '&search=' . urlencode($search) : '') . (!empty($role_filter) ? '&role=' . urlencode($role_filter) : '') . '">1</a></li>';
                               if ($start_page > 2) {
                                 echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
                               }
@@ -191,20 +189,20 @@ include 'views/layouts/admin-header.php';
 
                             for ($i = $start_page; $i <= $end_page; $i++) {
                               $active = $i == $page ? 'active' : '';
-                              echo '<li class="page-item ' . $active . '"><a class="page-link" href="?controller=profile&action=index&page=' . $i . (!empty($search) ? '&search=' . urlencode($search) : '') . (!empty($role_filter) ? '&role=' . urlencode($role_filter) : '') . '">' . $i . '</a></li>';
+                              echo '<li class="page-item ' . $active . '"><a class="page-link" href="' . route('profile', 'index') . '?page=' . $i . (!empty($search) ? '&search=' . urlencode($search) : '') . (!empty($role_filter) ? '&role=' . urlencode($role_filter) : '') . '">' . $i . '</a></li>';
                             }
 
                             if ($end_page < $total_pages) {
                               if ($end_page < $total_pages - 1) {
                                 echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
                               }
-                              echo '<li class="page-item"><a class="page-link" href="?controller=profile&action=index&page=' . $total_pages . (!empty($search) ? '&search=' . urlencode($search) : '') . (!empty($role_filter) ? '&role=' . urlencode($role_filter) : '') . '">' . $total_pages . '</a></li>';
+                              echo '<li class="page-item"><a class="page-link" href="' . route('profile', 'index') . '?page=' . $total_pages . (!empty($search) ? '&search=' . urlencode($search) : '') . (!empty($role_filter) ? '&role=' . urlencode($role_filter) : '') . '">' . $total_pages . '</a></li>';
                             }
                             ?>
 
                             <?php if ($page < $total_pages): ?>
                               <li class="page-item">
-                                <a class="page-link" href="?controller=profile&action=index&page=<?php echo $page + 1; ?><?php echo !empty($search) ? '&search=' . urlencode($search) : ''; ?><?php echo !empty($role_filter) ? '&role=' . urlencode($role_filter) : ''; ?>">
+                                <a class="page-link" href="<?= route('profile', 'index') ?>?page=<?php echo $page + 1; ?><?php echo !empty($search) ? '&search=' . urlencode($search) : ''; ?><?php echo !empty($role_filter) ? '&role=' . urlencode($role_filter) : ''; ?>">
                                   <i class="fas fa-chevron-right"></i>
                                 </a>
                               </li>
@@ -223,10 +221,10 @@ include 'views/layouts/admin-header.php';
     </div>
   </div>
 
-  <!-- Toast Notifications Container -->
+  
   <div id="toastContainer" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
 
-  <!-- Delete Confirmation Modal -->
+  
   <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -263,26 +261,26 @@ include 'views/layouts/admin-header.php';
 
   <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Function to handle image loading errors
+    
     function handleImageError(img, initials) {
       img.onerror = null;
       img.src = '';
       img.style.display = 'none';
 
-      // Create fallback div with initials
+      
       const fallbackDiv = document.createElement('div');
       fallbackDiv.className = 'bg-gradient-primary rounded-circle d-flex align-items-center justify-content-center text-white';
       fallbackDiv.style.cssText = 'width: 40px; height: 40px; font-size: 14px; font-weight: bold;';
       fallbackDiv.textContent = initials;
 
-      // Replace the image with the fallback
+      
       img.parentElement.appendChild(fallbackDiv);
     }
 
-    // Make function globally available
+    
     window.handleImageError = handleImageError;
 
-    // Show toast notifications
+    
     function showToast(message, type = 'success') {
       const toastContainer = document.getElementById('toastContainer');
       const toast = document.createElement('div');
@@ -309,7 +307,7 @@ include 'views/layouts/admin-header.php';
 
       toastContainer.appendChild(toast);
 
-      // Auto remove after 5 seconds
+      
       setTimeout(() => {
         const toastElement = document.getElementById(toastId);
         if (toastElement) {
@@ -319,7 +317,7 @@ include 'views/layouts/admin-header.php';
       }, 5000);
     }
 
-    // Show session messages
+    
     <?php if (isset($_SESSION['success'])): ?>
       showToast("<?php echo addslashes($_SESSION['success']); unset($_SESSION['success']); ?>", 'success');
     <?php endif; ?>
@@ -328,20 +326,20 @@ include 'views/layouts/admin-header.php';
       showToast("<?php echo addslashes($_SESSION['error']); unset($_SESSION['error']); ?>", 'error');
     <?php endif; ?>
 
-    // Delete confirmation
+    
     function confirmDelete(id, name) {
       document.getElementById('deleteId').value = id;
       document.getElementById('deleteProfileName').textContent = name;
-      document.getElementById('deleteForm').action = 'index.php?controller=profile&action=delete';
+      document.getElementById('deleteForm').action = '<?= route('profile', 'delete') ?>';
 
       const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
       modal.show();
     }
 
-    // Make function globally available
+    
     window.confirmDelete = confirmDelete;
 
-    // CSS animations
+    
     const style = document.createElement('style');
     style.textContent = `
       @keyframes slideInRight {

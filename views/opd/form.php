@@ -10,7 +10,7 @@
         <div class="content-wrapper">
           <div class="row">
             <div class="col-sm-12">
-              <!-- Header Section -->
+              
               <div class="d-flex align-items-center justify-content-between mb-4">
                 <div>
                   <h3 class="page-title mb-1">
@@ -19,26 +19,26 @@
                   </h3>
                 </div>
                 <div>
-                  <a href="index.php?controller=opd&action=index" class="btn btn-secondary">
+                  <a href="<?= route('opd', 'index') ?>" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i> Kembali
                   </a>
                 </div>
               </div>
 
-              <!-- Toast Notifications Container -->
+              
               <div id="toastContainer" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
 
-              <!-- Form Container -->
+              
               <div class="card border-0 shadow-sm">
                 <div class="card-body">
                   <form method="POST" 
-                        action="index.php?controller=opd&action=<?php echo isset($opd) ? 'update&id=' . $opd['id_opd'] : 'store'; ?>">
+                        action="<?php echo isset($opd) ? route('opd', 'update', ['id' => $opd['id_opd']]) : route('opd', 'store'); ?>">
                     
                     <?php if (isset($opd)): ?>
                         <input type="hidden" name="id" value="<?php echo $opd['id_opd']; ?>">
                     <?php endif; ?>
 
-                    <!-- Informasi OPD Section -->
+                    
                     <div class="mb-4">
                       <h4 class="border-bottom pb-2 mb-3">
                         <i class="fas fa-building"></i> Informasi OPD
@@ -63,14 +63,14 @@
                       </div>
                     </div>
 
-                    <!-- Form Actions -->
+                    
                     <div class="d-flex gap-2">
                       <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save"></i>
                         <?php echo isset($opd) ? 'Update OPD' : 'Simpan OPD'; ?>
                       </button>
                       
-                      <a href="index.php?controller=opd&action=index" class="btn btn-secondary">
+                      <a href="<?= route('opd', 'index') ?>" class="btn btn-secondary">
                         <i class="fas fa-times"></i> Batal
                       </a>
                       
@@ -91,7 +91,7 @@
   </div>
   <?php include 'views/layouts/admin-script.php'; ?>
 
-  <!-- Toast Notification Script -->
+  
   <script>
   function showToast(message, type = 'success') {
     const toastContainer = document.getElementById('toastContainer');
@@ -122,7 +122,7 @@
 
     toastContainer.appendChild(toast);
 
-    // Auto remove after 5 seconds
+    
     setTimeout(() => {
       removeToast(toastId);
     }, 5000);
@@ -138,7 +138,7 @@
     }
   }
 
-  // Show toast notifications on page load
+  
   document.addEventListener('DOMContentLoaded', function() {
     <?php if (isset($_SESSION['success'])): ?>
       showToast("<?php echo addslashes($_SESSION['success']); unset($_SESSION['success']); ?>", 'success');
@@ -158,7 +158,7 @@
     <?php endif; ?>
   });
 
-  // Add CSS animations
+  
   const style = document.createElement('style');
   style.textContent = `
     @keyframes slideInRight {
@@ -186,7 +186,7 @@
   document.head.appendChild(style);
   </script>
 
-  <!-- Delete Confirmation Modal -->
+  
   <?php if (isset($opd)): ?>
   <div class="modal fade" id="deleteModal" tabindex="-1">
     <div class="modal-dialog">
@@ -201,9 +201,10 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-          <a href="index.php?controller=opd&action=delete&id=<?php echo $opd['id_opd']; ?>" class="btn btn-danger">
-            Hapus
-          </a>
+          <form method="POST" action="<?= route('opd', 'delete') ?>" style="display: inline;">
+            <input type="hidden" name="id" value="<?php echo $opd['id_opd']; ?>">
+            <button type="submit" class="btn btn-danger">Hapus</button>
+          </form>
         </div>
       </div>
     </div>

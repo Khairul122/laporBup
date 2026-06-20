@@ -2,24 +2,24 @@
 
 <body class="with-welcome-text">
   <div class="container-scroller">
-    <!-- Navbar -->
+    
     <?php include 'views/layouts/admin-navbar.php'; ?>
 
     <div class="container-fluid page-body-wrapper">
-      <!-- Settings Panel -->
+      
       <?php include 'views/layouts/admin-setting-panel.php'; ?>
 
-      <!-- Sidebar -->
+      
       <?php include 'views/layouts/admin-sidebar.php'; ?>
 
-      <!-- Main Panel -->
+      
       <div class="main-panel">
         <div class="content-wrapper">
           <div class="row">
             <div class="col-12">
 
               <?php if ($laporan): ?>
-                <!-- Header Section -->
+                
                 <div class="card mb-4">
                   <div class="card-body">
                     <div class="row align-items-center">
@@ -58,9 +58,9 @@
                 </div>
 
                 <div class="row">
-                  <!-- Main Content -->
+                  
                   <div class="col-lg-8">
-                    <!-- Detail Informasi Laporan -->
+                    
                     <div class="card mb-4">
                       <div class="card-header">
                         <h5 class="card-title mb-0">Informasi Laporan</h5>
@@ -118,9 +118,9 @@
                     </div>
                   </div>
 
-                  <!-- Sidebar -->
+                  
                   <div class="col-lg-4">
-                    <!-- Informasi Tambahan -->
+                    
                     <div class="card mb-4">
                       <div class="card-header">
                         <h5 class="card-title mb-0">Informasi Laporan</h5>
@@ -181,26 +181,26 @@
                       </div>
                     </div>
 
-                    <!-- Aksi -->
+                    
                     <div class="card">
                       <div class="card-header">
                         <h5 class="card-title mb-0">Aksi</h5>
                       </div>
                       <div class="card-body">
                         <div class="d-grid gap-2">
-                          <a href="index.php?controller=laporanCamatAdmin&action=edit&id=<?php echo $laporan['id_laporan_camat']; ?>"
+                          <a href="<?= route('laporanCamatAdmin', 'edit') ?>?id=<?php echo $laporan['id_laporan_camat']; ?>"
                              class="btn btn-primary">
                             <i class="mdi mdi-pencil me-2"></i>Edit Laporan
                           </a>
 
-                          <form method="POST" action="index.php?controller=laporanCamatAdmin&action=delete&id=<?php echo $laporan['id_laporan_camat']; ?>"
+                          <form method="POST" action="<?= route('laporanCamatAdmin', 'delete') ?>?id=<?php echo $laporan['id_laporan_camat']; ?>"
                                 onsubmit="return confirm('Apakah Anda yakin ingin menghapus laporan ini?');">
                             <button type="submit" class="btn btn-outline-danger w-100">
                               <i class="mdi mdi-delete me-2"></i>Hapus Laporan
                             </button>
                           </form>
 
-                          <a href="index.php?controller=laporanCamatAdmin&action=index" class="btn btn-outline-secondary">
+                          <a href="<?= route('laporanCamatAdmin', 'index') ?>" class="btn btn-outline-secondary">
                             <i class="mdi mdi-arrow-left me-2"></i>Kembali
                           </a>
                         </div>
@@ -209,13 +209,13 @@
                   </div>
                 </div>
               <?php else: ?>
-                <!-- Error State -->
+                
                 <div class="card">
                   <div class="card-body text-center py-5">
                     <i class="mdi mdi-alert-circle-outline text-muted display-1"></i>
                     <h4 class="mt-3">Data Tidak Ditemukan!</h4>
                     <p class="text-muted">Laporan yang Anda cari tidak ditemukan dalam database.</p>
-                    <a href="index.php?controller=laporanCamatAdmin&action=index" class="btn btn-primary">
+                    <a href="<?= route('laporanCamatAdmin', 'index') ?>" class="btn btn-primary">
                       Kembali ke Daftar Laporan
                     </a>
                   </div>
@@ -267,31 +267,31 @@
   </style>
 
   <script>
-    // Smooth scroll to top when page loads
+    
     document.addEventListener('DOMContentLoaded', function() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
-    // Add keyboard shortcuts
+    
     document.addEventListener('keydown', function(e) {
-      // E untuk edit
+      
       if (e.key === 'e' && !e.ctrlKey && !e.metaKey && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
         e.preventDefault();
-        window.location.href = `index.php?controller=laporanCamatAdmin&action=edit&id=<?php echo $laporan['id_laporan_camat'] ?? 0; ?>`;
+        window.location.href = `<?= route('laporanCamatAdmin', 'edit') ?>?id=<?php echo $laporan['id_laporan_camat'] ?? 0; ?>`;
       }
 
-      // Escape untuk kembali
+      
       if (e.key === 'Escape') {
-        window.location.href = 'index.php?controller=laporanCamatAdmin&action=index';
+        window.location.href = '<?= route('laporanCamatAdmin', 'index') ?>';
       }
     });
 
-    // Print functionality
+    
     function printLaporan() {
       window.print();
     }
 
-    // Copy link functionality
+    
     function copyLink() {
       const url = window.location.href;
       navigator.clipboard.writeText(url).then(() => {
@@ -299,7 +299,7 @@
       });
     }
 
-    // Toast notification
+    
     function showToast(message, type = 'success') {
       const toastHtml = `
         <div class="toast align-items-center text-white bg-${type} border-0" role="alert">
@@ -325,7 +325,7 @@
       }, 5000);
     }
 
-    // Show success/error messages as toast if exist
+    
     <?php if (isset($_SESSION['success'])): ?>
       showToast('<?php echo $_SESSION['success']; ?>', 'success');
       <?php unset($_SESSION['success']); ?>
