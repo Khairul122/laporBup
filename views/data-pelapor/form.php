@@ -157,14 +157,12 @@
                               <label for="password" class="form-label fw-semibold">
                                 Password <span class="text-danger <?php echo $dataPelapor ? '' : '*'; ?>"></span>
                               </label>
-                              <div class="input-group">
-                                <span class="input-group-text">
-                                  <i class="fas fa-lock"></i>
-                                </span>
+                              <div class="password-field">
+                                <i class="fas fa-lock password-field__icon"></i>
                                 <input type="password" class="form-control" id="password" name="password"
                                        placeholder="<?php echo $dataPelapor ? 'Kosongkan jika tidak ingin mengubah password' : 'Masukkan password'; ?>"
                                        <?php echo $dataPelapor ? '' : 'required'; ?> minlength="6">
-                                <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('password')">
+                                <button class="password-field__toggle" type="button" onclick="togglePassword('password')">
                                   <i class="fas fa-eye" id="password-eye"></i>
                                 </button>
                               </div>
@@ -177,14 +175,12 @@
                               <label for="confirm_password" class="form-label fw-semibold">
                                 Konfirmasi Password <span class="text-danger <?php echo $dataPelapor ? '' : '*'; ?>"></span>
                               </label>
-                              <div class="input-group">
-                                <span class="input-group-text">
-                                  <i class="fas fa-lock"></i>
-                                </span>
+                              <div class="password-field">
+                                <i class="fas fa-lock password-field__icon"></i>
                                 <input type="password" class="form-control" id="confirm_password" name="confirm_password"
                                        placeholder="Ulangi password"
                                        <?php echo $dataPelapor ? '' : 'required'; ?> minlength="6">
-                                <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('confirm_password')">
+                                <button class="password-field__toggle" type="button" onclick="togglePassword('confirm_password')">
                                   <i class="fas fa-eye" id="confirm_password-eye"></i>
                                 </button>
                               </div>
