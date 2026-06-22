@@ -718,7 +718,7 @@
                         </svg>
                     </div>
                 </div>
-                <span class="brand-name">LaporBup</span>
+                <span class="brand-name">Silap Gawat</span>
             </div>
 
             <div class="context-main">

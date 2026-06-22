@@ -683,7 +683,7 @@
                         </div>
                     </div>
                     <div class="brand-details">
-                        <div class="brand-title">LaporBup</div>
+                        <div class="brand-title">Silap Gawat</div>
                         <div class="brand-subtitle">Kab. Mandailing Natal</div>
                     </div>
                 </div>

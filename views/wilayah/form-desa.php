@@ -11,46 +11,48 @@
           <div class="row">
             <div class="col-sm-12">
 
-              <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="<?= route('Dashboard', 'admin') ?>">Dashboard</a></li>
-                  <li class="breadcrumb-item"><a href="<?= route('desa', 'index') ?>">Desa</a></li>
+              <nav aria-label="breadcrumb" class="mb-3">
+                <ol class="breadcrumb mb-0">
+                  <li class="breadcrumb-item"><a href="<?= route('Dashboard', 'admin') ?>" class="text-decoration-none">Dashboard</a></li>
+                  <li class="breadcrumb-item"><a href="<?= route('desa', 'index') ?>" class="text-decoration-none">Desa</a></li>
                   <li class="breadcrumb-item active" aria-current="page"><?php echo $desa ? 'Edit' : 'Tambah'; ?></li>
                 </ol>
               </nav>
+
               <div class="page-header d-flex justify-content-between align-items-center mb-4">
                 <div>
-                  <h2 class="page-title"><?php echo $desa ? 'Edit Desa' : 'Tambah Desa'; ?></h2>
+                  <h3 class="page-title mb-1"><?php echo $desa ? 'Edit Desa / Kelurahan' : 'Tambah Desa / Kelurahan'; ?></h3>
+                  <p class="text-muted small mb-0">Masukkan informasi detail data desa/kelurahan</p>
                 </div>
-                <a href="<?= route('desa', 'index') ?>" class="btn btn-secondary">
+                <a href="<?= route('desa', 'index') ?>" class="btn btn-outline-secondary">
                   <i class="mdi mdi-arrow-left me-2"></i> Kembali
                 </a>
               </div>
 
-              <div class="card">
-                <div class="card-header">
-                  <h5 class="card-title mb-0">
-                    <i class="mdi mdi-home-map-marker me-2"></i>
-                    Form <?php echo $desa ? 'Edit' : 'Tambah'; ?> Desa
+              <div class="card border-0 shadow-sm col-md-10 mx-auto">
+                <div class="card-header bg-transparent border-bottom py-3">
+                  <h5 class="card-title mb-0 fw-bold">
+                    <i class="mdi mdi-home-map-marker text-success me-2"></i>
+                    Form <?php echo $desa ? 'Edit' : 'Tambah'; ?> Desa / Kelurahan
                   </h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-4">
                   <form id="desaForm" method="POST" action="<?= $desa ? route('desa', 'save', ['id' => $desa['id_desa']]) : route('desa', 'save') ?>">
                     <?php if ($desa): ?>
                       <input type="hidden" name="_method" value="PUT">
                     <?php endif; ?>
                     <input type="hidden" name="id_desa" value="<?php echo $desa ? $desa['id_desa'] : ''; ?>">
 
-                    <div class="row mb-3">
-                      <div class="col-md-6">
-                        <label for="id_kecamatan" class="form-label">
+                    <div class="row mb-4">
+                      <div class="col-md-6 mb-3 mb-md-0">
+                        <label for="id_kecamatan" class="form-label fw-semibold text-dark mb-2">
                           Kecamatan <span class="text-danger">*</span>
                         </label>
                         <div class="input-group">
-                          <span class="input-group-text">
+                          <span class="input-group-text bg-transparent border-end-0 text-muted">
                             <i class="mdi mdi-map-marker-multiple"></i>
                           </span>
-                          <select class="form-select" id="id_kecamatan" name="id_kecamatan" required>
+                          <select class="form-select border-start-0 ps-0" id="id_kecamatan" name="id_kecamatan" required>
                             <option value="">-- Pilih Kecamatan --</option>
                             <?php foreach ($kecamatanOptions as $kecamatan): ?>
                               <option value="<?php echo $kecamatan['id_kecamatan']; ?>"
@@ -60,39 +62,38 @@
                             <?php endforeach; ?>
                           </select>
                         </div>
-                        <div class="invalid-feedback">
+                        <div class="invalid-feedback text-danger small mt-1" id="id_kecamatan-feedback" style="display: none;">
                           Kecamatan wajib dipilih
                         </div>
                       </div>
                       <div class="col-md-6">
-                        <label for="nama_desa" class="form-label">
-                          Nama Desa <span class="text-danger">*</span>
+                        <label for="nama_desa" class="form-label fw-semibold text-dark mb-2">
+                          Nama Desa / Kelurahan <span class="text-danger">*</span>
                         </label>
                         <div class="input-group">
-                          <span class="input-group-text">
+                          <span class="input-group-text bg-transparent border-end-0 text-muted">
                             <i class="mdi mdi-home-map-marker"></i>
                           </span>
-                          <input type="text" class="form-control" id="nama_desa"
+                          <input type="text" class="form-control border-start-0 ps-0" id="nama_desa"
                                  name="nama_desa"
                                  value="<?php echo $desa ? htmlspecialchars($desa['nama_desa']) : ''; ?>"
                                  placeholder="Masukkan nama desa" required>
                         </div>
-                        <div class="invalid-feedback">
+                        <div class="invalid-feedback text-danger small mt-1" id="nama_desa-feedback" style="display: none;">
                           Nama desa wajib diisi
                         </div>
-                        <small class="text-muted">Masukkan nama desa dengan huruf kapital di awal kata</small>
+                        <div class="form-text text-muted mt-2">Format: Masukkan nama desa dengan huruf kapital di awal kata (contoh: Panyabungan Jae).</div>
                       </div>
                     </div>
 
-                    <div class="form-actions">
-                      <button type="submit" class="btn btn-primary">
+                    <div class="form-actions d-flex justify-content-end gap-2 border-top pt-4">
+                      <a href="<?= route('desa', 'index') ?>" class="btn btn-outline-secondary">
+                        Batal
+                      </a>
+                      <button type="submit" class="btn btn-primary px-4 shadow-sm" id="btnSubmit">
                         <i class="mdi mdi-content-save me-2"></i>
                         <?php echo $desa ? 'Update' : 'Simpan'; ?>
                       </button>
-                      <a href="<?= route('desa', 'index') ?>"
-                         class="btn btn-secondary">
-                        <i class="mdi mdi-close-circle me-2"></i> Batal
-                      </a>
                     </div>
                   </form>
                 </div>
@@ -107,99 +108,37 @@
   <?php include 'views/layouts/admin-script.php'; ?>
 
   <script>
-    function showNotification(message, type = 'success') {
-      console.log('Showing notification:', message, type);
-
-      const toastContainer = document.createElement('div');
-      toastContainer.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 9999;
-        min-width: 300px;
-        background: ${type === 'success' ? '#10b981' : '#ef4444'};
-        color: white;
-        padding: 16px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        animation: slideIn 0.3s ease-out;
-      `;
-
-      toastContainer.innerHTML = `
-        <div style="display: flex; align-items: center;">
-          <i class="mdi ${type === 'success' ? 'mdi-check-circle' : 'mdi-alert-circle'} me-2"></i>
-          <span>${message}</span>
-        </div>
-        <button style="background: none; border: none; color: white; cursor: pointer; font-size: 20px; margin-left: 10px;" onclick="this.parentElement.remove()">×</button>
-      `;
-
-      const style = document.createElement('style');
-      style.textContent = `
-        @keyframes slideIn {
-          from {
-            transform: translateX(100%);
-            opacity: 0;
-          }
-          to {
-            transform: translateX(0);
-            opacity: 1;
-          }
-        }
-        @keyframes slideOut {
-          from {
-            transform: translateX(0);
-            opacity: 1;
-          }
-          to {
-            transform: translateX(100%);
-            opacity: 0;
-          }
-        }
-      `;
-      document.head.appendChild(style);
-
-      document.body.appendChild(toastContainer);
-
-      setTimeout(() => {
-        toastContainer.style.animation = 'slideOut 0.3s ease-in';
-        setTimeout(() => {
-          if (toastContainer.parentElement) {
-            toastContainer.remove();
-          }
-        }, 300);
-      }, 5000);
-
-      console.log('Custom toast shown');
-    }
-
     document.getElementById('desaForm').addEventListener('submit', function(e) {
       e.preventDefault();
 
       const form = e.target;
       const idKecamatan = form.id_kecamatan.value;
       const namaDesa = form.nama_desa.value.trim();
+      const idKecamatanFeedback = document.getElementById('id_kecamatan-feedback');
+      const namaDesaFeedback = document.getElementById('nama_desa-feedback');
 
       form.classList.remove('was-validated');
       form.id_kecamatan.classList.remove('is-invalid');
       form.nama_desa.classList.remove('is-invalid');
+      idKecamatanFeedback.style.display = 'none';
+      namaDesaFeedback.style.display = 'none';
 
       let isValid = true;
 
       if (!idKecamatan) {
         form.id_kecamatan.classList.add('is-invalid');
+        idKecamatanFeedback.style.display = 'block';
         isValid = false;
       }
 
       if (!namaDesa) {
         form.nama_desa.classList.add('is-invalid');
+        namaDesaFeedback.style.display = 'block';
         isValid = false;
       }
 
       if (isValid) {
-        const submitBtn = form.querySelector('button[type="submit"]');
+        const submitBtn = document.getElementById('btnSubmit');
         const originalText = submitBtn.innerHTML;
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Menyimpan...';
@@ -216,19 +155,19 @@
         .then(response => response.json())
         .then(data => {
           if (data.success) {
-            showNotification(data.message, 'success');
+            showToast(data.message, 'success');
             setTimeout(() => {
               window.location.href = '<?= route('desa', 'index') ?>';
-            }, 1500);
+            }, 1200);
           } else {
-            showNotification(data.message, 'error');
+            showToast(data.message, 'error');
             submitBtn.disabled = false;
             submitBtn.innerHTML = originalText;
           }
         })
         .catch(error => {
           console.error('Error:', error);
-          showNotification('Terjadi kesalahan saat menyimpan data', 'error');
+          showToast('Terjadi kesalahan saat menyimpan data', 'error');
           submitBtn.disabled = false;
           submitBtn.innerHTML = originalText;
         });
@@ -244,7 +183,7 @@
     });
 
     <?php if (isset($_SESSION['error'])): ?>
-      showNotification('<?php echo addslashes($_SESSION['error']); ?>', 'error');
+      showToast('<?php echo addslashes($_SESSION['error']); ?>', 'error');
       <?php unset($_SESSION['error']); ?>
     <?php endif; ?>
   </script>
