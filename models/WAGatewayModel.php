@@ -8,11 +8,12 @@ class WAGatewayModel extends BaseModel {
     private $table = "wagateway";
 
     
-    private $fonnte_token = "mebMc5vfWw1ZpMbh1n77";
+    private $fonnte_token;
     private $api_url = "https://api.fonnte.com";
 
     public function __construct() {
         $this->conn = getKoneksi();
+        $this->fonnte_token = env('FONNTE_TOKEN', '');
     }
 
     public function getAllMessages($page = 1, $limit = 10, $search = '', $status_filter = '', $date_filter = '') {

@@ -1,0 +1,9 @@
+.env
+/vendor/
+/uploads/*
+!/uploads/.gitkeep
+/logs/*
+!/logs/.gitkeep
+out.html
+err.txt
+*.log

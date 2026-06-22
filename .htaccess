@@ -41,7 +41,12 @@ RewriteEngine On
 
 # Blokir akses ke folder konfigurasi, model, controller, core, vendor, dan
 # folder development tooling (.git, .claude)
-RewriteRule ^(config|core|controllers|models|\.git|\.claude)(/.*)?$ - [F,L]
+RewriteRule ^(config|core|controllers|models|vendor|logs|\.git|\.claude)(/.*)?$ - [F,L]
+
+# Blokir dokumen perencanaan/debug yang tidak boleh diakses publik
+<FilesMatch "^(out\.html|err\.txt|PRD.*\.html)$">
+    Require all denied
+</FilesMatch>
 
 # Blokir akses ke file sistem/dotfiles & file konfigurasi
 <FilesMatch "^(\.env|\.git.*|composer\.(json|lock)|package(-lock)?\.json|\.htaccess)$">
