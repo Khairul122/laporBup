@@ -1,7 +1,13 @@
 {
   "permissions": {
     "allow": [
-      "WebFetch(domain:docs.fonnte.com)"
+      "WebFetch(domain:docs.fonnte.com)",
+      "Bash(netstat -ano)",
+      "Read(//c/Windows/System32/drivers/etc/**)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost/laporBup/)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://laporbup.test/)",
+      "Bash(curl *)",
+      "Bash(python3 scripts/search.py \"government civic reporting portal formal trustworthy bright\" --design-system -p \"Silap Gawat\")"
     ],
     "deny": [],
     "ask": []

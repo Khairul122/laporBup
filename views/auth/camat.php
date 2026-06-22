@@ -7,100 +7,101 @@
     <title><?= htmlspecialchars($appData['title']) ?> — Camat</title>
     <link rel="shortcut icon" href="<?= asset('assets/images/favicon.png') ?>" />
 
-    <!-- Premium Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..500;1,6..72,300..400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=Lato:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?= asset('assets/css/design-tokens.css') ?>" />
 
     <style>
         :root {
-            --canvas:         #FAF9F6; /* Soft warm off-white */
-            --surface:        #FFFFFF;
-            --prestige-navy:   #0A1D37; /* Institutional Navy */
-            --prestige-accent: #1E3F20; /* Refined Forest Green for Camat */
-            --border-alpha:    rgba(10, 29, 55, 0.06);
-            --text-primary:    #1C2630;
-            --text-muted:      #656E77;
-            
-            --ease-spring:     cubic-bezier(0.32, 0.72, 0, 1);
-            --transition-premium: all 0.7s var(--ease-spring);
+            --ink:        #0F172A;
+            --ink-2:      #334155;
+            --canvas:     #F8FAFC;
+            --surface:    #FFFFFF;
+            --muted:      #E8ECF1;
+            --border:     #E2E8F0;
+            --accent:     #15803D; /* Camat: green */
+            --accent-soft:#E1F3E8;
+            --accent-ink: #0F5C2E;
+            --danger:     #DC2626;
+            --danger-soft:#FDECEC;
+            --focus-ring: #15803D;
+
+            --font-serif: 'EB Garamond', Georgia, serif;
+            --font-sans: 'Lato', Arial, sans-serif;
+            --ease: cubic-bezier(0.2, 0.65, 0.3, 1);
         }
 
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
         }
+
+        html, body { height: 100%; }
 
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--canvas);
-            color: var(--text-primary);
-            min-height: 100dvh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-            overflow-x: hidden;
-            position: relative;
+            font-family: var(--font-sans);
+            background-color: var(--surface);
+            color: var(--ink-2);
+            font-size: 16px;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* Ambient grain overlay */
-        body::before {
-            content: "";
-            position: fixed;
-            inset: 0;
-            width: 100vw;
-            height: 100vh;
-            opacity: 0.02;
-            pointer-events: none;
-            z-index: 999;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        :focus-visible {
+            outline: 3px solid var(--focus-ring);
+            outline-offset: 2px;
+            border-radius: 4px;
         }
 
-        /* ── EDITORIAL SPLIT CONFIGURATION ── */
-        .split-wrapper {
-            background: rgba(10, 29, 55, 0.02);
-            border: 1px solid rgba(10, 29, 55, 0.04);
-            padding: 8px;
-            border-radius: 32px;
-            max-width: 1000px;
-            width: 100%;
-            display: flex;
-            box-shadow: 0 30px 70px rgba(10, 29, 55, 0.08);
-            position: relative;
-            z-index: 2;
-        }
-
-        .split-core {
-            width: 100%;
-            background: var(--surface);
-            border-radius: calc(32px - 8px);
-            display: flex;
-            overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.8);
-        }
-
-        /* ── LEFT: PRESTIGE CONTEXT PANEL (42%) ── */
-        .context-panel {
-            flex: 0 0 42%;
-            background: var(--prestige-navy);
+        .skip-link {
+            position: absolute;
+            left: -9999px;
+            top: 0;
+            background: var(--ink);
             color: #FFFFFF;
-            padding: 56px 48px;
+            padding: 12px 20px;
+            font-weight: 700;
+            font-size: 14px;
+            z-index: 1000;
+        }
+
+        .skip-link:focus { left: 0; }
+
+        .civic-strip {
+            height: 4px;
+            background: linear-gradient(90deg, #B91C1C 0%, #B91C1C 50%, #FFFFFF 50%, #FFFFFF 100%);
+        }
+
+        .split-wrapper {
+            display: flex;
+            min-height: calc(100dvh - 4px);
+            width: 100%;
+        }
+
+        .context-panel {
+            flex: 0 0 44%;
+            background: linear-gradient(165deg, var(--accent-soft) 0%, #FFFFFF 65%);
+            color: var(--ink);
+            padding: 56px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             position: relative;
             overflow: hidden;
+            border-right: 1px solid var(--border);
         }
 
-        /* Ambient gradient behind */
         .context-panel::before {
             content: "";
             position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at 85% 15%, rgba(30, 63, 32, 0.18) 0%, transparent 60%);
+            top: -120px;
+            right: -120px;
+            width: 320px;
+            height: 320px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(21, 128, 61, 0.1) 0%, transparent 70%);
             pointer-events: none;
         }
 
@@ -109,424 +110,266 @@
             align-items: center;
             gap: 12px;
             position: relative;
-            z-index: 2;
+            z-index: 1;
         }
 
-        .brand-emblem-shell {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 3px;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .brand-emblem-core {
-            width: 28px;
-            height: 28px;
-            border-radius: 5px;
-            background: rgba(255, 255, 255, 0.08);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2);
-        }
-
-        .brand-emblem-core svg {
-            width: 16px;
-            height: 16px;
-            stroke: #FFFFFF;
-            stroke-width: 1.5;
-            fill: none;
-        }
-
-        .brand-name {
-            font-size: 13px;
-            font-weight: 700;
-            letter-spacing: -0.01em;
-            color: #FFFFFF;
-        }
-
-        .context-main {
-            margin: 40px 0;
-            position: relative;
-            z-index: 2;
-        }
-
-        .role-tag-pill {
-            display: inline-flex;
-            align-items: center;
-            background: rgba(30, 63, 32, 0.25);
-            border: 1px solid rgba(30, 63, 32, 0.35);
-            color: #A3D8A5;
-            padding: 4px 14px;
-            border-radius: 9999px;
-            font-size: 9px;
-            font-weight: 700;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            margin-bottom: 20px;
-        }
-
-        .context-title {
-            font-family: 'Newsreader', Georgia, serif;
-            font-size: clamp(24px, 3vw, 32px);
-            font-weight: 400;
-            line-height: 1.15;
-            letter-spacing: -0.02em;
-            color: #FFFFFF;
-            margin-bottom: 12px;
-        }
-
-        .context-title em {
-            font-style: italic;
-            font-weight: 300;
-            color: #A3D8A5;
-        }
-
-        .context-desc {
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.55);
-            line-height: 1.6;
-            margin-bottom: 32px;
-        }
-
-        /* Fine feature list */
-        .feature-list {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .feature-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 16px;
-            padding: 14px 0;
-            border-top: 1px solid rgba(255, 255, 255, 0.06);
-        }
-
-        .feature-symbol-shell {
-            width: 28px;
-            height: 28px;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+        .brand-emblem {
+            width: 38px;
+            height: 38px;
+            border-radius: 9px;
+            background: var(--accent);
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            margin-top: 2px;
         }
 
-        .feature-symbol-shell svg {
-            width: 14px;
-            height: 14px;
-            stroke: #A3D8A5;
-            stroke-width: 1.5;
-            fill: none;
+        .brand-emblem svg { width: 20px; height: 20px; stroke: #FFFFFF; stroke-width: 1.5; fill: none; }
+
+        .brand-name { font-size: 14px; font-weight: 700; color: var(--ink); }
+
+        .context-main { margin: 40px 0; position: relative; z-index: 1; }
+
+        .role-tag-pill {
+            display: inline-flex;
+            padding: 5px 14px;
+            border-radius: 999px;
+            background: #FFFFFF;
+            border: 1px solid var(--border);
+            color: var(--accent-ink);
+            font-size: 11.5px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 18px;
         }
 
-        .feature-body {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .feature-title {
-            font-size: 13px;
+        .context-title {
+            font-family: var(--font-serif);
+            font-size: clamp(26px, 3.2vw, 32px);
             font-weight: 600;
-            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.25;
+            color: var(--ink);
+            margin-bottom: 12px;
+            text-wrap: balance;
         }
 
-        .feature-desc {
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.4);
-            line-height: 1.4;
+        .context-desc {
+            font-size: 14.5px;
+            color: var(--ink-2);
+            line-height: 1.65;
+            margin-bottom: 36px;
         }
 
-        /* Retro back button link */
-        .back-nav-box {
-            position: relative;
-            z-index: 2;
+        .feature-list { display: flex; flex-direction: column; }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 16px 0;
+            border-top: 1px solid var(--border);
         }
+
+        .feature-symbol-shell {
+            width: 34px;
+            height: 34px;
+            border-radius: 9px;
+            background: #FFFFFF;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .feature-symbol-shell svg { width: 16px; height: 16px; stroke: var(--accent); stroke-width: 1.6; fill: none; }
+
+        .feature-title { font-size: 13.5px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+
+        .feature-desc { font-size: 12.5px; color: var(--ink-2); line-height: 1.45; }
+
+        .back-nav-box { padding-top: 8px; position: relative; z-index: 1; }
 
         .back-link {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.45);
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--ink-2);
             text-decoration: none;
-            font-weight: 600;
-            transition: var(--transition-premium);
+            min-height: 44px;
+            padding: 4px 0;
+            transition: color 150ms var(--ease);
         }
 
-        .back-link svg {
-            width: 12px;
-            height: 12px;
-            stroke: currentColor;
-            stroke-width: 2;
-            fill: none;
-            transition: var(--transition-premium);
-        }
+        .back-link:hover { color: var(--accent); }
+        .back-link svg { width: 16px; height: 16px; stroke-width: 2; fill: none; }
 
-        .back-link:hover {
-            color: #A3D8A5;
-        }
-
-        .back-link:hover svg {
-            transform: translateX(-4px);
-        }
-
-        /* ── RIGHT: FORM PANEL (58%) ── */
         .form-panel {
             flex: 1;
             padding: 56px 64px;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            align-items: center;
             background: var(--surface);
         }
 
-        .form-header {
-            margin-bottom: 32px;
-        }
+        .form-header { margin-bottom: 28px; max-width: 420px; width: 100%; }
 
         .form-header h2 {
-            font-family: 'Newsreader', Georgia, serif;
-            font-size: 26px;
-            font-weight: 400;
-            color: var(--prestige-navy);
-            letter-spacing: -0.02em;
+            font-family: var(--font-serif);
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--ink);
             margin-bottom: 6px;
         }
 
-        .form-header p {
-            font-size: 13px;
-            color: var(--text-muted);
-        }
+        .form-header p { font-size: 14px; color: var(--ink-2); }
 
-        /* Fields with double bezels */
-        .field-group {
-            margin-bottom: 20px;
-        }
+        form { max-width: 420px; width: 100%; }
+
+        .field-group { margin-bottom: 20px; }
 
         .field-label {
             display: block;
-            font-size: 10px;
+            font-size: 13.5px;
             font-weight: 700;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--prestige-navy);
+            color: var(--ink);
             margin-bottom: 8px;
         }
 
-        .double-bezel-input {
-            background: rgba(10, 29, 55, 0.02);
-            border: 1px solid rgba(10, 29, 55, 0.03);
-            padding: 3px;
-            border-radius: 12px;
-            position: relative;
-            transition: var(--transition-premium);
-        }
+        .required-mark { color: var(--danger); margin-left: 2px; }
+
+        .field-input-wrap { position: relative; }
 
         .field-input {
             width: 100%;
-            height: 42px;
+            min-height: 48px;
             padding: 0 16px;
-            border: 1px solid rgba(10, 29, 55, 0.06);
-            border-radius: calc(12px - 3px);
-            background: #FFFFFF;
-            font-size: 13.5px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            color: var(--text-primary);
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            background: var(--surface);
+            font-size: 15.5px;
+            font-family: var(--font-sans);
+            color: var(--ink);
             outline: none;
-            transition: var(--transition-premium);
+            transition: border-color 150ms var(--ease), box-shadow 150ms var(--ease);
         }
 
-        .field-input::placeholder {
-            color: rgba(10, 29, 55, 0.35);
-        }
-
-        /* Focus states */
-        .double-bezel-input:focus-within {
-            background: rgba(30, 63, 32, 0.06);
-            border-color: rgba(30, 63, 32, 0.15);
-        }
+        .field-input::placeholder { color: #94A3B8; }
 
         .field-input:focus {
-            border-color: var(--prestige-accent);
-            box-shadow: 0 0 0 3px rgba(30, 63, 32, 0.1);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-soft);
         }
 
-        .field-input.with-toggle {
-            padding-right: 48px;
-        }
+        .field-input.with-toggle { padding-right: 48px; }
 
-        /* Error state formatting */
-        .double-bezel-input.is-error {
-            background: rgba(159, 47, 45, 0.05);
-            border-color: rgba(159, 47, 45, 0.15);
-        }
-
-        .double-bezel-input.is-error .field-input {
-            border-color: #9F2F2D;
-            background: #FFFDFD;
+        .field-group.is-error .field-input {
+            border-color: var(--danger);
+            background: var(--danger-soft);
         }
 
         .field-error {
             display: none;
-            font-size: 11px;
-            color: #9F2F2D;
+            font-size: 12.5px;
+            color: var(--danger);
             margin-top: 6px;
-            font-weight: 500;
+            font-weight: 600;
         }
 
-        .field-error.show {
-            display: block;
-        }
+        .field-error.show { display: block; }
 
-        /* Password show toggle */
         .pwd-toggle-btn {
             position: absolute;
-            right: 12px;
+            right: 8px;
             top: 50%;
             transform: translateY(-50%);
             background: none;
             border: none;
             cursor: pointer;
-            padding: 6px;
-            color: var(--text-muted);
-            transition: var(--transition-premium);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 5;
-        }
-
-        .pwd-toggle-btn:hover {
-            color: var(--prestige-navy);
-            transform: translateY(-50%) scale(1.05);
-        }
-
-        .pwd-toggle-btn svg {
-            width: 16px;
-            height: 16px;
-            stroke-width: 1.5;
-            fill: none;
-        }
-
-        /* Button design */
-        .btn-submit {
-            width: 100%;
-            height: 48px;
-            background: var(--prestige-navy);
-            color: #FFFFFF;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 9999px;
-            font-size: 14px;
-            font-weight: 600;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            cursor: pointer;
-            transition: var(--transition-premium);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 6px 6px 6px 24px;
-            box-shadow: 0 4px 15px rgba(10, 29, 55, 0.05);
-            margin-top: 8px;
-        }
-
-        .btn-icon-box {
             width: 36px;
             height: 36px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--ink-2);
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: var(--transition-premium);
+            transition: background-color 150ms var(--ease), color 150ms var(--ease);
         }
 
-        .btn-icon-box svg {
-            width: 14px;
-            height: 14px;
-            stroke-width: 2;
-            fill: none;
-            transition: var(--transition-premium);
-            stroke: #FFFFFF;
+        .pwd-toggle-btn:hover { background: var(--muted); color: var(--ink); }
+        .pwd-toggle-btn svg { width: 18px; height: 18px; stroke-width: 1.6; fill: none; }
+
+        .btn-submit {
+            width: 100%;
+            min-height: 50px;
+            background: var(--accent);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            font-family: var(--font-sans);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: background-color 150ms var(--ease), transform 100ms var(--ease);
+            margin-top: 4px;
         }
 
-        .btn-submit:hover {
-            background: var(--prestige-accent);
-            box-shadow: 0 10px 25px rgba(30, 63, 32, 0.2);
-        }
+        .btn-submit:hover { background: var(--accent-ink); }
+        .btn-submit:active { transform: scale(0.98); }
+        .btn-submit:disabled { opacity: 0.65; cursor: not-allowed; }
 
-        .btn-submit:hover .btn-icon-box {
-            background: rgba(10, 29, 55, 0.1);
-        }
+        .btn-icon-box svg { width: 16px; height: 16px; stroke-width: 2; fill: none; stroke: #FFFFFF; }
 
-        .btn-submit:hover .btn-icon-box svg {
-            transform: translate(2px, -2px);
-        }
-
-        .btn-submit:active {
-            transform: scale(0.98);
-        }
-
-        .btn-submit:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            pointer-events: none;
-        }
-
-        /* Footer copy */
         .form-footer {
-            margin-top: 36px;
-            padding-top: 24px;
-            border-top: 1px solid rgba(10, 29, 55, 0.06);
-            font-size: 11px;
-            color: var(--text-muted);
-            text-align: center;
+            margin-top: 28px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            font-size: 12.5px;
+            color: var(--ink-2);
+            max-width: 420px;
+            width: 100%;
         }
 
-        /* ── TOAST NOTIFICATIONS ── */
         .toast-wrap {
             position: fixed;
-            top: 24px;
-            right: 24px;
-            z-index: var(--z-toast, 500);
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
             max-width: 380px;
-            width: calc(100vw - 48px);
+            width: calc(100vw - 40px);
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
         .toast {
             background: #FFFFFF;
-            border-radius: 16px;
-            padding: 16px 20px;
-            box-shadow: 0 20px 40px rgba(10, 29, 55, 0.08);
-            border: 1px solid rgba(10, 29, 55, 0.04);
-            border-left: 4px solid var(--prestige-navy);
+            border-radius: 12px;
+            padding: 14px 16px;
+            box-shadow: 0 16px 32px rgba(15, 23, 42, 0.12);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--ink);
             display: flex;
             align-items: flex-start;
-            gap: 14px;
-            position: relative;
-            overflow: hidden;
-            transition: var(--transition-premium);
+            gap: 12px;
+            transition: opacity 200ms var(--ease), transform 200ms var(--ease);
         }
 
-        .toast.success {
-            border-left-color: #1E3F20;
-        }
-
-        .toast.error {
-            border-left-color: #DC2626;
-        }
+        .toast.success { border-left-color: #15803D; }
+        .toast.error { border-left-color: var(--danger); }
 
         .toast-dot-wrapper {
-            width: 24px;
-            height: 24px;
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -534,48 +377,19 @@
             flex-shrink: 0;
         }
 
-        .toast.success .toast-dot-wrapper {
-            background: rgba(30, 63, 32, 0.1);
-        }
+        .toast.success .toast-dot-wrapper { background: #E1F3E8; }
+        .toast.error .toast-dot-wrapper { background: var(--danger-soft); }
 
-        .toast.error .toast-dot-wrapper {
-            background: rgba(220, 38, 38, 0.1);
-        }
+        .toast-dot-wrapper svg { width: 13px; height: 13px; stroke-width: 2.5; fill: none; }
+        .toast.success .toast-dot-wrapper svg { stroke: #15803D; }
+        .toast.error .toast-dot-wrapper svg { stroke: var(--danger); }
 
-        .toast-dot-wrapper svg {
-            width: 14px;
-            height: 14px;
-            stroke-width: 2.5;
-            fill: none;
-        }
-
-        .toast.success .toast-dot-wrapper svg {
-            stroke: #1E3F20;
-        }
-
-        .toast.error .toast-dot-wrapper svg {
-            stroke: #DC2626;
-        }
-
-        .toast-body {
-            flex: 1;
-        }
-
-        .toast-ttl {
-            font-size: 13.5px;
-            font-weight: 700;
-            color: var(--prestige-navy);
-            margin-bottom: 2px;
-        }
-
-        .toast-msg {
-            color: var(--text-muted);
-            font-size: 12.5px;
-            line-height: 1.4;
-        }
+        .toast-body { flex: 1; }
+        .toast-ttl { font-size: 13.5px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+        .toast-msg { font-size: 12.5px; color: var(--ink-2); line-height: 1.4; }
 
         .toast-x {
-            background: rgba(10, 29, 55, 0.04);
+            background: var(--muted);
             border: none;
             border-radius: 50%;
             width: 22px;
@@ -584,150 +398,100 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            color: var(--text-muted);
-            font-size: 14px;
-            transition: var(--transition-premium);
+            color: var(--ink-2);
             flex-shrink: 0;
         }
 
-        .toast-x:hover {
-            background: rgba(10, 29, 55, 0.08);
-            color: var(--prestige-navy);
-        }
+        .toast.removing { opacity: 0; transform: translateX(20px); }
 
-        .toast.removing {
-            opacity: 0;
-            transform: translateX(100%) scale(0.9);
-        }
-
-        /* Spinner */
         .spinner-shell {
             display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            width: 15px;
+            height: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.35);
             border-radius: 50%;
             border-top-color: #FFFFFF;
             animation: spin 0.8s linear infinite;
-            margin-right: 8px;
-            vertical-align: middle;
         }
 
-        .btn-submit:hover .spinner-shell {
-            border: 2px solid rgba(10, 29, 55, 0.2);
-            border-top-color: var(--prestige-navy);
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* ── ANIMATIONS ── */
-        @media (prefers-reduced-motion: no-preference) {
-            .split-wrapper {
-                opacity: 0;
-                transform: translateY(20px);
-                animation: premiumReveal 0.8s var(--ease-spring) forwards;
-            }
-
-            @keyframes premiumReveal {
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-        }
-
-        /* ── RESPONSIVE ── */
-        @media (max-width: 768px) {
-            body {
-                padding: 16px;
-                align-items: flex-start;
-            }
-
-            .split-wrapper {
-                border-radius: 24px;
-                padding: 6px;
-            }
-
-            .split-core {
-                flex-direction: column;
-                border-radius: calc(24px - 6px);
-            }
+        @media (max-width: 800px) {
+            .split-wrapper { flex-direction: column; }
 
             .context-panel {
                 flex: 0 0 auto;
-                padding: 40px 32px;
+                padding: 28px 24px;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
             }
 
-            .context-main {
-                margin: 24px 0;
-            }
-
-            .feature-item:nth-child(n+3) {
-                display: none;
-            }
+            .context-main { margin: 20px 0 4px; }
+            .context-desc { margin-bottom: 20px; }
+            .feature-list { display: none; }
+            .back-nav-box { display: none; }
 
             .form-panel {
-                padding: 40px 32px;
+                flex: 1;
+                padding: 32px 24px 40px;
+                justify-content: flex-start;
+                align-items: stretch;
             }
+
+            .form-header, form, .form-footer { max-width: none; margin-left: 0; }
         }
     </style>
 </head>
 <body>
 
-<div class="split-wrapper">
-    <div class="split-core">
+    <a href="#login-form" class="skip-link">Lewati ke formulir login</a>
+    <div class="civic-strip" role="presentation"></div>
 
-        <!-- LEFT PANEL: CONTEXT -->
+    <div class="split-wrapper">
+
         <aside class="context-panel">
             <div class="brand-header">
-                <div class="brand-emblem-shell">
-                    <div class="brand-emblem-core">
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 10v11M16 10v11M12 10v11"/>
-                        </svg>
-                    </div>
-                </div>
+                <span class="brand-emblem" aria-hidden="true">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 10v11M16 10v11M12 10v11"/>
+                    </svg>
+                </span>
                 <span class="brand-name">Silap Gawat</span>
             </div>
 
             <div class="context-main">
                 <span class="role-tag-pill">Camat</span>
-                
-                <h1 class="context-title">
-                    <?= htmlspecialchars($appData['name']) ?><br>
-                    <em><?= htmlspecialchars($appData['description']) ?></em>
-                </h1>
+
+                <h1 class="context-title"><?php if (!empty($appData['name'])): ?><?= htmlspecialchars($appData['name']) ?><br><?php endif; ?><?= htmlspecialchars($appData['description']) ?></h1>
                 <p class="context-desc">Portal laporan dan monitoring kegiatan tingkat kecamatan.</p>
 
                 <div class="feature-list" role="list">
                     <div class="feature-item" role="listitem">
-                        <div class="feature-symbol-shell">
+                        <span class="feature-symbol-shell" aria-hidden="true">
                             <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                        </div>
-                        <div class="feature-body">
-                            <div class="feature-title">Input Laporan Kecamatan</div>
-                            <div class="feature-desc">Laporan berkala kegiatan wilayah kerja kecamatan.</div>
-                        </div>
+                        </span>
+                        <span>
+                            <span class="feature-title" style="display:block;">Input Laporan Kecamatan</span>
+                            <span class="feature-desc">Laporan berkala kegiatan wilayah kerja kecamatan.</span>
+                        </span>
                     </div>
                     <div class="feature-item" role="listitem">
-                        <div class="feature-symbol-shell">
+                        <span class="feature-symbol-shell" aria-hidden="true">
                             <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                        </div>
-                        <div class="feature-body">
-                            <div class="feature-title">Monitoring Desa</div>
-                            <div class="feature-desc">Mengontrol status laporan berkala dari tingkat desa.</div>
-                        </div>
+                        </span>
+                        <span>
+                            <span class="feature-title" style="display:block;">Monitoring Desa</span>
+                            <span class="feature-desc">Mengontrol status laporan berkala dari tingkat desa.</span>
+                        </span>
                     </div>
                     <div class="feature-item" role="listitem">
-                        <div class="feature-symbol-shell">
+                        <span class="feature-symbol-shell" aria-hidden="true">
                             <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-                        </div>
-                        <div class="feature-body">
-                            <div class="feature-title">Tindak Lanjut</div>
-                            <div class="feature-desc">Update respon langsung terhadap laporan wilayah.</div>
-                        </div>
+                        </span>
+                        <span>
+                            <span class="feature-title" style="display:block;">Tindak Lanjut</span>
+                            <span class="feature-desc">Update respon langsung terhadap laporan wilayah.</span>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -740,31 +504,30 @@
             </div>
         </aside>
 
-        <!-- RIGHT PANEL: FORM -->
-        <main class="form-panel">
+        <main class="form-panel" id="login-form">
             <div class="form-header">
                 <h2>Masuk Camat</h2>
                 <p>Silakan masukkan kredensial akun kecamatan Anda.</p>
             </div>
 
             <form id="loginForm" novalidate>
-                
-                <!-- USERNAME -->
-                <div class="field-group">
-                    <label for="username" class="field-label">Username</label>
-                    <div class="double-bezel-input" id="username-bezel">
+
+                <div class="field-group" id="username-group">
+                    <label for="username" class="field-label">Username<span class="required-mark" aria-hidden="true">*</span></label>
+                    <div class="field-input-wrap">
                         <input type="text" class="field-input" id="username" name="username"
-                               placeholder="nama pengguna" autocomplete="username" required>
+                               placeholder="nama pengguna" autocomplete="username" required aria-required="true"
+                               aria-describedby="username-error">
                     </div>
-                    <div class="field-error" id="username-error"></div>
+                    <div class="field-error" id="username-error" role="alert"></div>
                 </div>
 
-                <!-- PASSWORD -->
-                <div class="field-group">
-                    <label for="password" class="field-label">Password</label>
-                    <div class="double-bezel-input" id="password-bezel">
+                <div class="field-group" id="password-group">
+                    <label for="password" class="field-label">Password<span class="required-mark" aria-hidden="true">*</span></label>
+                    <div class="field-input-wrap">
                         <input type="password" class="field-input with-toggle" id="password" name="password"
-                               placeholder="kata sandi" autocomplete="current-password" required>
+                               placeholder="kata sandi" autocomplete="current-password" required aria-required="true"
+                               aria-describedby="password-error">
                         <button type="button" class="pwd-toggle-btn" id="pwdToggle" aria-label="Tampilkan password" title="Tampilkan password">
                             <svg id="eyeIcon" viewBox="0 0 24 24" stroke="currentColor">
                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
@@ -772,31 +535,24 @@
                             </svg>
                         </button>
                     </div>
-                    <div class="field-error" id="password-error"></div>
+                    <div class="field-error" id="password-error" role="alert"></div>
                 </div>
 
-                <!-- SUBMIT -->
                 <button type="submit" class="btn-submit" id="loginBtn" aria-live="polite">
                     <span id="loginText">Masuk</span>
-                    <span class="btn-icon-box">
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M5 12h14M13 6l6 6-6 6"/>
-                        </svg>
+                    <span class="btn-icon-box" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
                     </span>
                 </button>
 
             </form>
 
-            <div class="form-footer">
-                &copy; <?= date('Y') ?> Pemerintah Kabupaten Mandailing Natal
-            </div>
+            <p class="form-footer">&copy; <?= date('Y') ?> Pemerintah Kabupaten Mandailing Natal</p>
         </main>
 
     </div>
-</div>
 
 <script>
-    /* ── PASSWORD TOGGLE ── */
     const pwdInput = document.getElementById('password');
     const eyeIcon  = document.getElementById('eyeIcon');
 
@@ -804,33 +560,28 @@
         const isHidden = pwdInput.type === 'password';
         pwdInput.type  = isHidden ? 'text' : 'password';
         this.setAttribute('aria-label', isHidden ? 'Sembunyikan password' : 'Tampilkan password');
-        
         eyeIcon.innerHTML = isHidden
             ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>'
             : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
     });
 
-    /* ── TOAST NOTIFICATION SYSTEM ── */
     let _tw = null;
 
     function _getWrap() {
-        if (!_tw) { 
-            _tw = document.createElement('div'); 
-            _tw.className = 'toast-wrap'; 
-            document.body.appendChild(_tw); 
+        if (!_tw) {
+            _tw = document.createElement('div');
+            _tw.className = 'toast-wrap';
+            _tw.setAttribute('aria-live', 'polite');
+            document.body.appendChild(_tw);
         }
         return _tw;
     }
 
     function showToast(title, msg, type = 'success', ms = 4500) {
         const w = _getWrap();
-        
-        let iconSvg = '';
-        if (type === 'success') {
-            iconSvg = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
-        } else {
-            iconSvg = '<svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
-        }
+        let iconSvg = type === 'success'
+            ? '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>'
+            : '<svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
 
         const t = document.createElement('div');
         t.className = `toast ${type}`;
@@ -840,31 +591,28 @@
                 <div class="toast-ttl">${title}</div>
                 <div class="toast-msg">${msg}</div>
             </div>
-            <button class="toast-x" onclick="_rmToast(this)" aria-label="Tutup">&times;</button>`;
+            <button class="toast-x" onclick="_rmToast(this)" aria-label="Tutup notifikasi">&times;</button>`;
         w.appendChild(t);
-        setTimeout(() => { const b = t.querySelector('.toast-x'); if(b) _rmToast(b); }, ms);
+        setTimeout(() => { const b = t.querySelector('.toast-x'); if (b) _rmToast(b); }, ms);
     }
 
     function _rmToast(btn) {
         const t = btn.closest('.toast');
         if (t && !t.classList.contains('removing')) {
             t.classList.add('removing');
-            setTimeout(() => t.remove(), 700);
+            setTimeout(() => t.remove(), 300);
         }
     }
 
-    /* ── FIELD VALIDATION ── */
     function setErr(id, msg) {
-        const bezel = document.getElementById(id + '-bezel');
-        const e     = document.getElementById(id + '-error');
-        if (bezel) bezel.classList.add('is-error');
+        document.getElementById(id + '-group').classList.add('is-error');
+        const e = document.getElementById(id + '-error');
         if (e) { e.textContent = msg; e.classList.add('show'); }
     }
 
     function clrErr(id) {
-        const bezel = document.getElementById(id + '-bezel');
-        const e     = document.getElementById(id + '-error');
-        if (bezel) bezel.classList.remove('is-error');
+        document.getElementById(id + '-group').classList.remove('is-error');
+        const e = document.getElementById(id + '-error');
         if (e) e.classList.remove('show');
     }
 
@@ -872,18 +620,16 @@
         document.getElementById(id).addEventListener('input', () => clrErr(id));
     });
 
-    /* ── LOADING STATES ── */
     function setLoad(on) {
         const btn  = document.getElementById('loginBtn');
         const text = document.getElementById('loginText');
         btn.disabled = on;
         btn.setAttribute('aria-busy', on);
         text.innerHTML = on
-            ? '<span class="spinner-shell" role="status"></span>Memproses...'
+            ? '<span class="spinner-shell" role="status"></span> Memproses...'
             : 'Masuk';
     }
 
-    /* ── FORM SUBMISSION ── */
     document.getElementById('loginForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         const u = document.getElementById('username').value.trim();
@@ -891,15 +637,18 @@
         let ok = true;
         if (!u) { setErr('username', 'Username wajib diisi.'); ok = false; }
         if (!p) { setErr('password', 'Password wajib diisi.'); ok = false; }
-        if (!ok) return;
+        if (!ok) {
+            document.getElementById(!u ? 'username' : 'password').focus();
+            return;
+        }
 
         setLoad(true);
         try {
             const fd = new FormData();
-            fd.append('username', u); 
-            fd.append('password', p); 
+            fd.append('username', u);
+            fd.append('password', p);
             fd.append('login_role', 'camat');
-            
+
             const res    = await fetch('<?= route('auth', 'login') ?>', { method: 'POST', body: fd });
             const result = await res.json();
             if (result.success) {
@@ -908,7 +657,7 @@
             } else {
                 showToast('Akses Ditolak', result.message || 'Username atau password salah.', 'error');
             }
-        } catch(err) {
+        } catch (err) {
             showToast('Gangguan Jaringan', 'Gagal terhubung dengan server pelaporan.', 'error');
         } finally {
             setLoad(false);

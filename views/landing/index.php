@@ -7,778 +7,452 @@
     <title>Sistem Layanan Pelaporan — Pemerintah Kabupaten Mandailing Natal</title>
     <link rel="shortcut icon" href="<?= asset('assets/images/favicon.png') ?>" />
 
-    <!-- Premium Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..500;1,6..72,300..400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=Lato:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?= asset('assets/css/design-tokens.css') ?>" />
 
     <style>
         :root {
-            --canvas:       #FAF9F6; /* Warm cotton off-white */
-            --surface:      #FFFFFF;
-            --prestige-navy: #0A1D37; /* Institutional dark blue */
-            --prestige-gold: #B8976C; /* Elegant bronze/gold */
-            --prestige-gold-light: rgba(184, 151, 108, 0.15);
-            --border-alpha:  rgba(10, 29, 55, 0.06);
-            --border-double: rgba(184, 151, 108, 0.2);
-            --text-primary:  #1C2630;
-            --text-muted:    #656E77;
-            
-            /* Custom spring-like motion curve */
-            --ease-spring:  cubic-bezier(0.32, 0.72, 0, 1);
-            --transition-premium: all 0.7s var(--ease-spring);
+            --ink:        #0F172A; /* Primary navy - authority */
+            --ink-2:      #334155; /* Secondary text */
+            --canvas:     #F8FAFC; /* Bright accessible background */
+            --surface:    #FFFFFF;
+            --muted:      #E8ECF1;
+            --border:     #E2E8F0;
+            --accent:     #0369A1; /* Default blue accent */
+            --danger:     #DC2626;
+            --focus-ring: #0369A1;
+
+            --accent-admin: #0369A1;
+            --accent-admin-soft: #E0F0FA;
+            --accent-camat: #15803D;
+            --accent-camat-soft: #E1F3E8;
+            --accent-opd: #B45309;
+            --accent-opd-soft: #FCEEDD;
+
+            --font-serif: 'EB Garamond', Georgia, serif;
+            --font-sans: 'Lato', Arial, sans-serif;
+            --ease: cubic-bezier(0.2, 0.65, 0.3, 1);
         }
 
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
         }
 
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: var(--font-sans);
             background-color: var(--canvas);
-            color: var(--text-primary);
+            color: var(--ink-2);
             min-height: 100dvh;
             line-height: 1.6;
+            font-size: 16px;
             -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
-            position: relative;
         }
 
-        /* Ambient grain overlay */
-        body::before {
-            content: "";
-            position: fixed;
-            inset: 0;
-            width: 100vw;
-            height: 100vh;
-            opacity: 0.02;
-            pointer-events: none;
-            z-index: 999;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        a { color: inherit; }
+
+        :focus-visible {
+            outline: 3px solid var(--focus-ring);
+            outline-offset: 2px;
+            border-radius: 4px;
         }
 
-        /* Ambient radial glow */
-        .ambient-glow {
+        /* ── SKIP LINK ── */
+        .skip-link {
             position: absolute;
-            top: -200px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80vw;
-            height: 600px;
-            background: radial-gradient(circle, rgba(184, 151, 108, 0.05) 0%, rgba(250, 249, 246, 0) 70%);
-            pointer-events: none;
-            z-index: 0;
+            left: -9999px;
+            top: 0;
+            background: var(--ink);
+            color: #FFFFFF;
+            padding: 12px 20px;
+            font-weight: 700;
+            font-size: 14px;
+            z-index: 1000;
+            border-radius: 0 0 8px 0;
         }
 
-        /* ── FLOATING GLASS NAVIGATION ── */
-        .nav-wrapper {
-            position: relative;
-            z-index: 10;
-            padding: 24px 24px 0;
-            max-width: 1100px;
+        .skip-link:focus {
+            left: 0;
+        }
+
+        /* ── TOP BAR (Merah Putih civic strip) ── */
+        .civic-strip {
+            height: 4px;
+            background: linear-gradient(90deg, #B91C1C 0%, #B91C1C 50%, #FFFFFF 50%, #FFFFFF 100%);
+        }
+
+        /* ── HEADER ── */
+        .site-header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-inner {
+            max-width: 1200px;
             margin: 0 auto;
-        }
-
-        .floating-nav {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            box-shadow: 0 10px 30px rgba(10, 29, 55, 0.03), 
-                        inset 0 1px 0 rgba(255, 255, 255, 0.8);
-            border-radius: 9999px;
-            padding: 10px 24px;
+            padding: 16px 24px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-        }
-
-        .nav-left {
-            display: flex;
-            align-items: center;
             gap: 16px;
         }
 
-        .brand-logo-container {
+        .brand {
             display: flex;
             align-items: center;
             gap: 12px;
+            text-decoration: none;
         }
 
-        /* Double-bezel on small mark */
-        .brand-emblem-shell {
-            background: rgba(10, 29, 55, 0.03);
-            padding: 3px;
+        .brand-mark {
+            width: 44px;
+            height: 44px;
             border-radius: 10px;
-            border: 1px solid rgba(10, 29, 55, 0.05);
-        }
-
-        .brand-emblem-core {
-            width: 32px;
-            height: 32px;
-            border-radius: 7px;
-            background: var(--prestige-navy);
+            background: var(--ink);
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2);
+            flex-shrink: 0;
         }
 
-        .brand-emblem-core svg {
-            width: 18px;
-            height: 18px;
-            stroke: var(--prestige-gold);
-            stroke-width: 1.25;
+        .brand-mark svg {
+            width: 24px;
+            height: 24px;
+            stroke: #FFFFFF;
+            stroke-width: 1.5;
             fill: none;
         }
 
-        .brand-details {
+        .brand-text-title {
+            font-family: var(--font-serif);
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--ink);
             line-height: 1.2;
         }
 
-        .brand-title {
-            font-size: 13.5px;
+        .brand-text-subtitle {
+            font-size: 12.5px;
+            color: var(--ink-2);
+            font-weight: 400;
+        }
+
+        .header-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
             font-weight: 700;
-            color: var(--prestige-navy);
-            letter-spacing: -0.01em;
-        }
-
-        .brand-subtitle {
-            font-size: 10px;
-            color: var(--text-muted);
-            font-weight: 500;
-            letter-spacing: 0.02em;
-        }
-
-        .nav-divider {
-            width: 1px;
-            height: 24px;
-            background: rgba(10, 29, 55, 0.08);
-        }
-
-        .sys-badge {
-            font-size: 10.5px;
-            font-weight: 600;
-            color: var(--prestige-gold);
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-        }
-
-        .nav-right {
-            font-size: 11px;
-            color: var(--text-muted);
-            font-weight: 600;
-            letter-spacing: 0.05em;
-            background: rgba(10, 29, 55, 0.04);
-            padding: 6px 14px;
-            border-radius: 9999px;
+            color: var(--ink-2);
+            background: var(--muted);
+            padding: 8px 16px;
+            border-radius: 8px;
             font-variant-numeric: tabular-nums;
         }
 
-        /* ── HERO SECTION ── */
+        /* ── MAIN ── */
+        main { display: block; }
+
         .hero-section {
-            max-width: 800px;
+            max-width: 760px;
             margin: 0 auto;
             text-align: center;
-            padding: 80px 24px 60px;
-            position: relative;
-            z-index: 2;
+            padding: 64px 24px 40px;
         }
 
-        .eyebrow-pill {
+        .eyebrow {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            background: rgba(184, 151, 108, 0.1);
-            border: 1px solid rgba(184, 151, 108, 0.15);
+            gap: 8px;
+            background: var(--accent-admin-soft);
+            color: #044F7A;
+            border: 1px solid #BFE0F2;
             padding: 6px 16px;
-            border-radius: 9999px;
-            font-size: 10px;
-            font-weight: 600;
-            letter-spacing: 0.15em;
+            border-radius: 999px;
+            font-size: 12.5px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
             text-transform: uppercase;
-            color: #8E6E45;
             margin-bottom: 24px;
         }
 
-        .eyebrow-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--prestige-gold);
-            box-shadow: 0 0 8px var(--prestige-gold);
-        }
-
         .hero-title {
-            font-family: 'Newsreader', Georgia, serif;
-            font-size: clamp(34px, 5.5vw, 56px);
-            font-weight: 400;
-            color: var(--prestige-navy);
-            letter-spacing: -0.03em;
-            line-height: 1.1;
-            margin-bottom: 20px;
-        }
-
-        .hero-title em {
-            font-style: italic;
-            font-weight: 300;
-            color: var(--prestige-gold);
-            background: linear-gradient(135deg, #B8976C 30%, #E2C9A6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-family: var(--font-serif);
+            font-size: clamp(32px, 5vw, 48px);
+            font-weight: 600;
+            color: var(--ink);
+            line-height: 1.2;
+            letter-spacing: -0.01em;
+            margin-bottom: 16px;
+            text-wrap: balance;
         }
 
         .hero-description {
-            font-size: 15px;
-            color: var(--text-muted);
-            max-width: 540px;
+            font-size: 17px;
+            color: var(--ink-2);
+            max-width: 560px;
             margin: 0 auto;
             line-height: 1.7;
-            font-weight: 400;
         }
 
-        /* ── BENTO GRID ── */
+        /* ── ROLE GRID ── */
         .grid-container {
-            max-width: 1000px;
+            max-width: 1080px;
             margin: 0 auto;
-            padding: 0 24px 120px;
-            position: relative;
-            z-index: 2;
+            padding: 32px 24px 100px;
         }
 
-        .bento-grid {
+        .role-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 24px;
         }
 
-        /* ── DOUBLE-BEZEL CARD PATTERN ── */
-        .double-bezel-wrapper {
-            background: rgba(10, 29, 55, 0.02);
-            border: 1px solid rgba(10, 29, 55, 0.04);
-            padding: 8px;
-            border-radius: 32px;
-            transition: var(--transition-premium);
-        }
-
-        .double-bezel-wrapper:hover {
-            transform: translateY(-4px);
-            background: rgba(184, 151, 108, 0.03);
-            border-color: rgba(184, 151, 108, 0.15);
-            box-shadow: 0 20px 40px rgba(10, 29, 55, 0.04);
-        }
-
-        .card-core {
-            border-radius: calc(32px - 8px);
-            padding: 40px;
-            height: 100%;
+        .role-card {
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            position: relative;
-            overflow: hidden;
-            transition: var(--transition-premium);
-            text-decoration: none;
-            color: inherit;
-        }
-
-        /* 1. ADMIN CARD (Massive High-Contrast, Full Width) */
-        .wrapper-admin {
-            grid-column: span 2;
-        }
-
-        .wrapper-admin .card-core {
-            background: var(--prestige-navy);
-            color: #FFFFFF;
-            flex-direction: row;
-            align-items: center;
-            gap: 40px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
-        }
-
-        /* Admin card glowing mesh */
-        .wrapper-admin .card-core::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at 80% 20%, rgba(184, 151, 108, 0.12) 0%, transparent 60%);
-            pointer-events: none;
-        }
-
-        .admin-content-left {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            position: relative;
-            z-index: 2;
-        }
-
-        .card-badge {
-            display: inline-flex;
-            align-items: center;
-            align-self: flex-start;
-            padding: 4px 12px;
-            border-radius: 9999px;
-            font-size: 9px;
-            font-weight: 700;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            margin-bottom: 16px;
-        }
-
-        .badge-admin {
-            background: rgba(184, 151, 108, 0.15);
-            color: var(--prestige-gold);
-            border: 1px solid rgba(184, 151, 108, 0.25);
-        }
-
-        .card-title {
-            font-size: 22px;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            margin-bottom: 8px;
-        }
-
-        .wrapper-admin .card-title {
-            font-family: 'Newsreader', Georgia, serif;
-            font-size: 28px;
-            font-weight: 400;
-        }
-
-        .card-desc {
-            font-size: 13.5px;
-            line-height: 1.6;
-        }
-
-        .wrapper-admin .card-desc {
-            color: rgba(255, 255, 255, 0.6);
-            max-width: 460px;
-        }
-
-        /* 2. SUB CARDS (Camat & OPD) - Spans 1 */
-        .wrapper-sub .card-core {
             background: var(--surface);
-            border: 1px solid rgba(10, 29, 55, 0.05);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px 28px;
+            text-decoration: none;
+            transition: transform 200ms var(--ease), box-shadow 200ms var(--ease), border-color 200ms var(--ease);
             min-height: 320px;
         }
 
-        .badge-camat {
-            background: rgba(30, 63, 32, 0.06);
-            color: #1E3F20;
-            border: 1px solid rgba(30, 63, 32, 0.12);
+        .role-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
         }
 
-        .badge-opd {
-            background: rgba(142, 110, 39, 0.06);
-            color: #8E6E27;
-            border: 1px solid rgba(142, 110, 39, 0.12);
+        .role-card:active {
+            transform: translateY(-1px) scale(0.99);
         }
 
-        .wrapper-sub .card-title {
-            color: var(--prestige-navy);
-            margin-top: 12px;
-        }
-
-        .wrapper-sub .card-desc {
-            color: var(--text-muted);
-            margin-bottom: 40px;
-        }
-
-        /* Iconic Symbol Containers */
-        .symbol-shell {
-            width: 48px;
-            height: 48px;
-            border-radius: 14px;
-            background: rgba(10, 29, 55, 0.02);
-            border: 1px solid rgba(10, 29, 55, 0.04);
-            padding: 4px;
+        .role-icon-shell {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
+            margin-bottom: 20px;
         }
 
-        .wrapper-admin .symbol-shell {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-        }
-
-        .symbol-core {
-            width: 100%;
-            height: 100%;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: var(--transition-premium);
-        }
-
-        .wrapper-admin .symbol-core {
-            background: rgba(255, 255, 255, 0.05);
-            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
-        }
-
-        .wrapper-sub .symbol-core {
-            background: #FFFFFF;
-            border: 1px solid rgba(10, 29, 55, 0.04);
-            box-shadow: 0 4px 10px rgba(10, 29, 55, 0.02);
-        }
-
-        .symbol-core svg {
-            width: 20px;
-            height: 20px;
-            stroke-width: 1.25;
+        .role-icon-shell svg {
+            width: 26px;
+            height: 26px;
+            stroke-width: 1.6;
             fill: none;
-            transition: var(--transition-premium);
         }
 
-        .wrapper-admin .symbol-core svg {
-            stroke: var(--prestige-gold);
+        .role-card.is-admin .role-icon-shell { background: var(--accent-admin-soft); }
+        .role-card.is-admin .role-icon-shell svg { stroke: var(--accent-admin); }
+        .role-card.is-camat .role-icon-shell { background: var(--accent-camat-soft); }
+        .role-card.is-camat .role-icon-shell svg { stroke: var(--accent-camat); }
+        .role-card.is-opd .role-icon-shell { background: var(--accent-opd-soft); }
+        .role-card.is-opd .role-icon-shell svg { stroke: var(--accent-opd); }
+
+        .role-badge {
+            display: inline-flex;
+            align-self: flex-start;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            margin-bottom: 14px;
         }
 
-        .wrapper-sub .symbol-core svg {
-            stroke: var(--prestige-navy);
+        .role-card.is-admin .role-badge { background: var(--accent-admin-soft); color: #044F7A; }
+        .role-card.is-camat .role-badge { background: var(--accent-camat-soft); color: #0F5C2E; }
+        .role-card.is-opd .role-badge { background: var(--accent-opd-soft); color: #8A4109; }
+
+        .role-title {
+            font-family: var(--font-serif);
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--ink);
+            margin-bottom: 10px;
         }
 
-        /* ── PREMIUM BUTTON-IN-BUTTON CTA PATTERN ── */
-        .premium-cta {
+        .role-desc {
+            font-size: 14.5px;
+            color: var(--ink-2);
+            line-height: 1.65;
+            flex: 1;
+        }
+
+        .role-cta {
             display: inline-flex;
             align-items: center;
-            gap: 16px;
-            padding: 6px 6px 6px 24px;
-            border-radius: 9999px;
-            font-size: 13px;
-            font-weight: 600;
-            letter-spacing: -0.01em;
-            transition: var(--transition-premium);
-            position: relative;
-            z-index: 2;
-            align-self: flex-start;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            margin-top: 24px;
+            padding: 12px 4px;
+            min-height: 44px;
         }
 
-        .cta-icon-box {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: var(--transition-premium);
-        }
+        .role-card.is-admin .role-cta { color: var(--accent-admin); }
+        .role-card.is-camat .role-cta { color: var(--accent-camat); }
+        .role-card.is-opd .role-cta { color: var(--accent-opd); }
 
-        .cta-icon-box svg {
-            width: 14px;
-            height: 14px;
+        .role-cta svg {
+            width: 16px;
+            height: 16px;
             stroke-width: 2;
             fill: none;
-            transition: var(--transition-premium);
+            transition: transform 200ms var(--ease);
         }
 
-        /* Admin CTA (Light/Gold Style) */
-        .cta-admin {
-            background: var(--prestige-gold);
-            color: var(--prestige-navy);
-        }
-
-        .cta-admin .cta-icon-box {
-            background: rgba(10, 29, 55, 0.15);
-        }
-
-        .cta-admin .cta-icon-box svg {
-            stroke: var(--prestige-navy);
-        }
-
-        .double-bezel-wrapper:hover .cta-admin {
-            background: #FFFFFF;
-            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.1);
-        }
-
-        /* Sub Cards CTA (Navy/Gold Style) */
-        .cta-sub {
-            background: var(--prestige-navy);
-            color: #FFFFFF;
-        }
-
-        .cta-sub .cta-icon-box {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .cta-sub .cta-icon-box svg {
-            stroke: #FFFFFF;
-        }
-
-        .double-bezel-wrapper:hover .cta-sub {
-            background: var(--prestige-gold);
-            color: var(--prestige-navy);
-        }
-
-        .double-bezel-wrapper:hover .cta-sub .cta-icon-box {
-            background: rgba(10, 29, 55, 0.1);
-        }
-
-        .double-bezel-wrapper:hover .cta-sub .cta-icon-box svg {
-            stroke: var(--prestige-navy);
-        }
-
-        /* Magnetic Hover Effects on Icons */
-        .double-bezel-wrapper:hover .cta-icon-box {
-            transform: scale(1.05);
-        }
-
-        .double-bezel-wrapper:hover .cta-icon-box svg {
-            transform: translate(2px, -2px);
-        }
-
-        .double-bezel-wrapper:hover .symbol-core {
-            background: var(--prestige-navy);
-        }
-
-        .double-bezel-wrapper:hover .symbol-core svg {
-            stroke: var(--prestige-gold);
-            transform: scale(1.08);
-        }
-
-        .double-bezel-wrapper.wrapper-admin:hover .symbol-core {
-            background: var(--prestige-gold);
-        }
-
-        .double-bezel-wrapper.wrapper-admin:hover .symbol-core svg {
-            stroke: var(--prestige-navy);
+        .role-card:hover .role-cta svg {
+            transform: translateX(3px);
         }
 
         /* ── FOOTER ── */
-        .footer-section {
-            max-width: 1000px;
+        .site-footer {
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 40px 24px;
+            padding: 32px 24px 48px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            border-top: 1px solid rgba(10, 29, 55, 0.06);
-            position: relative;
-            z-index: 2;
+            gap: 16px;
+            border-top: 1px solid var(--border);
+            flex-wrap: wrap;
         }
 
         .footer-text {
-            font-size: 11.5px;
-            color: var(--text-muted);
-            font-weight: 500;
+            font-size: 13px;
+            color: var(--ink-2);
         }
 
-        .footer-version {
-            font-size: 11px;
+        .footer-links {
+            display: flex;
+            gap: 20px;
+            font-size: 13px;
+        }
+
+        .footer-links a {
+            color: var(--ink-2);
+            text-decoration: none;
             font-weight: 600;
-            color: var(--prestige-gold);
-            letter-spacing: 0.05em;
-            background: rgba(184, 151, 108, 0.1);
-            padding: 4px 12px;
-            border-radius: 9999px;
+            transition: color 150ms var(--ease);
         }
 
-        /* ── MOTION DECORATIONS / ENTRANCE ── */
-        @media (prefers-reduced-motion: no-preference) {
-            .hero-section,
-            .bento-grid {
-                opacity: 0;
-                transform: translateY(20px);
-                animation: premiumReveal 0.8s var(--ease-spring) forwards;
-            }
+        .footer-links a:hover { color: var(--accent); }
 
-            .bento-grid {
-                animation-delay: 0.15s;
-            }
-
-            @keyframes premiumReveal {
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
+        /* ── RESPONSIVE ── */
+        @media (max-width: 900px) {
+            .role-grid { grid-template-columns: 1fr; }
         }
 
-        /* ── RESPONSIVE ADAPTATIONS (MOBILE COLLAPSE) ── */
-        @media (max-width: 768px) {
-            .nav-wrapper {
-                padding: 16px 16px 0;
-            }
-
-            .floating-nav {
-                padding: 8px 16px;
-            }
-
-            .nav-divider, .sys-badge {
-                display: none;
-            }
-
-            .hero-section {
-                padding: 60px 20px 40px;
-            }
-
-            .hero-title {
-                font-size: 32px;
-            }
-
-            .grid-container {
-                padding: 0 16px 80px;
-            }
-
-            .bento-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-
-            .double-bezel-wrapper {
-                border-radius: 24px;
-                padding: 6px;
-            }
-
-            .card-core {
-                border-radius: calc(24px - 6px);
-                padding: 30px 24px;
-            }
-
-            .wrapper-admin {
-                grid-column: span 1;
-            }
-
-            .wrapper-admin .card-core {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 24px;
-            }
-
-            .wrapper-sub .card-core {
-                min-height: auto;
-            }
-
-            .footer-section {
-                flex-direction: column;
-                gap: 12px;
-                text-align: center;
-                padding: 32px 16px;
-            }
+        @media (max-width: 640px) {
+            .header-inner { padding: 14px 16px; }
+            .brand-text-subtitle { display: none; }
+            .header-meta { padding: 6px 12px; font-size: 12px; }
+            .hero-section { padding: 40px 16px 24px; }
+            .grid-container { padding: 24px 16px 64px; }
+            .site-footer { flex-direction: column; align-items: flex-start; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Ambient blur glows -->
-    <div class="ambient-glow"></div>
+    <a href="#main-content" class="skip-link">Lewati ke konten utama</a>
+    <div class="civic-strip" role="presentation"></div>
 
-    <!-- FLOATING TOP BAR -->
-    <div class="nav-wrapper">
-        <header class="floating-nav" role="banner">
-            <div class="nav-left">
-                <div class="brand-logo-container">
-                    <div class="brand-emblem-shell">
-                        <div class="brand-emblem-core">
-                            <svg viewBox="0 0 24 24" aria-hidden="true">
-                                <path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 10v11M16 10v11M12 10v11"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="brand-details">
-                        <div class="brand-title">Silap Gawat</div>
-                        <div class="brand-subtitle">Kab. Mandailing Natal</div>
-                    </div>
-                </div>
-                <div class="nav-divider"></div>
-                <span class="sys-badge">Sistem Pelaporan Digital</span>
-            </div>
-            <div class="nav-right"><?= date('Y') ?></div>
-        </header>
-    </div>
+    <header class="site-header" role="banner">
+        <div class="header-inner">
+            <a class="brand" href="<?= route('auth', 'index') ?>" aria-label="Beranda Silap Gawat">
+                <span class="brand-mark">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 10v11M16 10v11M12 10v11"/>
+                    </svg>
+                </span>
+                <span>
+                    <span class="brand-text-title" style="display:block;">Silap Gawat</span>
+                    <span class="brand-text-subtitle">Kab. Mandailing Natal</span>
+                </span>
+            </a>
+            <div class="header-meta" aria-label="Tahun berjalan"><?= date('Y') ?></div>
+        </div>
+    </header>
 
-    <!-- HERO HEADER -->
-    <main role="main">
+    <main role="main" id="main-content">
         <section class="hero-section">
-            <div class="eyebrow-pill">
-                <span class="eyebrow-dot"></span>
-                Portal Layanan Resmi
-            </div>
-            <h1 class="hero-title">Silakan pilih gerbang masuk<br><em>sesuai kewenangan Anda.</em></h1>
-            <p class="hero-description">Sistem pelaporan eksekutif terpadu Pemerintah Kabupaten Mandailing Natal untuk monitoring program kerja pembangunan daerah.</p>
+            <p class="eyebrow">Portal Layanan Resmi</p>
+            <h1 class="hero-title">Silakan pilih gerbang masuk sesuai kewenangan Anda</h1>
+            <p class="hero-description">Sistem pelaporan terpadu Pemerintah Kabupaten Mandailing Natal untuk monitoring program kerja dan pembangunan daerah.</p>
         </section>
 
-        <!-- ASYMMETRICAL BENTO GRID -->
-        <section class="grid-container">
-            <div class="bento-grid" role="list">
+        <section class="grid-container" aria-label="Pilihan akses pengguna">
+            <div class="role-grid">
 
-                <!-- 1. ADMIN (Massive Full-Width Card) -->
-                <div class="double-bezel-wrapper wrapper-admin" role="listitem">
-                    <a class="card-core" href="<?= route('auth', 'admin') ?>" aria-label="Masuk sebagai Administrator">
-                        <div class="admin-content-left">
-                            <span class="card-badge badge-admin">Eksekutif</span>
-                            <h2 class="card-title">Administrator Utama</h2>
-                            <p class="card-desc">Kontrol penuh operasional sistem pelaporan bupati. Kelola seluruh integrasi data OPD, kecamatan, laporan kerja, serta penugasan wewenang dinas secara terpusat.</p>
-                        </div>
-                        <span class="premium-cta cta-admin">
-                            Akses Dashboard
-                            <span class="cta-icon-box">
-                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-                            </span>
-                        </span>
-                    </a>
-                </div>
+                <a class="role-card is-admin" href="<?= route('auth', 'admin') ?>" aria-label="Masuk sebagai Administrator">
+                    <span class="role-icon-shell" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                    </span>
+                    <span class="role-badge">Eksekutif</span>
+                    <h2 class="role-title">Administrator Utama</h2>
+                    <p class="role-desc">Kontrol penuh operasional sistem pelaporan bupati. Kelola seluruh integrasi data OPD, kecamatan, laporan kerja, serta penugasan wewenang dinas secara terpusat.</p>
+                    <span class="role-cta">
+                        Akses Dashboard
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                    </span>
+                </a>
 
-                <!-- 2. CAMAT (Left Column Card) -->
-                <div class="double-bezel-wrapper wrapper-sub" role="listitem">
-                    <a class="card-core" href="<?= route('auth', 'camat') ?>" aria-label="Masuk sebagai Camat">
-                        <div>
-                            <div class="symbol-shell">
-                                <div class="symbol-core">
-                                    <svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V9M19 21V9M9 21v-6h6v6M2 10l10-7 10 7"/></svg>
-                                </div>
-                            </div>
-                            <h2 class="card-title">Wilayah Kecamatan</h2>
-                            <p class="card-desc">Akses monitoring khusus camat untuk memantau kemajuan pembangunan, mengawal program kerja wilayah, serta mengoordinasikan laporan dari desa.</p>
-                        </div>
-                        <span class="premium-cta cta-sub">
-                            Masuk Portal
-                            <span class="cta-icon-box">
-                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-                            </span>
-                        </span>
-                    </a>
-                </div>
+                <a class="role-card is-camat" href="<?= route('auth', 'camat') ?>" aria-label="Masuk sebagai Camat">
+                    <span class="role-icon-shell" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V9M19 21V9M9 21v-6h6v6M2 10l10-7 10 7"/></svg>
+                    </span>
+                    <span class="role-badge">Kecamatan</span>
+                    <h2 class="role-title">Wilayah Kecamatan</h2>
+                    <p class="role-desc">Akses monitoring khusus camat untuk memantau kemajuan pembangunan, mengawal program kerja wilayah, serta mengoordinasikan laporan dari desa.</p>
+                    <span class="role-cta">
+                        Masuk Portal
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                    </span>
+                </a>
 
-                <!-- 3. OPD (Right Column Card) -->
-                <div class="double-bezel-wrapper wrapper-sub" role="listitem">
-                    <a class="card-core" href="<?= route('auth', 'opd') ?>" aria-label="Masuk sebagai Perangkat Daerah">
-                        <div>
-                            <div class="symbol-shell">
-                                <div class="symbol-core">
-                                    <svg viewBox="0 0 24 24">
-                                        <rect x="2" y="7" width="20" height="14" rx="1"/>
-                                        <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
-                                        <line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/>
-                                    </svg>
-                                </div>
-                            </div>
-                            <h2 class="card-title">Dinas Perangkat Daerah</h2>
-                            <p class="card-desc">Portal resmi Organisasi Perangkat Daerah (OPD) untuk sinkronisasi target indikator, memasukkan laporan bulanan, dan melacak tindak lanjut.</p>
-                        </div>
-                        <span class="premium-cta cta-sub">
-                            Masuk Portal
-                            <span class="cta-icon-box">
-                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-                            </span>
-                        </span>
-                    </a>
-                </div>
+                <a class="role-card is-opd" href="<?= route('auth', 'opd') ?>" aria-label="Masuk sebagai Perangkat Daerah">
+                    <span class="role-icon-shell" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                            <rect x="2" y="7" width="20" height="14" rx="1"/>
+                            <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+                            <line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/>
+                        </svg>
+                    </span>
+                    <span class="role-badge">Perangkat Daerah</span>
+                    <h2 class="role-title">Dinas Perangkat Daerah</h2>
+                    <p class="role-desc">Portal resmi Organisasi Perangkat Daerah (OPD) untuk sinkronisasi target indikator, memasukkan laporan bulanan, dan melacak tindak lanjut.</p>
+                    <span class="role-cta">
+                        Masuk Portal
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                    </span>
+                </a>
 
             </div>
         </section>
     </main>
 
-    <!-- FOOTER -->
-    <footer class="footer-section" role="contentinfo">
+    <footer class="site-footer" role="contentinfo">
         <span class="footer-text">&copy; <?= date('Y') ?> Pemerintah Kabupaten Mandailing Natal. Hak Cipta Dilindungi.</span>
+        <nav class="footer-links" aria-label="Tautan kaki halaman">
+            <a href="#">Kebijakan Privasi</a>
+            <a href="#">Pusat Bantuan</a>
+        </nav>
     </footer>
 
 </body>
