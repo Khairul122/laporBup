@@ -438,7 +438,7 @@
                 align-items: stretch;
             }
 
-            .form-header, form, .form-footer { max-width: none; margin-left: 0; }
+            .form-header, form, .form-footer { max-width: none; }
         }
     </style>
 </head>
