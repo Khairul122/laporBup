@@ -14,13 +14,18 @@ include 'views/layouts/admin-header.php';
           <div class="row">
             <div class="col-sm-12">
               
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="<?= route('Dashboard', 'admin') ?>"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Profile</li>
+                </ol>
+              </nav>
               <div class="d-flex align-items-center justify-content-between mb-4">
                 <div>
-                  <h3 class="page-title mb-1">
+                  <h3 class="page-title mb-0">
                     <i class="fas fa-users-cog"></i>
                     Manajemen Profile
                   </h3>
-                  <p class="text-muted mb-0">Kelola konfigurasi profile aplikasi untuk setiap role</p>
                 </div>
                 <div>
                   <a href="<?= route('profile', 'create') ?>" class="btn btn-primary">

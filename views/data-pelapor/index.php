@@ -18,8 +18,8 @@
                     <h3 class="page-title mb-1">Data Pelapor</h3>
                     <nav aria-label="breadcrumb">
                       <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="<?= route('dashboard', 'admin') ?>">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Data Pelapor</li>
+                        <li class="breadcrumb-item"><a href="<?= route('dashboard', 'admin') ?>"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Data Pelapor</li>
                       </ol>
                     </nav>
                   </div>

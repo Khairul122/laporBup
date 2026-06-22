@@ -21,9 +21,9 @@
                     </h3>
                     <nav aria-label="breadcrumb">
                       <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="<?= route('dashboard', 'admin') ?>">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="<?= route('dashboard', 'admin') ?>"><i class="fa-solid fa-house"></i> Dashboard</a></li>
                         <li class="breadcrumb-item"><a href="<?= route('dataPelapor', 'index') ?>">Data Pelapor</a></li>
-                        <li class="breadcrumb-item active"><?php echo $dataPelapor ? 'Edit' : 'Tambah'; ?></li>
+                        <li class="breadcrumb-item active" aria-current="page"><?php echo $dataPelapor ? 'Edit' : 'Tambah'; ?></li>
                       </ol>
                     </nav>
                   </div>

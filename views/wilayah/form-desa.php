@@ -11,18 +11,17 @@
           <div class="row">
             <div class="col-sm-12">
 
-              <nav aria-label="breadcrumb" class="mb-3">
-                <ol class="breadcrumb mb-0">
-                  <li class="breadcrumb-item"><a href="<?= route('Dashboard', 'admin') ?>" class="text-decoration-none">Dashboard</a></li>
-                  <li class="breadcrumb-item"><a href="<?= route('desa', 'index') ?>" class="text-decoration-none">Desa</a></li>
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="<?= route('Dashboard', 'admin') ?>"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+                  <li class="breadcrumb-item"><a href="<?= route('desa', 'index') ?>">Desa</a></li>
                   <li class="breadcrumb-item active" aria-current="page"><?php echo $desa ? 'Edit' : 'Tambah'; ?></li>
                 </ol>
               </nav>
 
               <div class="page-header d-flex justify-content-between align-items-center mb-4">
                 <div>
-                  <h3 class="page-title mb-1"><?php echo $desa ? 'Edit Desa / Kelurahan' : 'Tambah Desa / Kelurahan'; ?></h3>
-                  <p class="text-muted small mb-0">Masukkan informasi detail data desa/kelurahan</p>
+                  <h3 class="page-title mb-0"><?php echo $desa ? 'Edit Desa / Kelurahan' : 'Tambah Desa / Kelurahan'; ?></h3>
                 </div>
                 <a href="<?= route('desa', 'index') ?>" class="btn btn-outline-secondary">
                   <i class="mdi mdi-arrow-left me-2"></i> Kembali

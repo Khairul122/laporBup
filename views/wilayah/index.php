@@ -12,6 +12,12 @@
             <div class="col-sm-12">
 
               
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="<?= route('Dashboard', 'admin') ?>"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Wilayah</li>
+                </ol>
+              </nav>
               <div class="page-header d-flex justify-content-between align-items-center mb-4">
                 <div>
                   <h2 class="page-title">Manajemen Wilayah</h2>

@@ -13,18 +13,17 @@
               
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="<?= route('Dashboard', 'admin') ?>">Dashboard</a></li>
+                  <li class="breadcrumb-item"><a href="<?= route('Dashboard', 'admin') ?>"><i class="fa-solid fa-house"></i> Dashboard</a></li>
                   <li class="breadcrumb-item"><a href="<?= route('opd', 'index') ?>">OPD</a></li>
                   <li class="breadcrumb-item active" aria-current="page"><?php echo isset($opd) ? 'Edit' : 'Tambah'; ?></li>
                 </ol>
               </nav>
               <div class="page-header d-flex justify-content-between align-items-center mb-4">
                 <div>
-                  <h3 class="page-title mb-1">
+                  <h3 class="page-title mb-0">
                     <i class="fas fa-<?php echo isset($opd) ? 'edit text-primary' : 'plus-circle text-primary'; ?> me-2"></i>
                     <?php echo isset($opd) ? 'Edit OPD' : 'Tambah OPD Baru'; ?>
                   </h3>
-                  <p class="text-muted small mb-0">Kelola data informasi detail instansi Organisasi Perangkat Daerah</p>
                 </div>
                 <div>
                   <a href="<?= route('opd', 'index') ?>" class="btn btn-outline-secondary">

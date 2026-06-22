@@ -11,10 +11,15 @@
           <div class="row">
             <div class="col-sm-12">
               
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="<?= route('Dashboard', 'admin') ?>"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">OPD</li>
+                </ol>
+              </nav>
               <div class="page-header d-flex justify-content-between align-items-center mb-4">
                 <div>
-                  <h3 class="page-title mb-1">Daftar OPD</h3>
-                  <p class="text-muted small mb-0">Kelola unit Organisasi Perangkat Daerah di Kabupaten Mandailing Natal</p>
+                  <h3 class="page-title mb-0">Daftar OPD</h3>
                 </div>
                 <div>
                   <a href="<?= route('opd', 'create') ?>" class="btn btn-primary shadow-sm">
@@ -112,36 +117,49 @@
                       </table>
                     </div>
 
-                    <?php if ($total_pages > 1): ?>
-                    <div class="p-4 border-top">
-                      <nav aria-label="OPD pagination">
-                        <ul class="pagination justify-content-center mb-0">
-                          <?php if ($page > 1): ?>
-                            <li class="page-item">
-                              <a class="page-link" href="<?= route('opd', 'index') ?>?page=<?php echo $page - 1; ?><?php echo isset($_GET['search']) && $_GET['search'] ? '&search=' . urlencode($_GET['search']) : ''; ?>">Sebelumnya</a>
-                            </li>
-                          <?php endif; ?>
+                    <div class="p-4 border-top d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3">
+                      <div class="text-muted small">
+                        <?php 
+                        $from = ($page - 1) * $limit + 1;
+                        $to = min($page * $limit, $total);
+                        if ($total > 0):
+                          echo "Menampilkan <strong>{$from}</strong> sampai <strong>{$to}</strong> dari <strong>{$total}</strong> OPD";
+                        endif;
+                        ?>
+                      </div>
+                      <?php if ($total_pages > 1): ?>
+                        <nav aria-label="OPD pagination">
+                          <ul class="pagination pagination-modern mb-0">
+                            <?php if ($page > 1): ?>
+                              <li class="page-item">
+                                <a class="page-link" href="<?= route('opd', 'index') ?>?page=<?php echo $page - 1; ?><?php echo isset($_GET['search']) && $_GET['search'] ? '&search=' . urlencode($_GET['search']) : ''; ?>" title="Sebelumnya">
+                                  <i class="fas fa-chevron-left"></i>
+                                </a>
+                              </li>
+                            <?php endif; ?>
 
-                          <?php
-                          $start = max(1, $page - 2);
-                          $end = min($total_pages, $page + 2);
-                          ?>
+                            <?php
+                            $start = max(1, $page - 2);
+                            $end = min($total_pages, $page + 2);
+                            ?>
 
-                          <?php for ($i = $start; $i <= $end; $i++): ?>
-                            <li class="page-item <?php echo $i === $page ? 'active' : ''; ?>">
-                              <a class="page-link" href="<?= route('opd', 'index') ?>?page=<?php echo $i; ?><?php echo isset($_GET['search']) && $_GET['search'] ? '&search=' . urlencode($_GET['search']) : ''; ?>"><?php echo $i; ?></a>
-                            </li>
-                          <?php endfor; ?>
+                            <?php for ($i = $start; $i <= $end; $i++): ?>
+                              <li class="page-item <?php echo $i === $page ? 'active' : ''; ?>">
+                                <a class="page-link" href="<?= route('opd', 'index') ?>?page=<?php echo $i; ?><?php echo isset($_GET['search']) && $_GET['search'] ? '&search=' . urlencode($_GET['search']) : ''; ?>"><?php echo $i; ?></a>
+                              </li>
+                            <?php endfor; ?>
 
-                          <?php if ($page < $total_pages): ?>
-                            <li class="page-item">
-                              <a class="page-link" href="<?= route('opd', 'index') ?>?page=<?php echo $page + 1; ?><?php echo isset($_GET['search']) && $_GET['search'] ? '&search=' . urlencode($_GET['search']) : ''; ?>">Selanjutnya</a>
-                            </li>
-                          <?php endif; ?>
-                        </ul>
-                      </nav>
+                            <?php if ($page < $total_pages): ?>
+                              <li class="page-item">
+                                <a class="page-link" href="<?= route('opd', 'index') ?>?page=<?php echo $page + 1; ?><?php echo isset($_GET['search']) && $_GET['search'] ? '&search=' . urlencode($_GET['search']) : ''; ?>" title="Selanjutnya">
+                                  <i class="fas fa-chevron-right"></i>
+                                </a>
+                              </li>
+                            <?php endif; ?>
+                          </ul>
+                        </nav>
+                      <?php endif; ?>
                     </div>
-                    <?php endif; ?>
                   <?php endif; ?>
                 </div>
               </div>

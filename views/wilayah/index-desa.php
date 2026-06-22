@@ -12,10 +12,15 @@
             <div class="col-sm-12">
 
               
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="<?= route('Dashboard', 'admin') ?>"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Desa</li>
+                </ol>
+              </nav>
               <div class="page-header d-flex justify-content-between align-items-center mb-4">
                 <div>
-                  <h3 class="page-title mb-1">Manajemen Desa / Kelurahan</h3>
-                  <p class="text-muted small mb-0">Kelola unit wilayah desa atau kelurahan di Kabupaten Mandailing Natal</p>
+                  <h3 class="page-title mb-0">Manajemen Desa / Kelurahan</h3>
                 </div>
                 <div>
                   <a href="<?= route('desa', 'form') ?>" class="btn btn-primary shadow-sm">
@@ -127,35 +132,68 @@
                     </table>
                   </div>
 
-                  <?php if ($totalPages > 1): ?>
-                    <div class="p-4 border-top">
-                      <nav aria-label="Page navigation">
-                        <ul class="pagination justify-content-center mb-0">
-                          <?php if ($currentPage > 1): ?>
-                            <li class="page-item">
-                              <a class="page-link" href="<?= route('desa', 'index') ?>?page=<?php echo $currentPage - 1; ?>&search=<?php echo urlencode($search); ?>&kecamatan_filter=<?php echo urlencode($_GET['kecamatan_filter'] ?? ''); ?>">
-                                <i class="mdi mdi-chevron-left"></i> Sebelumnya
-                              </a>
-                            </li>
-                          <?php endif; ?>
+                    <div class="p-4 border-top d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3">
+                      <div class="text-muted small">
+                        <?php 
+                        $from = ($currentPage - 1) * $limit + 1;
+                        $to = min($currentPage * $limit, $statistics['total_desa']);
+                        $total = $statistics['total_desa'];
+                        if ($total > 0):
+                          echo "Menampilkan <strong>{$from}</strong> sampai <strong>{$to}</strong> dari <strong>{$total}</strong> desa/kelurahan";
+                        endif;
+                        ?>
+                      </div>
+                      <?php if ($totalPages > 1): ?>
+                        <nav aria-label="Page navigation">
+                          <ul class="pagination pagination-modern mb-0">
+                            <?php if ($currentPage > 1): ?>
+                              <li class="page-item">
+                                <a class="page-link" href="<?= route('desa', 'index') ?>?page=<?php echo $currentPage - 1; ?>&search=<?php echo urlencode($search); ?>&kecamatan_filter=<?php echo urlencode($_GET['kecamatan_filter'] ?? ''); ?>" title="Sebelumnya">
+                                  <i class="mdi mdi-chevron-left"></i>
+                                </a>
+                              </li>
+                            <?php endif; ?>
 
-                          <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-                            <li class="page-item <?php echo $i == $currentPage ? 'active' : ''; ?>">
-                              <a class="page-link" href="<?= route('desa', 'index') ?>?page=<?php echo $i; ?>&search=<?php echo urlencode($search); ?>&kecamatan_filter=<?php echo urlencode($_GET['kecamatan_filter'] ?? ''); ?>"><?php echo $i; ?></a>
-                            </li>
-                          <?php endfor; ?>
+                            <?php
+                            $start = max(1, $currentPage - 2);
+                            $end = min($totalPages, $currentPage + 2);
+                            
+                            if ($start > 1):
+                            ?>
+                              <li class="page-item">
+                                <a class="page-link" href="<?= route('desa', 'index') ?>?page=1&search=<?php echo urlencode($search); ?>&kecamatan_filter=<?php echo urlencode($_GET['kecamatan_filter'] ?? ''); ?>">1</a>
+                              </li>
+                              <?php if ($start > 2): ?>
+                                <li class="page-item disabled"><span class="page-link border-0 text-muted">...</span></li>
+                              <?php endif; ?>
+                            <?php endif; ?>
 
-                          <?php if ($currentPage < $totalPages): ?>
-                            <li class="page-item">
-                              <a class="page-link" href="<?= route('desa', 'index') ?>?page=<?php echo $currentPage + 1; ?>&search=<?php echo urlencode($search); ?>&kecamatan_filter=<?php echo urlencode($_GET['kecamatan_filter'] ?? ''); ?>">
-                                Selanjutnya <i class="mdi mdi-chevron-right"></i>
-                              </a>
-                            </li>
-                          <?php endif; ?>
-                        </ul>
-                      </nav>
+                            <?php for ($i = $start; $i <= $end; $i++): ?>
+                              <li class="page-item <?php echo $i == $currentPage ? 'active' : ''; ?>">
+                                <a class="page-link" href="<?= route('desa', 'index') ?>?page=<?php echo $i; ?>&search=<?php echo urlencode($search); ?>&kecamatan_filter=<?php echo urlencode($_GET['kecamatan_filter'] ?? ''); ?>"><?php echo $i; ?></a>
+                              </li>
+                            <?php endfor; ?>
+
+                            <?php if ($end < $totalPages): ?>
+                              <?php if ($end < $totalPages - 1): ?>
+                                <li class="page-item disabled"><span class="page-link border-0 text-muted">...</span></li>
+                              <?php endif; ?>
+                              <li class="page-item">
+                                <a class="page-link" href="<?= route('desa', 'index') ?>?page=<?php echo $totalPages; ?>&search=<?php echo urlencode($search); ?>&kecamatan_filter=<?php echo urlencode($_GET['kecamatan_filter'] ?? ''); ?>"><?php echo $totalPages; ?></a>
+                              </li>
+                            <?php endif; ?>
+
+                            <?php if ($currentPage < $totalPages): ?>
+                              <li class="page-item">
+                                <a class="page-link" href="<?= route('desa', 'index') ?>?page=<?php echo $currentPage + 1; ?>&search=<?php echo urlencode($search); ?>&kecamatan_filter=<?php echo urlencode($_GET['kecamatan_filter'] ?? ''); ?>" title="Selanjutnya">
+                                  <i class="mdi mdi-chevron-right"></i>
+                                </a>
+                              </li>
+                            <?php endif; ?>
+                          </ul>
+                        </nav>
+                      <?php endif; ?>
                     </div>
-                  <?php endif; ?>
                 </div>
               </div>
 

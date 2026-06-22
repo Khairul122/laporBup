@@ -13,6 +13,12 @@
             <div class="col-sm-12">
 
               
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="<?= route('Dashboard', 'admin') ?>"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">WhatsApp Gateway</li>
+                </ol>
+              </nav>
               <div class="page-header mb-4">
                 <div class="d-flex align-items-center justify-content-between">
                   <div>

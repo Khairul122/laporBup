@@ -6,8 +6,8 @@ loadEnv(__DIR__ . '/../.env');
 define('APP_ENV', env('APP_ENV', 'local'));
 
 define('DB_HOST', env('DB_HOST', 'localhost'));
-define('DB_USER', env('DB_USER', 'silapga_user'));
-define('DB_PASS', env('DB_PASS', 'SFVU85Di4zsY'));
+define('DB_USER', env('DB_USER', 'root'));
+define('DB_PASS', env('DB_PASS', ''));
 define('DB_NAME', env('DB_NAME', 'silapga_web'));
 
 define('APP_NAME', 'Sistem ');

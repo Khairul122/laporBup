@@ -15,34 +15,17 @@ include 'views/layouts/admin-header.php';
             <div class="col-sm-12">
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="<?= route('Dashboard', 'admin') ?>">Dashboard</a></li>
+                  <li class="breadcrumb-item"><a href="<?= route('Dashboard', 'admin') ?>"><i class="fa-solid fa-house"></i> Dashboard</a></li>
                   <li class="breadcrumb-item"><a href="<?= route('laporan', 'index') ?>?tab=<?php echo htmlspecialchars($type); ?>">Cetak Laporan</a></li>
                   <li class="breadcrumb-item active" aria-current="page">Tanda Tangan</li>
                 </ol>
               </nav>
               <div class="d-flex align-items-center justify-content-between mb-4">
                 <div>
-                  <h3 class="page-title mb-1">
+                  <h3 class="page-title mb-0">
                     <i class="fas fa-signature"></i>
                     Tanda Tangan Laporan
                   </h3>
-                  <p class="text-muted mb-0">
-                    <?php
-                    if ($laporan) {
-                      if ($type === 'opd') {
-                        echo 'Laporan OPD: ' . htmlspecialchars($laporan['nama_kegiatan']);
-                      } else {
-                        echo 'Laporan Camat: ' . htmlspecialchars($laporan['nama_pelapor']);
-                      }
-                    } else {
-                      if ($type === 'opd') {
-                        echo 'Pengaturan Tanda Tangan Global untuk Laporan OPD';
-                      } else {
-                        echo 'Pengaturan Tanda Tangan Global untuk Laporan Camat';
-                      }
-                    }
-                    ?>
-                  </p>
                 </div>
                 <div>
                   <a href="<?= route('laporan', 'index') ?>?tab=<?php echo htmlspecialchars($type); ?>" class="btn btn-secondary me-2">

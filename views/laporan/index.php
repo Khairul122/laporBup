@@ -12,10 +12,15 @@
             <div class="col-sm-12">
 
               
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="<?= route('Dashboard', 'admin') ?>"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Cetak Laporan</li>
+                </ol>
+              </nav>
               <div class="page-header d-flex justify-content-between align-items-center mb-4">
                 <div>
-                  <h2 class="page-title">Manajemen Laporan</h2>
-                  <p class="text-muted mb-0">Admin dapat mengakses semua laporan OPD dan Camat</p>
+                  <h2 class="page-title mb-0">Manajemen Laporan</h2>
                 </div>
               </div>
 
