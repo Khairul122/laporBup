@@ -1,4 +1,9 @@
+# Environment files — JANGAN commit ke Git
 .env
+.env.local
+.env.staging
+.env.production
+
 /vendor/
 /uploads/*
 !/uploads/.gitkeep
